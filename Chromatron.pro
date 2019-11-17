@@ -16,7 +16,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        src/level.cpp
+        src/auxiliary.cpp \
+        src/level.cpp \
+        src/object.cpp \
+        src/structures.cpp
 
 LIBS += -L/usr/lib -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 OBJECTS_DIR = obj
@@ -28,4 +31,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
 	main.h \
-	src/level.h
+	src/auxiliary.h \
+	src/level.h \
+	src/object.h \
+	src/structures.h
