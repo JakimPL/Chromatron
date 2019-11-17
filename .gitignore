@@ -1,3 +1,7 @@
 .qmake.stash
 *.user
+
 Makefile
+Chromatron
+
+obj/
