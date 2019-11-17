@@ -1,16 +1,16 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define OBJ_BEAMER 1
+#define OBJ_DOT 2
+#define OBJ_MIRROR 3
+#define OBJ_BENDER 4
+
 #include <SFML/Graphics.hpp>
 #include "src/auxiliary.h"
 #include "src/level.h"
 #include "src/object.h"
 #include "src/structures.h"
-
-#define OBJ_BEAMER 1
-#define OBJ_DOT 2
-#define OBJ_MIRROR 3
-#define OBJ_BENDER 4
 
 typedef sf::Keyboard Key;
 typedef sf::Event Ev;
@@ -35,7 +35,10 @@ constexpr int OFFSET_Y = 64;
 constexpr int TILE_SIZE = 40;
 constexpr int OUTLINE_SIZE = 1;
 
-const std::string PATH_DATA_PREFIX = "./data/LEV/level";
-const std::string PATH_DATA_SUFFIX = ".lev";
+const std::string PATH_DATA = "./data/";
+const std::string PATH_LEV_PREFIX = "LEV/level";
+const std::string PATH_LEV_SUFFIX = ".lev";
+const std::string PATH_IMG_PREFIX = "IMG/";
+const std::string PATH_IMG_SUFFIX = ".png";
 
 #endif

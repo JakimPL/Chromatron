@@ -12,6 +12,13 @@ int main(int argc, char *argv[])
 	// Initialize the window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chromatron");
 
+	std::vector<sf::Texture*> textures;
+	textures.push_back(loadTexture("empty"));
+	textures.push_back(loadTexture("beamer"));
+	textures.push_back(loadTexture("dot"));
+	textures.push_back(loadTexture("mirror"));
+	textures.push_back(loadTexture("bender"));
+
 	// Load a level
 	Level level("000");
 	// Game main loop
@@ -33,6 +40,13 @@ int main(int argc, char *argv[])
 					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 				}
 			}
+
+			// Draw game objects
+			size_t objectsCount = level.objectList.size();
+			for (size_t index = 0; index < objectsCount; ++index) {
+				///TODO: draw sprites
+			}
+
 			window.display();
 		}
 	}

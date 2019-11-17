@@ -5,7 +5,7 @@
 
 Level::Level(const std::string &id)
 {
-	std::string location = PATH_DATA_PREFIX + id + PATH_DATA_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
 		// Read level dimensions
