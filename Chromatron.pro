@@ -18,7 +18,6 @@ SOURCES += \
         main.cpp \
         src/auxiliary.cpp \
         src/game.cpp \
-        src/level.cpp \
         src/object.cpp \
         src/structures.cpp
 
@@ -34,6 +33,5 @@ HEADERS += \
 	main.h \
 	src/auxiliary.h \
 	src/game.h \
-	src/level.h \
 	src/object.h \
 	src/structures.h

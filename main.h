@@ -9,7 +9,6 @@
 #include <SFML/Graphics.hpp>
 #include "src/auxiliary.h"
 #include "src/game.h"
-#include "src/level.h"
 #include "src/structures.h"
 #include "src/object.h"
 

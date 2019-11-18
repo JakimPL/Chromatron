@@ -8,7 +8,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "structures.h"
-#include "game.h"
 
 class Object
 {
@@ -16,24 +15,14 @@ public:
 	unsigned short id;
 	unsigned short x;
 	unsigned short y;
-	Game* game;
 	sf::Sprite sprite;
-
-	void initialize(Game* gm, unsigned short xx, unsigned short yy);
-	static float moveInDirection_x(unsigned short dir, float length);
-	static float moveInDirection_y(unsigned short dir, float length);
 };
 
 class Beamer : public Object
 {
 	void calculateLaser();
 public:
-	Beamer(Game* gm, unsigned short xx, unsigned short yy, Color col, unsigned short dir) : color(col), direction(dir)
-	{
-		id = OBJ_BEAMER;
-		initialize(gm, xx, yy);
-		calculateLaser();
-	}
+	Beamer(Color col) : color(col) {}
 
 	Color color;
 	unsigned short direction;
@@ -43,11 +32,7 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(Game* gm, unsigned short xx, unsigned short yy, Color col) : color(col)
-	{
-		id = OBJ_DOT;
-		initialize(gm, xx, yy);
-	}
+	Dot(Color col) : color(col) {}
 
 	Color color;
 };
@@ -55,24 +40,12 @@ public:
 class Mirror : public Object
 {
 public:
-	Mirror(Game* gm, unsigned short xx, unsigned short yy, unsigned short dir) : direction(dir)
-	{
-		id = OBJ_MIRROR;
-		initialize(gm, xx, yy);
-	}
-
 	unsigned short direction;
 };
 
 class Bender : public Object
 {
 public:
-	Bender(Game* gm, unsigned short xx, unsigned short yy, unsigned short dir) : direction(dir)
-	{
-		id = OBJ_BENDER;
-		initialize(gm, xx, yy);
-	}
-
 	unsigned short direction;
 };
 

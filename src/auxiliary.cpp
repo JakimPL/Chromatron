@@ -1,5 +1,4 @@
 #include "auxiliary.h"
-#include "main.h"
 
 // Create a rectangle
 sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
@@ -17,4 +16,3 @@ void readByte(std::ifstream *file, unsigned short &var)
 	file->read(&buffer, 1);
 	var = static_cast<unsigned short>(buffer);
 }
-

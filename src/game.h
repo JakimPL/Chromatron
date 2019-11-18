@@ -7,16 +7,17 @@
 #include <string>
 
 #include <SFML/Graphics.hpp>
+#include "object.h"
 
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
+	void setObject(Object *object, unsigned short x, unsigned short y, unsigned short id);
+	static double moveInDirection_x(unsigned short dir, double length);
+	static double moveInDirection_y(unsigned short dir, double length);
 public:
 	Game();
 	~Game();
-
-	unsigned short boardWidth;
-	unsigned short boardHeight;
 
 	std::vector<sf::Texture*> textures;
 	unsigned int SCREEN_WIDTH = 640;
@@ -31,8 +32,20 @@ public:
 	std::string PATH_LEV_SUFFIX = ".lev";
 	std::string PATH_IMG_PREFIX = "IMG/";
 	std::string PATH_IMG_SUFFIX = ".png";
-
 	std::vector<std::string> IMG_NAMES = {"empty", "beamer", "dot", "mirror", "bender"};
+
+	struct Level {
+		unsigned short width;
+		unsigned short height;
+		std::vector<std::vector<bool>> obstacles;
+		std::vector<Object*> objectList;
+		std::vector<Beamer*> beamerList;
+		std::vector<Mirror*> mirrorList;
+		Game* game;
+	} level;
+
+	void loadLevel(const std::string &id);
+	void calculateLasers();
 };
 
 #endif
