@@ -17,3 +17,4 @@ void readByte(std::ifstream *file, unsigned short &var)
 	file->read(&buffer, 1);
 	var = static_cast<unsigned short>(buffer);
 }
+

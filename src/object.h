@@ -20,6 +20,8 @@ public:
 	sf::Sprite sprite;
 
 	void initialize(Game* gm, unsigned short xx, unsigned short yy);
+	static float moveInDirection_x(unsigned short dir, float length);
+	static float moveInDirection_y(unsigned short dir, float length);
 };
 
 class Beamer : public Object

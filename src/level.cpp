@@ -75,6 +75,7 @@ Level::Level(Game* gm, const std::string &id)
 
 				Mirror *mirror = new Mirror(game, x, y, direction);
 				objectList.push_back(mirror);
+				mirrorList.push_back(mirror);
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 

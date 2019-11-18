@@ -17,6 +17,7 @@ public:
 	std::vector<std::vector<bool>> obstacles;
 	std::vector<Object*> objectList;
 	std::vector<Beamer*> beamerList;
+	std::vector<Mirror*> mirrorList;
 	Game* game;
 };
 
