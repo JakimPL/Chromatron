@@ -4,18 +4,19 @@
 #include <vector>
 #include <string>
 
-#include "main.h"
+#include "game.h"
 #include "object.h"
 
 class Level
 {
 public:
-	Level(const std::string &id);
+	Level(Game* gm, const std::string &id);
 
 	unsigned short width;
 	unsigned short height;
 	std::vector<std::vector<bool>> obstacles;
 	std::vector<Object*> objectList;
+	Game* game;
 };
 
 #endif

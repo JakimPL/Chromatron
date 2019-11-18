@@ -8,9 +8,10 @@
 
 #include <SFML/Graphics.hpp>
 #include "src/auxiliary.h"
+#include "src/game.h"
 #include "src/level.h"
-#include "src/object.h"
 #include "src/structures.h"
+#include "src/object.h"
 
 typedef sf::Keyboard Key;
 typedef sf::Event Ev;
@@ -27,18 +28,5 @@ static sf::Color blue(0, 0, 255);
 static sf::Color lred(255, 128, 128);
 static sf::Color lgreen(128, 255, 128);
 static sf::Color lblue(128, 128, 255);
-
-constexpr int SCREEN_WIDTH = 1024;
-constexpr int SCREEN_HEIGHT = 768;
-constexpr int OFFSET_X = 64;
-constexpr int OFFSET_Y = 64;
-constexpr int TILE_SIZE = 40;
-constexpr int OUTLINE_SIZE = 1;
-
-const std::string PATH_DATA = "./data/";
-const std::string PATH_LEV_PREFIX = "LEV/level";
-const std::string PATH_LEV_SUFFIX = ".lev";
-const std::string PATH_IMG_PREFIX = "IMG/";
-const std::string PATH_IMG_SUFFIX = ".png";
 
 #endif

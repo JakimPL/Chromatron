@@ -10,21 +10,6 @@ sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 	return rectangle;
 }
 
-// Load a sprite
-sf::Texture* loadTexture(const std::string &filename)
-{
-	std::string location = PATH_DATA + PATH_IMG_PREFIX + filename + PATH_IMG_SUFFIX;
-	sf::Texture *image = new sf::Texture();
-	if (!image->loadFromFile(location)) {
-		throw std::runtime_error("failed to load " + location + " image file");
-	}
-
-	/*sf::Sprite sprite;
-	sprite.setTexture(image);*/
-
-	return image;
-}
-
 // Read a byte from a file
 void readByte(std::ifstream *file, unsigned short &var)
 {

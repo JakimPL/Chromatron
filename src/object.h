@@ -7,6 +7,7 @@
 #define OBJ_BENDER 4
 
 #include <SFML/Graphics.hpp>
+#include "game.h"
 #include "structures.h"
 
 class Object
@@ -15,17 +16,19 @@ public:
 	unsigned short id;
 	unsigned short x;
 	unsigned short y;
-	//sf::Sprite sprite;
+	Game* game;
+	sf::Sprite sprite;
+
+	void initialize(Game* gm, unsigned short xx, unsigned short yy);
 };
 
 class Beamer : public Object
 {
 public:
-	Beamer(unsigned short xx, unsigned short yy, Color col, unsigned short dir) : color(col), direction(dir)
+	Beamer(Game* gm, unsigned short xx, unsigned short yy, Color col, unsigned short dir) : color(col), direction(dir)
 	{
 		id = OBJ_BEAMER;
-		x = xx;
-		y = yy;
+		initialize(gm, xx, yy);
 	}
 
 	Color color;
@@ -35,11 +38,10 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(unsigned short xx, unsigned short yy, Color col) : color(col)
+	Dot(Game* gm, unsigned short xx, unsigned short yy, Color col) : color(col)
 	{
 		id = OBJ_DOT;
-		x = xx;
-		y = yy;
+		initialize(gm, xx, yy);
 	}
 
 	Color color;
@@ -48,11 +50,10 @@ public:
 class Mirror : public Object
 {
 public:
-	Mirror(unsigned short xx, unsigned short yy, unsigned short dir) : direction(dir)
+	Mirror(Game* gm, unsigned short xx, unsigned short yy, unsigned short dir) : direction(dir)
 	{
 		id = OBJ_MIRROR;
-		x = xx;
-		y = yy;
+		initialize(gm, xx, yy);
 	}
 
 	unsigned short direction;
@@ -61,11 +62,10 @@ public:
 class Bender : public Object
 {
 public:
-	Bender(unsigned short xx, unsigned short yy, unsigned short dir) : direction(dir)
+	Bender(Game* gm, unsigned short xx, unsigned short yy, unsigned short dir) : direction(dir)
 	{
 		id = OBJ_BENDER;
-		x = xx;
-		y = yy;
+		initialize(gm, xx, yy);
 	}
 
 	unsigned short direction;

@@ -3,9 +3,12 @@
 #include "auxiliary.h"
 #include "level.h"
 
-Level::Level(const std::string &id)
+Level::Level(Game* gm, const std::string &id)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
+	///TODO: error handling
+	game = gm;
+
+	std::string location = game->PATH_DATA + game->PATH_LEV_PREFIX + id + game->PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
 		// Read level dimensions
@@ -48,7 +51,7 @@ Level::Level(const std::string &id)
 
 				Color color(red > 0, green > 0, blue > 0);
 
-				Beamer *beamer = new Beamer(x, y, color, direction);
+				Beamer *beamer = new Beamer(game, x, y, color, direction);
 				objectList.push_back(beamer);
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
@@ -59,21 +62,21 @@ Level::Level(const std::string &id)
 
 				Color color(red > 0, green > 0, blue > 0);
 
-				Dot *dot = new Dot(x, y, color);
+				Dot *dot = new Dot(game, x, y, color);
 				objectList.push_back(dot);
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
-				Mirror *mirror = new Mirror(x, y, direction);
+				Mirror *mirror = new Mirror(game, x, y, direction);
 				objectList.push_back(mirror);
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
-				Bender *bender = new Bender(x, y, direction);
+				Bender *bender = new Bender(game, x, y, direction);
 				objectList.push_back(bender);
 			}
 		}
