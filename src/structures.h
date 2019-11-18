@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <SFML/Graphics.hpp>
+
 class Color
 {
 	// Tuple of colors
@@ -18,12 +20,14 @@ public:
 	bool green;
 	bool blue;
 
-	void printTuple();
+	sf::Color convertToColor();
 };
 
 class Ray
 {
 public:
+	Ray(float xx_start, float yy_start, float xx_end, float yy_end, Color col) : x_start(xx_start), y_start(yy_start), x_end(xx_end), y_end(yy_end), color(col) {}
+
 	float x_start;
 	float y_start;
 	float x_end;

@@ -39,9 +39,19 @@ int main(int argc, char *argv[])
 			}
 
 			// Draw game objects
-			size_t objectsCount = level.objectList.size();
-			for (size_t index = 0; index < objectsCount; ++index) {
-				///TODO: draw sprites
+			for (size_t index = 0; index < level.objectList.size(); ++index) {
+				// Draw lasers
+				for (size_t beamer = 0; beamer < level.beamerList.size(); ++beamer) {
+					for (size_t ray = 0; ray < level.beamerList[beamer]->laser.size(); ++ray) {
+						sf::Vertex line[2];
+						line[0].position = sf::Vector2f(level.beamerList[beamer]->laser[ray].x_start, level.beamerList[beamer]->laser[ray].y_start);
+						line[1].position = sf::Vector2f(level.beamerList[beamer]->laser[ray].x_end, level.beamerList[beamer]->laser[ray].y_end);
+						line[0].color = line[1].color = level.beamerList[beamer]->laser[ray].color.convertToColor();
+						window.draw(line, 2, sf::Lines);
+					}
+				}
+
+				// Draw the sprite
 				window.draw(level.objectList[index]->sprite);
 			}
 

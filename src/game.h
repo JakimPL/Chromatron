@@ -15,12 +15,15 @@ public:
 	Game();
 	~Game();
 
+	unsigned short boardWidth;
+	unsigned short boardHeight;
+
 	std::vector<sf::Texture*> textures;
-	unsigned int SCREEN_WIDTH = 1024;
-	unsigned int SCREEN_HEIGHT = 768;
-	int OFFSET_X = 64;
-	int OFFSET_Y = 64;
-	int TILE_SIZE = 40;
+	unsigned int SCREEN_WIDTH = 640;
+	unsigned int SCREEN_HEIGHT = 480;
+	int OFFSET_X = 32;
+	int OFFSET_Y = 32;
+	int TILE_SIZE = 24;
 	int OUTLINE_SIZE = 1;
 
 	std::string PATH_DATA = "./data/";

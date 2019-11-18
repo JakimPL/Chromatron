@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "structures.h"
 
 Color Color::operator+(const Color& color)
@@ -8,8 +6,7 @@ Color Color::operator+(const Color& color)
 	return newColor;
 }
 
-void Color::printTuple()
+sf::Color Color::convertToColor()
 {
-	std::cout << red << green << blue << "\n";
-	std::cout << *colorTuple[0] << *colorTuple[1] << *colorTuple[2] << "\n";
+	return sf::Color(255 * static_cast<int>(red), 255 * static_cast<int>(green), 255 * static_cast<int>(blue));
 }

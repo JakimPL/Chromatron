@@ -16,6 +16,7 @@ public:
 	unsigned short height;
 	std::vector<std::vector<bool>> obstacles;
 	std::vector<Object*> objectList;
+	std::vector<Beamer*> beamerList;
 	Game* game;
 };
 

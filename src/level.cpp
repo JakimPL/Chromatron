@@ -15,6 +15,9 @@ Level::Level(Game* gm, const std::string &id)
 		readByte(&levelFile, width);
 		readByte(&levelFile, height);
 
+		gm->boardWidth = width;
+		gm->boardHeight = height;
+
 		// Resize obstacle map
 		obstacles.resize(height, std::vector<bool>(width));
 		for (short y = 0; y < height; ++y) {
@@ -53,6 +56,7 @@ Level::Level(Game* gm, const std::string &id)
 
 				Beamer *beamer = new Beamer(game, x, y, color, direction);
 				objectList.push_back(beamer);
+				beamerList.push_back(beamer);
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 

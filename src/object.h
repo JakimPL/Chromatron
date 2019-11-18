@@ -7,8 +7,8 @@
 #define OBJ_BENDER 4
 
 #include <SFML/Graphics.hpp>
-#include "game.h"
 #include "structures.h"
+#include "game.h"
 
 class Object
 {
@@ -24,15 +24,18 @@ public:
 
 class Beamer : public Object
 {
+	void calculateLaser();
 public:
 	Beamer(Game* gm, unsigned short xx, unsigned short yy, Color col, unsigned short dir) : color(col), direction(dir)
 	{
 		id = OBJ_BEAMER;
 		initialize(gm, xx, yy);
+		calculateLaser();
 	}
 
 	Color color;
 	unsigned short direction;
+	Laser laser;
 };
 
 class Dot : public Object
