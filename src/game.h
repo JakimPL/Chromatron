@@ -1,7 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
+#define OBJ_COUNT 5
+
 #include <vector>
+#include <string>
 
 #include <SFML/Graphics.hpp>
 
@@ -25,6 +28,8 @@ public:
 	std::string PATH_LEV_SUFFIX = ".lev";
 	std::string PATH_IMG_PREFIX = "IMG/";
 	std::string PATH_IMG_SUFFIX = ".png";
+
+	std::vector<std::string> IMG_NAMES = {"empty", "beamer", "dot", "mirror", "bender"};
 };
 
 #endif

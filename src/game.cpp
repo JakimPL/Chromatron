@@ -2,11 +2,9 @@
 
 Game::Game()
 {
-	textures.push_back(loadTexture("empty"));
-	textures.push_back(loadTexture("beamer"));
-	textures.push_back(loadTexture("dot"));
-	textures.push_back(loadTexture("mirror"));
-	textures.push_back(loadTexture("bender"));
+	for (size_t index = 0; index < OBJ_COUNT; ++index) {
+		textures.push_back(loadTexture(IMG_NAMES[index]));
+	}
 }
 
 Game::~Game()

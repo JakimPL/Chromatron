@@ -20,4 +20,17 @@ public:
 
 	void printTuple();
 };
+
+class Ray
+{
+public:
+	float x_start;
+	float y_start;
+	float x_end;
+	float y_end;
+	Color color;
+};
+
+typedef std::vector<Ray> Laser;
+
 #endif
