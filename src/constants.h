@@ -3,11 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 
+#define OBJ_EMPTY 0
 #define OBJ_BEAMER 1
 #define OBJ_DOT 2
 #define OBJ_MIRROR 3
 #define OBJ_BENDER 4
 #define OBJ_COUNT 5
+
 #define OBJ_DOTF 5
 
 #define DIRS 8

@@ -48,8 +48,12 @@ void Game::loadLevel(const std::string &id)
 
 		// Resize obstacle map
 		level.obstacles.resize(level.height, std::vector<bool>(level.width));
-		for (short y = 0; y < level.height; ++y) {
-			for (short x = 0; x < level.width; ++x) {
+		for (unsigned short y = 0; y < level.height; ++y) {
+			for (unsigned short x = 0; x < level.width; ++x) {
+				// Fill object map with OBJ_EMPTY
+				level.objectMap[x][y] = nullptr;
+
+				// Read level obstacle data
 				bool temp;
 				levelFile.read((char*)&temp, 1);
 				level.obstacles[x][y] = temp;
@@ -141,9 +145,17 @@ void Game::calculateLasers()
 				xx += moveInDirection_x(dir, 1);
 				yy += moveInDirection_y(dir, 1);
 
-				for (size_t mirrorIndex = 0; mirrorIndex < level.objectList[OBJ_MIRROR].size(); ++mirrorIndex) {
-					Mirror* mirror = (Mirror*) level.objectList[OBJ_MIRROR][mirrorIndex];
-					if (mirror->x == static_cast<unsigned short>(xx) && mirror->y == static_cast<unsigned short>(yy)) {
+				auto x = static_cast<unsigned short>(xx);
+				auto y = static_cast<unsigned short>(yy);
+
+				if (level.objectMap[x][y] != nullptr) {
+					if (level.objectMap[x][y]->id == OBJ_BEAMER) {
+						stop = end = true;
+					} else if (level.objectMap[x][y]->id == OBJ_DOT) {
+						Dot* dot = (Dot*) level.objectMap[x][y];
+						dot->actualColor = dot->actualColor + col;
+					} else if (level.objectMap[x][y]->id == OBJ_MIRROR) {
+						Mirror* mirror = (Mirror*) level.objectMap[x][y];
 						int diff = (DIRS + mirror->direction - dir) % DIRS - 4;
 						if (std::abs(diff) <= 1) {
 							stop = true;
@@ -151,13 +163,6 @@ void Game::calculateLasers()
 						} else {
 							stop = end = true;
 						}
-					}
-				}
-
-				for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
-					Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
-					if (dot->x == static_cast<unsigned short>(xx) && dot->y == static_cast<unsigned short>(yy)) {
-						dot->actualColor = dot->actualColor + col;
 					}
 				}
 
@@ -185,7 +190,7 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object* object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction)
+void Game::setObject(Object * object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction)
 {
 	object->x = x;
 	object->y = y;

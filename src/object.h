@@ -9,7 +9,7 @@ class Object
 {
 public:
 	bool rotatable = false;
-
+	bool movable = false;
 	unsigned short id;
 	unsigned short x;
 	unsigned short y;
@@ -25,7 +25,8 @@ class Beamer : public Object
 public:
 	Beamer(Color col) : color(col)
 	{
-		rotatable = true;
+		rotatable = false;
+		movable = false;
 	}
 
 	Color color;
@@ -38,6 +39,7 @@ public:
 	Dot(Color col) : color(col), actualColor(false, false, false)
 	{
 		rotatable = false;
+		movable = false;
 		sprite.setColor(color.convertToColor());
 	}
 
@@ -54,6 +56,7 @@ public:
 	Mirror()
 	{
 		rotatable = true;
+		movable = true;
 	}
 };
 
@@ -63,6 +66,7 @@ public:
 	Bender()
 	{
 		rotatable = true;
+		movable = true;
 	}
 };
 
