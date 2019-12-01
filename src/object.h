@@ -15,6 +15,7 @@ public:
 	unsigned short id;
 	unsigned short x;
 	unsigned short y;
+	unsigned short direction = 0;
 	sf::Sprite sprite;
 };
 
@@ -25,7 +26,6 @@ public:
 	Beamer(Color col) : color(col) {}
 
 	Color color;
-	unsigned short direction;
 	Laser laser;
 };
 
@@ -39,14 +39,10 @@ public:
 
 class Mirror : public Object
 {
-public:
-	unsigned short direction;
 };
 
 class Bender : public Object
 {
-public:
-	unsigned short direction;
 };
 
 #endif

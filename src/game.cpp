@@ -80,7 +80,7 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Beamer *beamer = new Beamer(color);
-				setObject(beamer, x, y, id);
+				setObject(beamer, x, y, id, direction);
 
 				level.objectList.push_back(beamer);
 				level.beamerList.push_back(beamer);
@@ -103,7 +103,7 @@ void Game::loadLevel(const std::string &id)
 				readByte(&levelFile, direction);
 
 				Mirror *mirror = new Mirror();
-				setObject(mirror, x, y, id);
+				setObject(mirror, x, y, id, direction);
 
 				level.objectList.push_back(mirror);
 				level.mirrorList.push_back(mirror);
@@ -132,7 +132,6 @@ void Game::calculateLasers()
 		Color col = level.beamerList[beamer]->color;
 		unsigned short dir = level.beamerList[beamer]->direction;
 
-		bool middlePoint = false;
 		bool end = false;
 		while (!end) {
 			bool stop = false;
@@ -142,21 +141,19 @@ void Game::calculateLasers()
 
 				for (size_t mirror = 0; mirror < level.mirrorList.size(); ++mirror) {
 					if (level.mirrorList[mirror]->x == static_cast<unsigned short>(xx) && level.mirrorList[mirror]->y == static_cast<unsigned short>(yy)) {
-						stop = end = true;
-						middlePoint = true;
-
-						///TODO: reflections
+						int diff = (DIRS + level.mirrorList[mirror]->direction - dir) % DIRS - 4;
+						if (std::abs(diff) <= 1) {
+							stop = true;
+							dir = (DIRS + dir - (diff == 0 ? 4 : 2 * diff)) % DIRS;
+						} else {
+							stop = end = true;
+						}
 					}
 				}
 
 				if (xx < 0 || yy < 0 || xx >= level.width || yy >= level.height) {
 					stop = end = true;
 				}
-			}
-
-			if (!middlePoint) {
-				xx -= moveInDirection_x(dir, 0.5);
-				yy -= moveInDirection_y(dir, 0.5);
 			}
 
 			Ray ray(OFFSET_X + (xx_start + 0.5) * TILE_SIZE, OFFSET_Y + (yy_start + 0.5) * TILE_SIZE, OFFSET_X + (xx + 0.5) * TILE_SIZE, OFFSET_Y + (yy + 0.5) * TILE_SIZE, col);
@@ -168,14 +165,17 @@ void Game::calculateLasers()
 	}
 }
 
-void Game::setObject(Object* object, unsigned short x, unsigned short y, unsigned short id)
+void Game::setObject(Object* object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction)
 {
 	///TODO: proper object initializer
 	object->x = x;
 	object->y = y;
 	object->id = id;
-	object->sprite.setPosition(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y);
+	object->direction = direction;
+	object->sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
+	object->sprite.setPosition(OFFSET_X + TILE_SIZE * (x + 0.5), OFFSET_Y + TILE_SIZE * (y + 0.5));
 	object->sprite.setTexture(*textures[id]);
+	object->sprite.setRotation(direction * 45);
 }
 
 // Move in a direction

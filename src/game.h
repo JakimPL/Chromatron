@@ -2,6 +2,7 @@
 #define GAME_H
 
 #define OBJ_COUNT 5
+#define DIRS 8
 
 #include <vector>
 #include <string>
@@ -12,7 +13,7 @@
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
-	void setObject(Object *object, unsigned short x, unsigned short y, unsigned short id);
+	void setObject(Object *object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction = 0);
 	static double moveInDirection_x(unsigned short dir, double length);
 	static double moveInDirection_y(unsigned short dir, double length);
 public:

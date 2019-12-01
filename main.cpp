@@ -45,19 +45,20 @@ int main(int argc, char *argv[])
 				}
 			}
 
+
+			// Draw lasers
+			for (size_t beamer = 0; beamer < game.level.beamerList.size(); ++beamer) {
+				for (size_t ray = 0; ray < game.level.beamerList[beamer]->laser.size(); ++ray) {
+					sf::Vertex line[2];
+					line[0].position = sf::Vector2f(game.level.beamerList[beamer]->laser[ray].x_start, game.level.beamerList[beamer]->laser[ray].y_start);
+					line[1].position = sf::Vector2f(game.level.beamerList[beamer]->laser[ray].x_end, game.level.beamerList[beamer]->laser[ray].y_end);
+					line[0].color = line[1].color = game.level.beamerList[beamer]->laser[ray].color.convertToColor();
+					window.draw(line, 2, sf::Lines);
+				}
+			}
+
 			// Draw game objects
 			for (size_t index = 0; index < game.level.objectList.size(); ++index) {
-				// Draw lasers
-				for (size_t beamer = 0; beamer < game.level.beamerList.size(); ++beamer) {
-					for (size_t ray = 0; ray < game.level.beamerList[beamer]->laser.size(); ++ray) {
-						sf::Vertex line[2];
-						line[0].position = sf::Vector2f(game.level.beamerList[beamer]->laser[ray].x_start, game.level.beamerList[beamer]->laser[ray].y_start);
-						line[1].position = sf::Vector2f(game.level.beamerList[beamer]->laser[ray].x_end, game.level.beamerList[beamer]->laser[ray].y_end);
-						line[0].color = line[1].color = game.level.beamerList[beamer]->laser[ray].color.convertToColor();
-						window.draw(line, 2, sf::Lines);
-					}
-				}
-
 				// Draw the sprite
 				window.draw(game.level.objectList[index]->sprite);
 			}
