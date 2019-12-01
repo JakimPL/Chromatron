@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "auxiliary.h"
+#include "constants.h"
 #include "game.h"
 
 Game::Game()
@@ -81,9 +82,8 @@ void Game::loadLevel(const std::string &id)
 
 				Color color(red > 0, green > 0, blue > 0);
 
-				Beamer *beamer = new Beamer(color);
+				Beamer* beamer = new Beamer(color);
 				setObject(beamer, x, y, id, direction);
-				level.objectList[OBJ_BEAMER].push_back(beamer);
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 
@@ -93,24 +93,22 @@ void Game::loadLevel(const std::string &id)
 
 				Color color(red > 0, green > 0, blue > 0);
 
-				Dot *dot = new Dot(color);
+				Dot* dot = new Dot(color);
 				setObject(dot, x, y, id);
-				level.objectList[OBJ_DOT].push_back(dot);
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
-				Mirror *mirror = new Mirror();
+				Mirror* mirror = new Mirror();
 				setObject(mirror, x, y, id, direction);
-				level.objectList[OBJ_MIRROR].push_back(mirror);
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
-				Bender *bender = new Bender();
-				level.objectList[OBJ_BENDER].push_back(bender);
+				Bender* bender = new Bender();
+				setObject(bender, x, y, id, direction);
 			}
 		}
 	} else {
@@ -151,7 +149,7 @@ void Game::calculateLasers()
 				}
 
 				for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
-					Dot *dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+					Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
 					if (dot->x == static_cast<unsigned short>(xx) && dot->y == static_cast<unsigned short>(yy)) {
 						dot->actualColor = dot->actualColor + col;
 					}
@@ -162,7 +160,7 @@ void Game::calculateLasers()
 				}
 			}
 
-			Ray ray(OFFSET_X + (xx_start + 0.5) * TILE_SIZE, OFFSET_Y + (yy_start + 0.5) * TILE_SIZE, OFFSET_X + (xx + 0.5) * TILE_SIZE, OFFSET_Y + (yy + 0.5) * TILE_SIZE, col);
+			Ray ray(OFFSET_X + (xx_start + 0.5)*  TILE_SIZE, OFFSET_Y + (yy_start + 0.5)*  TILE_SIZE, OFFSET_X + (xx + 0.5)*  TILE_SIZE, OFFSET_Y + (yy + 0.5)*  TILE_SIZE, col);
 			beamer->laser.push_back(ray);
 
 			xx_start = xx;
@@ -174,24 +172,29 @@ void Game::calculateLasers()
 void Game::updateDots()
 {
 	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
-		Dot *dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
 		dot->updateState();
-		bool state = dot->state;
-		dot->sprite.setTexture(*textures[state ? OBJ_DOTF : OBJ_DOT]);
 	}
 }
 
 void Game::setObject(Object* object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction)
 {
-	///TODO: proper object initializer
 	object->x = x;
 	object->y = y;
 	object->id = id;
 	object->direction = direction;
 	object->sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
 	object->sprite.setPosition(OFFSET_X + TILE_SIZE * (x + 0.5), OFFSET_Y + TILE_SIZE * (y + 0.5));
-	object->sprite.setTexture(*textures[id]);
+
+	object->textures.push_back(textures[id]);
+	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
+
+	if (id == OBJ_DOT) {
+		object->textures.push_back(textures[OBJ_DOTF]);
+	}
+
+	level.objectList[id].push_back(object);
 }
 
 // Move in a direction

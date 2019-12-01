@@ -1,13 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#define OBJ_BEAMER 1
-#define OBJ_DOT 2
-#define OBJ_MIRROR 3
-#define OBJ_BENDER 4
-#define OBJ_DOTF 5
-
 #include <SFML/Graphics.hpp>
+#include "constants.h"
 #include "structures.h"
 
 class Object
@@ -18,6 +13,7 @@ public:
 	unsigned short y;
 	unsigned short direction = 0;
 	sf::Sprite sprite;
+	std::vector<sf::Texture*> textures;
 };
 
 class Beamer : public Object
@@ -32,7 +28,10 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(Color col) : color(col), actualColor({0, 0, 0}) {}
+	Dot(Color col) : color(col), actualColor({0, 0, 0})
+	{
+		sprite.setColor(color.convertToColor());
+	}
 
 	Color color;
 	Color actualColor;

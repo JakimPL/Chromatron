@@ -10,7 +10,7 @@ sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 }
 
 // Read a byte from a file
-void readByte(std::ifstream *file, unsigned short &var)
+void readByte(std::ifstream* file, unsigned short &var)
 {
 	char buffer;
 	file->read(&buffer, 1);

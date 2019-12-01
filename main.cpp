@@ -2,7 +2,7 @@
 
 #include "main.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	// Handle application's parameters
 	for (int arg = 0; arg < argc; ++arg) {
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	Game game;
 
 	// Initialize the window
-	sf::RenderWindow window(sf::VideoMode(game.SCREEN_WIDTH, game.SCREEN_HEIGHT), "Chromatron");
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chromatron");
 
 	// Load a level
 	game.loadLevel("000");
@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
 				for (short x = 0; x < game.level.width; ++x) {
 					sf::Color outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
 					sf::Color fillColor = (game.level.obstacles[x][y] ? dgray : gray);
-					window.draw(rectangleCreate(game.OFFSET_X + game.TILE_SIZE * x, game.OFFSET_Y + game.TILE_SIZE * y, game.TILE_SIZE, game.TILE_SIZE, outlineColor));
-					window.draw(rectangleCreate(game.OFFSET_X + game.TILE_SIZE * x + game.OUTLINE_SIZE, game.OFFSET_Y + game.TILE_SIZE * y + game.OUTLINE_SIZE, game.TILE_SIZE - 2 * game.OUTLINE_SIZE, game.TILE_SIZE - 2 * game.OUTLINE_SIZE, fillColor));
+					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
+					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 				}
 			}
 
