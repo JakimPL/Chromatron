@@ -118,6 +118,12 @@ void Game::loadLevel(const std::string &id)
 
 void Game::calculateLasers()
 {
+	// Clear dots' actual color
+	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
+		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+		dot->actualColor = {false, false, false};
+	}
+
 	for (size_t beamerIndex = 0; beamerIndex < level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
 		Beamer* beamer = (Beamer*) level.objectList[OBJ_BEAMER][beamerIndex];
 		beamer->laser.clear();
@@ -160,13 +166,15 @@ void Game::calculateLasers()
 				}
 			}
 
-			Ray ray(OFFSET_X + (xx_start + 0.5)*  TILE_SIZE, OFFSET_Y + (yy_start + 0.5)*  TILE_SIZE, OFFSET_X + (xx + 0.5)*  TILE_SIZE, OFFSET_Y + (yy + 0.5)*  TILE_SIZE, col);
+			Ray ray(OFFSET_X + (xx_start + 0.5) * TILE_SIZE, OFFSET_Y + (yy_start + 0.5) * TILE_SIZE, OFFSET_X + (xx + 0.5) * TILE_SIZE, OFFSET_Y + (yy + 0.5) * TILE_SIZE, col);
 			beamer->laser.push_back(ray);
 
 			xx_start = xx;
 			yy_start = yy;
 		}
 	}
+
+	updateDots();
 }
 
 void Game::updateDots()
@@ -195,6 +203,7 @@ void Game::setObject(Object* object, unsigned short x, unsigned short y, unsigne
 	}
 
 	level.objectList[id].push_back(object);
+	level.objectMap[x][y] = object;
 }
 
 // Move in a direction

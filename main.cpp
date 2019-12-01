@@ -2,6 +2,11 @@
 
 #include "main.h"
 
+bool isMouseOn(short x, short y, sf::Vector2f mousePosition)
+{
+	return (mousePosition.x >= OFFSET_X + TILE_SIZE * x && mousePosition.x < OFFSET_X + TILE_SIZE * (x + 1) && mousePosition.y >= OFFSET_Y + TILE_SIZE * y && mousePosition.y < OFFSET_Y + TILE_SIZE * (y + 1));
+}
+
 int main(int argc, char* argv[])
 {
 	// Handle application's parameters
@@ -14,12 +19,14 @@ int main(int argc, char* argv[])
 
 	// Initialize the window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chromatron");
+	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	window.setView(view);
 
 	// Load a level
 	game.loadLevel("000");
 
 	bool gameEvent = true;
-
+	bool mouseClicked = false;
 	// Game main loop
 	while (window.isOpen()) {
 		Ev event;
@@ -30,22 +37,36 @@ int main(int argc, char* argv[])
 
 			window.clear();
 
-			if (gameEvent) {
-				game.calculateLasers();
-				game.updateDots();
-				gameEvent = false;
-			}
-
 			// Draw the board
+			sf::Vector2f mousePosition =  window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			for (short y = 0; y < game.level.height; ++y) {
 				for (short x = 0; x < game.level.width; ++x) {
-					sf::Color outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
-					sf::Color fillColor = (game.level.obstacles[x][y] ? dgray : gray);
+					sf::Color outlineColor, fillColor;
+					if (isMouseOn(x, y, mousePosition)) {
+						outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
+						fillColor = (game.level.obstacles[x][y] ? yellow : lgray);
+
+						// If LMB is pressed
+						if (event.type == sf::Event::MouseButtonPressed) {
+							if (game.level.objectMap[x][y] != NULL) {
+								game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
+								gameEvent = true;
+							}
+						}
+					} else {
+						outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
+						fillColor = (game.level.obstacles[x][y] ? dgray : gray);
+					}
+
 					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
 					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 				}
 			}
 
+			if (gameEvent) {
+				game.calculateLasers();
+				gameEvent = false;
+			}
 
 			// Draw lasers
 			for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {

@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <vector>
+#include <map>
 #include <string>
 
 #include <SFML/Graphics.hpp>
@@ -23,6 +24,7 @@ public:
 		unsigned short height;
 		std::vector<std::vector<bool>> obstacles;
 		std::vector<Object*> objectList[OBJ_COUNT];
+		std::map<unsigned short, std::map<unsigned short, Object*>> objectMap;
 		Game* game;
 	} level;
 
