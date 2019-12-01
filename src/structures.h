@@ -12,8 +12,9 @@ class Color
 public:
 	Color(bool r, bool g, bool b) : red(r), green(g), blue(b) {}
 
-	// Add two colors (additive)
-	Color operator+(const Color & color);
+	// Add two colors (additive), compare two colors
+	Color operator+(const Color &color);
+	bool operator==(const Color &color);
 
 	// Color's components
 	bool red;

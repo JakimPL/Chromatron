@@ -5,6 +5,7 @@
 #define OBJ_DOT 2
 #define OBJ_MIRROR 3
 #define OBJ_BENDER 4
+#define OBJ_DOTF 5
 
 #include <SFML/Graphics.hpp>
 #include "structures.h"
@@ -21,7 +22,6 @@ public:
 
 class Beamer : public Object
 {
-	void calculateLaser();
 public:
 	Beamer(Color col) : color(col) {}
 
@@ -32,9 +32,13 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(Color col) : color(col) {}
+	Dot(Color col) : color(col), actualColor({0, 0, 0}) {}
 
 	Color color;
+	Color actualColor;
+	bool state = false;
+
+	void updateState();
 };
 
 class Mirror : public Object

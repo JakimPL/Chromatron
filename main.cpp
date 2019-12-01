@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 
 			if (gameEvent) {
 				game.calculateLasers();
+				game.updateDots();
 				gameEvent = false;
 			}
 

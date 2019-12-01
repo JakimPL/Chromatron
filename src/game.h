@@ -33,7 +33,7 @@ public:
 	std::string PATH_LEV_SUFFIX = ".lev";
 	std::string PATH_IMG_PREFIX = "IMG/";
 	std::string PATH_IMG_SUFFIX = ".png";
-	std::vector<std::string> IMG_NAMES = {"empty", "beamer", "dot", "mirror", "bender"};
+	std::vector<std::string> IMG_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
 
 	struct Level {
 		unsigned short width;
@@ -41,12 +41,14 @@ public:
 		std::vector<std::vector<bool>> obstacles;
 		std::vector<Object*> objectList;
 		std::vector<Beamer*> beamerList;
+		std::vector<Dot*> dotList;
 		std::vector<Mirror*> mirrorList;
 		Game* game;
 	} level;
 
 	void loadLevel(const std::string &id);
 	void calculateLasers();
+	void updateDots();
 };
 
 #endif

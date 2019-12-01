@@ -9,6 +9,8 @@ Game::Game()
 	for (size_t index = 0; index < OBJ_COUNT; ++index) {
 		textures.push_back(loadTexture(IMG_NAMES[index]));
 	}
+
+	textures.push_back(loadTexture(IMG_NAMES[OBJ_DOTF]));
 }
 
 Game::~Game()
@@ -95,8 +97,9 @@ void Game::loadLevel(const std::string &id)
 
 				Dot *dot = new Dot(color);
 				setObject(dot, x, y, id);
-
+				dot->sprite.setColor(color.convertToColor());
 				level.objectList.push_back(dot);
+				level.dotList.push_back(dot);
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
@@ -151,6 +154,12 @@ void Game::calculateLasers()
 					}
 				}
 
+				for (size_t dot = 0; dot < level.dotList.size(); ++dot) {
+					if (level.dotList[dot]->x == static_cast<unsigned short>(xx) && level.dotList[dot]->y == static_cast<unsigned short>(yy)) {
+						level.dotList[dot]->actualColor = level.dotList[dot]->actualColor + col;
+					}
+				}
+
 				if (xx < 0 || yy < 0 || xx >= level.width || yy >= level.height) {
 					stop = end = true;
 				}
@@ -162,6 +171,15 @@ void Game::calculateLasers()
 			xx_start = xx;
 			yy_start = yy;
 		}
+	}
+}
+
+void Game::updateDots()
+{
+	for (size_t dot = 0; dot < level.dotList.size(); ++dot) {
+		level.dotList[dot]->updateState();
+		bool state = level.dotList[dot]->state;
+		level.dotList[dot]->sprite.setTexture(*textures[state ? OBJ_DOTF : OBJ_DOT]);
 	}
 }
 
