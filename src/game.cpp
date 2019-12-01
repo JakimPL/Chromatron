@@ -83,9 +83,7 @@ void Game::loadLevel(const std::string &id)
 
 				Beamer *beamer = new Beamer(color);
 				setObject(beamer, x, y, id, direction);
-
-				level.objectList.push_back(beamer);
-				level.beamerList.push_back(beamer);
+				level.objectList[OBJ_BEAMER].push_back(beamer);
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 
@@ -97,9 +95,7 @@ void Game::loadLevel(const std::string &id)
 
 				Dot *dot = new Dot(color);
 				setObject(dot, x, y, id);
-				dot->sprite.setColor(color.convertToColor());
-				level.objectList.push_back(dot);
-				level.dotList.push_back(dot);
+				level.objectList[OBJ_DOT].push_back(dot);
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
@@ -107,16 +103,14 @@ void Game::loadLevel(const std::string &id)
 
 				Mirror *mirror = new Mirror();
 				setObject(mirror, x, y, id, direction);
-
-				level.objectList.push_back(mirror);
-				level.mirrorList.push_back(mirror);
+				level.objectList[OBJ_MIRROR].push_back(mirror);
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Bender *bender = new Bender();
-				level.objectList.push_back(bender);
+				level.objectList[OBJ_BENDER].push_back(bender);
 			}
 		}
 	} else {
@@ -126,14 +120,15 @@ void Game::loadLevel(const std::string &id)
 
 void Game::calculateLasers()
 {
-	for (size_t beamer = 0; beamer < level.beamerList.size(); ++beamer) {
-		level.beamerList[beamer]->laser.clear();
+	for (size_t beamerIndex = 0; beamerIndex < level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
+		Beamer* beamer = (Beamer*) level.objectList[OBJ_BEAMER][beamerIndex];
+		beamer->laser.clear();
 
 		double xx_start, xx, yy_start, yy;
-		xx = xx_start = static_cast<double>(level.beamerList[beamer]->x);
-		yy = yy_start = static_cast<double>(level.beamerList[beamer]->y);
-		Color col = level.beamerList[beamer]->color;
-		unsigned short dir = level.beamerList[beamer]->direction;
+		xx = xx_start = static_cast<double>(beamer->x);
+		yy = yy_start = static_cast<double>(beamer->y);
+		Color col = beamer->color;
+		unsigned short dir = beamer->direction;
 
 		bool end = false;
 		while (!end) {
@@ -142,9 +137,10 @@ void Game::calculateLasers()
 				xx += moveInDirection_x(dir, 1);
 				yy += moveInDirection_y(dir, 1);
 
-				for (size_t mirror = 0; mirror < level.mirrorList.size(); ++mirror) {
-					if (level.mirrorList[mirror]->x == static_cast<unsigned short>(xx) && level.mirrorList[mirror]->y == static_cast<unsigned short>(yy)) {
-						int diff = (DIRS + level.mirrorList[mirror]->direction - dir) % DIRS - 4;
+				for (size_t mirrorIndex = 0; mirrorIndex < level.objectList[OBJ_MIRROR].size(); ++mirrorIndex) {
+					Mirror* mirror = (Mirror*) level.objectList[OBJ_MIRROR][mirrorIndex];
+					if (mirror->x == static_cast<unsigned short>(xx) && mirror->y == static_cast<unsigned short>(yy)) {
+						int diff = (DIRS + mirror->direction - dir) % DIRS - 4;
 						if (std::abs(diff) <= 1) {
 							stop = true;
 							dir = (DIRS + dir - (diff == 0 ? 4 : 2 * diff)) % DIRS;
@@ -154,9 +150,10 @@ void Game::calculateLasers()
 					}
 				}
 
-				for (size_t dot = 0; dot < level.dotList.size(); ++dot) {
-					if (level.dotList[dot]->x == static_cast<unsigned short>(xx) && level.dotList[dot]->y == static_cast<unsigned short>(yy)) {
-						level.dotList[dot]->actualColor = level.dotList[dot]->actualColor + col;
+				for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
+					Dot *dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+					if (dot->x == static_cast<unsigned short>(xx) && dot->y == static_cast<unsigned short>(yy)) {
+						dot->actualColor = dot->actualColor + col;
 					}
 				}
 
@@ -166,7 +163,7 @@ void Game::calculateLasers()
 			}
 
 			Ray ray(OFFSET_X + (xx_start + 0.5) * TILE_SIZE, OFFSET_Y + (yy_start + 0.5) * TILE_SIZE, OFFSET_X + (xx + 0.5) * TILE_SIZE, OFFSET_Y + (yy + 0.5) * TILE_SIZE, col);
-			level.beamerList[beamer]->laser.push_back(ray);
+			beamer->laser.push_back(ray);
 
 			xx_start = xx;
 			yy_start = yy;
@@ -176,10 +173,11 @@ void Game::calculateLasers()
 
 void Game::updateDots()
 {
-	for (size_t dot = 0; dot < level.dotList.size(); ++dot) {
-		level.dotList[dot]->updateState();
-		bool state = level.dotList[dot]->state;
-		level.dotList[dot]->sprite.setTexture(*textures[state ? OBJ_DOTF : OBJ_DOT]);
+	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
+		Dot *dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+		dot->updateState();
+		bool state = dot->state;
+		dot->sprite.setTexture(*textures[state ? OBJ_DOTF : OBJ_DOT]);
 	}
 }
 

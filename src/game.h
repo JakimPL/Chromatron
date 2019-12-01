@@ -20,7 +20,6 @@ public:
 	Game();
 	~Game();
 
-	std::vector<sf::Texture*> textures;
 	unsigned int SCREEN_WIDTH = 640;
 	unsigned int SCREEN_HEIGHT = 480;
 	int OFFSET_X = 32;
@@ -39,10 +38,7 @@ public:
 		unsigned short width;
 		unsigned short height;
 		std::vector<std::vector<bool>> obstacles;
-		std::vector<Object*> objectList;
-		std::vector<Beamer*> beamerList;
-		std::vector<Dot*> dotList;
-		std::vector<Mirror*> mirrorList;
+		std::vector<Object*> objectList[OBJ_COUNT];
 		Game* game;
 	} level;
 
