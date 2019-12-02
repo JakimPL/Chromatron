@@ -23,6 +23,8 @@ public:
 		bool operator==(const Position &pos);
 		bool operator!=(const Position &pos);
 		operator sf::Vector2f();
+		static Position createPosition(short xx, short yy);
+		static Position createPosition(sf::Vector2f vector);
 	} position;
 
 	void rotate(bool clockwise);

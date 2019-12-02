@@ -34,40 +34,37 @@ int main(int argc, char* argv[])
 			}
 
 			// Game events: mouse
-			sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			for (short y = 0; y < game.level.height; ++y) {
-				for (short x = 0; x < game.level.width; ++x) {
-					if (isMouseOn(x, y, mousePosition)) {
-						// If mouse buttion is pressed
-						Object::Position currentPosition = {x, y};
-						if (event.type == sf::Event::MouseButtonPressed) {
-							if (game.level.objectMap[currentPosition] != nullptr) {
-								if (game.level.objectMap[currentPosition]->movable) {
-									dragPosition = currentPosition;
-									dragSprite = game.level.objectMap[currentPosition]->sprite;
-								}
-							}
-						}
+			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
+			Object* object = game.level.objectMap[mousePosition];
 
-						if (event.type == sf::Event::MouseButtonReleased) {
-							// If drag position is not null, move an object to the new location (if possible)
-							if (dragPosition != nullPosition) {
-								gameEvent = game.level.moveObject(dragPosition, {x, y});
-							}
-
-							// Rotate an object if possible
-							if (dragPosition == currentPosition || dragPosition == nullPosition) {
-								if (game.level.objectMap[currentPosition] != nullptr) {
-									game.level.objectMap[currentPosition]->rotate(event.mouseButton.button == sf::Mouse::Right);
-									gameEvent = true;
-								}
-							}
-
-							dragPosition = nullPosition;
-						}
+			// If mouse buttion is pressed
+			if (event.type == sf::Event::MouseButtonPressed) {
+				if (object != nullptr) {
+					if (object->movable) {
+						dragPosition = mousePosition;
+						dragSprite = object->sprite;
 					}
 				}
 			}
+
+			if (event.type == sf::Event::MouseButtonReleased) {
+				// If drag position is not null, move an object to the new location (if possible)
+				if (dragPosition != nullPosition) {
+					gameEvent = game.level.moveObject(dragPosition, mousePosition);
+				}
+
+				// Rotate an object if possible
+				if (dragPosition == mousePosition || dragPosition == nullPosition) {
+					if (object != nullptr) {
+						object->rotate(event.mouseButton.button == sf::Mouse::Right);
+						gameEvent = true;
+					}
+				}
+
+				dragPosition = nullPosition;
+			}
+
 
 			// Update game status: calculate lasers
 			if (gameEvent) {
@@ -82,7 +79,7 @@ int main(int argc, char* argv[])
 				for (short x = 0; x < game.level.width; ++x) {
 					sf::Color outlineColor, fillColor;
 					Object::Position currentPosition = {x, y};
-					if (isMouseOn(x, y, mousePosition)) {
+					if (currentPosition == mousePosition) {
 						outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
 						fillColor = (game.level.obstacles[currentPosition] ? yellow : lgray);
 					} else {

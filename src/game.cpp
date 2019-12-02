@@ -214,7 +214,7 @@ bool Game::Level::moveObject(Object::Position start, Object::Position end)
 		return false;
 	}
 
-	bool success = (objectMap[start] == nullptr && !obstacles[end]);
+	bool success = (objectMap[end] == nullptr && !obstacles[end]);
 
 	if (success) {
 		objectMap[start]->position = end;
