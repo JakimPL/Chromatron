@@ -13,5 +13,5 @@ bool Color::operator==(const Color& color)
 
 sf::Color Color::convertToColor()
 {
-	return sf::Color(255 * static_cast<int>(red), 255 * static_cast<int>(green), 255 * static_cast<int>(blue));
+	return sf::Color(255 * static_cast<sf::Uint8>(red), 255 * static_cast<sf::Uint8>(green), 255 * static_cast<sf::Uint8>(blue));
 }

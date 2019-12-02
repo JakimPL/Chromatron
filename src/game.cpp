@@ -131,11 +131,13 @@ void Game::calculateLasers()
 		Beamer* beamer = (Beamer*) level.objectList[OBJ_BEAMER][beamerIndex];
 		beamer->laser.clear();
 
-		Object::Position now = beamer->position;
-		Object::Position start = beamer->position;
-
-		Color col = beamer->color;
 		unsigned short dir = beamer->direction;
+		Object::Position now = beamer->position;
+		Color color = beamer->color;
+		sf::Color sfColor = color.convertToColor();
+
+		Ray ray;
+		ray.push_back(sf::Vertex(beamer->position, sfColor));
 
 		bool end = false;
 		while (!end) {
@@ -151,7 +153,7 @@ void Game::calculateLasers()
 						stop = end = true;
 					} else if (level.objectMap[x][y]->id == OBJ_DOT) {
 						Dot* dot = (Dot*) level.objectMap[x][y];
-						dot->actualColor = dot->actualColor + col;
+						dot->actualColor = dot->actualColor + color;
 					} else if (level.objectMap[x][y]->id == OBJ_MIRROR) {
 						Mirror* mirror = (Mirror*) level.objectMap[x][y];
 						int diff = (DIRS + mirror->direction - dir) % DIRS - 4;
@@ -169,10 +171,12 @@ void Game::calculateLasers()
 				}
 			}
 
-			Ray ray(OFFSET_X + (start.x + 0.5) * TILE_SIZE, OFFSET_Y + (start.y + 0.5) * TILE_SIZE, OFFSET_X + (now.x + 0.5) * TILE_SIZE, OFFSET_Y + (now.y + 0.5) * TILE_SIZE, col);
-			beamer->laser.push_back(ray);
-			start = now;
+			// Add a new node to the ray
+			ray.push_back(sf::Vertex(now, sfColor));
 		}
+
+		// Add the created ray
+		beamer->laser.push_back(ray);
 	}
 
 	updateDots();

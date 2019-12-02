@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 							}
 						}
 						if (event.type == sf::Event::MouseButtonReleased) {
-							dragPosition = NULLPOS;
+							dragPosition = nullPosition;
 							if (game.level.objectMap[x][y] != nullptr) {
 								game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
 								gameEvent = true;
@@ -85,13 +85,12 @@ int main(int argc, char* argv[])
 			// Draw lasers
 			for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
 				Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
-				for (size_t rayIndex = 0; rayIndex < beamer->laser.size(); ++rayIndex) {
-					Ray ray = beamer->laser[rayIndex];
-					sf::Vertex line[2];
-					line[0].position = sf::Vector2f(ray.x_start, ray.y_start);
-					line[1].position = sf::Vector2f(ray.x_end, ray.y_end);
-					line[0].color = line[1].color = ray.color.convertToColor();
-					window.draw(line, 2, sf::Lines);
+				size_t rays = beamer->laser.size();
+				for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {
+					size_t size = beamer->laser[rayIndex].size();
+					sf::Vertex vertices[size];
+					std::copy(beamer->laser[rayIndex].begin(), beamer->laser[rayIndex].end(), vertices);
+					window.draw(vertices, size, sf::LinesStrip);
 				}
 			}
 
@@ -99,7 +98,7 @@ int main(int argc, char* argv[])
 			for (size_t type = 0; type < OBJ_COUNT; ++type) {
 				for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
 					// Draw the sprite unless it's dragged
-					if (dragPosition.x != game.level.objectList[type][index]->position.x || dragPosition.y != game.level.objectList[type][index]->position.y) {
+					if (dragPosition != game.level.objectList[type][index]->position) {
 						window.draw(game.level.objectList[type][index]->sprite);
 					}
 				}

@@ -25,18 +25,7 @@ public:
 	sf::Color convertToColor();
 };
 
-class Ray
-{
-public:
-	Ray(double xx_start, double yy_start, double xx_end, double yy_end, Color col) : x_start(xx_start), y_start(yy_start), x_end(xx_end), y_end(yy_end), color(col) {}
-
-	double x_start;
-	double y_start;
-	double x_end;
-	double y_end;
-	Color color;
-};
-
+typedef std::vector<sf::Vertex> Ray;
 typedef std::vector<Ray> Laser;
 
 #endif
