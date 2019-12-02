@@ -21,11 +21,12 @@ public:
 		unsigned short width;
 		unsigned short height;
 		std::vector<Object*> objectList[OBJ_COUNT];
-		std::map<short, std::map<short, bool>> obstacles;
-		std::map<short, std::map<short, Object*>> objectMap;
+		std::map<Object::Position, bool> obstacles;
+		std::map<Object::Position, Object*> objectMap;
 		Game* game;
 
 		bool moveObject(Object::Position start, Object::Position end);
+		bool isOutsideBoard(Object::Position position);
 	} level;
 
 	void loadLevel(const std::string &id);

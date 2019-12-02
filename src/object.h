@@ -19,6 +19,7 @@ public:
 		short x;
 		short y;
 		void moveInDirection(unsigned short dir, int length);
+		bool operator<(const Position &pos) const;
 		bool operator==(const Position &pos);
 		bool operator!=(const Position &pos);
 		operator sf::Vector2f();

@@ -49,13 +49,15 @@ void Game::loadLevel(const std::string &id)
 		// Resize obstacle map
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
+				Object::Position currentPosition = {x, y};
+
 				// Fill object map with OBJ_EMPTY
-				level.objectMap[x][y] = nullptr;
+				level.objectMap[currentPosition] = nullptr;
 
 				// Read level obstacle data
 				bool temp;
 				levelFile.read((char*)&temp, 1);
-				level.obstacles[x][y] = temp;
+				level.obstacles[currentPosition] = temp;
 			}
 		}
 
@@ -145,17 +147,14 @@ void Game::calculateLasers()
 			while (!stop) {
 				now.moveInDirection(dir, 1);
 
-				auto x = now.x;
-				auto y = now.y;
-
-				if (level.objectMap[x][y] != nullptr) {
-					if (level.objectMap[x][y]->id == OBJ_BEAMER) {
+				if (level.objectMap[now] != nullptr) {
+					if (level.objectMap[now]->id == OBJ_BEAMER) {
 						stop = end = true;
-					} else if (level.objectMap[x][y]->id == OBJ_DOT) {
-						Dot* dot = (Dot*) level.objectMap[x][y];
+					} else if (level.objectMap[now]->id == OBJ_DOT) {
+						Dot* dot = (Dot*) level.objectMap[now];
 						dot->actualColor = dot->actualColor + color;
-					} else if (level.objectMap[x][y]->id == OBJ_MIRROR) {
-						Mirror* mirror = (Mirror*) level.objectMap[x][y];
+					} else if (level.objectMap[now]->id == OBJ_MIRROR) {
+						Mirror* mirror = (Mirror*) level.objectMap[now];
 						int diff = (DIRS + mirror->direction - dir) % DIRS - 4;
 						if (std::abs(diff) <= 1) {
 							stop = true;
@@ -166,16 +165,14 @@ void Game::calculateLasers()
 					}
 				}
 
-				if (x < 0 || y < 0 || x >= level.width || y >= level.height) {
+				if (level.isOutsideBoard(now)) {
 					stop = end = true;
 				}
 			}
 
-			// Add a new node to the ray
 			ray.push_back(sf::Vertex(now, sfColor));
 		}
 
-		// Add the created ray
 		beamer->laser.push_back(ray);
 	}
 
@@ -196,9 +193,9 @@ void Game::setObject(Object* object, short x, short y, unsigned short id, unsign
 	object->position.y = y;
 	object->id = id;
 	object->direction = direction;
+
 	object->sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
 	object->sprite.setPosition(object->position);
-
 	object->textures.push_back(textures[id]);
 	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
@@ -208,27 +205,28 @@ void Game::setObject(Object* object, short x, short y, unsigned short id, unsign
 	}
 
 	level.objectList[id].push_back(object);
-	level.objectMap[x][y] = object;
+	level.objectMap[object->position] = object;
 }
 
 bool Game::Level::moveObject(Object::Position start, Object::Position end)
 {
-	if (start == end) {
+	if (start == end || isOutsideBoard(end)) {
 		return false;
 	}
 
-	short x_start = start.x;
-	short y_start = start.y;
-	short x_end = end.x;
-	short y_end = end.y;
-	bool success = (objectMap[x_end][y_end] == nullptr && !obstacles[x_end][y_end]);
+	bool success = (objectMap[start] == nullptr && !obstacles[end]);
 
 	if (success) {
-		objectMap[x_start][y_start]->position = end;
-		objectMap[x_end][y_end] = objectMap[x_start][y_start];
-		objectMap[x_start][y_start] = nullptr;
-		objectMap[x_end][y_end]->updateSprite();
+		objectMap[start]->position = end;
+		objectMap[end] = objectMap[start];
+		objectMap[start] = nullptr;
+		objectMap[end]->updateSprite();
 	}
 
 	return success;
+}
+
+bool Game::Level::isOutsideBoard(Object::Position position)
+{
+	return position.x < 0 || position.y < 0 || position.x >= width || position.y >= height;
 }

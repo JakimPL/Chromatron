@@ -34,17 +34,17 @@ int main(int argc, char* argv[])
 			}
 
 			// Game events: mouse
-			sf::Vector2f mousePosition =  window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			for (short y = 0; y < game.level.height; ++y) {
 				for (short x = 0; x < game.level.width; ++x) {
 					if (isMouseOn(x, y, mousePosition)) {
 						// If mouse buttion is pressed
 						Object::Position currentPosition = {x, y};
 						if (event.type == sf::Event::MouseButtonPressed) {
-							if (game.level.objectMap[x][y] != nullptr) {
-								if (game.level.objectMap[x][y]->movable) {
+							if (game.level.objectMap[currentPosition] != nullptr) {
+								if (game.level.objectMap[currentPosition]->movable) {
 									dragPosition = currentPosition;
-									dragSprite = game.level.objectMap[x][y]->sprite;
+									dragSprite = game.level.objectMap[currentPosition]->sprite;
 								}
 							}
 						}
@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
 
 							// Rotate an object if possible
 							if (dragPosition == currentPosition || dragPosition == nullPosition) {
-								if (game.level.objectMap[x][y] != nullptr) {
-									game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
+								if (game.level.objectMap[currentPosition] != nullptr) {
+									game.level.objectMap[currentPosition]->rotate(event.mouseButton.button == sf::Mouse::Right);
 									gameEvent = true;
 								}
 							}
@@ -81,12 +81,13 @@ int main(int argc, char* argv[])
 			for (short y = 0; y < game.level.height; ++y) {
 				for (short x = 0; x < game.level.width; ++x) {
 					sf::Color outlineColor, fillColor;
+					Object::Position currentPosition = {x, y};
 					if (isMouseOn(x, y, mousePosition)) {
-						outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
-						fillColor = (game.level.obstacles[x][y] ? yellow : lgray);
+						outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
+						fillColor = (game.level.obstacles[currentPosition] ? yellow : lgray);
 					} else {
-						outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
-						fillColor = (game.level.obstacles[x][y] ? dgray : gray);
+						outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
+						fillColor = (game.level.obstacles[currentPosition] ? dgray : gray);
 					}
 
 					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
