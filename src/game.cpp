@@ -49,7 +49,8 @@ void Game::loadLevel(const std::string &id)
 		// Resize obstacle map
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
-				Object::Position currentPosition = {x, y};
+				Object::Position currentPosition;
+				currentPosition.setPosition(x, y);
 
 				// Fill object map with OBJ_EMPTY
 				level.objectMap[currentPosition] = nullptr;
@@ -189,9 +190,8 @@ void Game::updateDots()
 
 void Game::setObject(Object* object, short x, short y, unsigned short id, unsigned short direction)
 {
-	object->position.x = x;
-	object->position.y = y;
 	object->id = id;
+	object->position.setPosition(x, y);
 	object->direction = direction;
 
 	object->sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
@@ -228,5 +228,12 @@ bool Game::Level::moveObject(Object::Position start, Object::Position end)
 
 bool Game::Level::isOutsideBoard(Object::Position position)
 {
-	return position.x < 0 || position.y < 0 || position.x >= width || position.y >= height;
+	return position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height;
+}
+
+void Game::Editor::setObject(unsigned short id)
+{
+	if (active) {
+		currentObject = id;
+	}
 }

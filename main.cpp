@@ -33,6 +33,34 @@ int main(int argc, char* argv[])
 				window.close();
 			}
 
+			// Game events: keyboard
+			if (event.type == sf::Event::KeyPressed) {
+				switch (event.key.code) {
+				case Key::Num1: {
+					game.editor.setObject(OBJ_BEAMER);
+					break;
+				}
+				case Key::Num2: {
+					game.editor.setObject(OBJ_BEAMER);
+					break;
+				}
+				case Key::Num3: {
+					game.editor.setObject(OBJ_DOT);
+					break;
+				}
+				case Key::Num4: {
+					game.editor.setObject(OBJ_MIRROR);
+					break;
+				}
+				case Key::Num5: {
+					game.editor.setObject(OBJ_BENDER);
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
 			// Game events: mouse
 			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
@@ -77,7 +105,8 @@ int main(int argc, char* argv[])
 			for (short y = 0; y < game.level.height; ++y) {
 				for (short x = 0; x < game.level.width; ++x) {
 					sf::Color outlineColor, fillColor;
-					Object::Position currentPosition = {x, y};
+					Object::Position currentPosition;
+					currentPosition.setPosition(x, y);
 					if (currentPosition == mousePosition) {
 						outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
 						fillColor = (game.level.obstacles[currentPosition] ? yellow : lgray);

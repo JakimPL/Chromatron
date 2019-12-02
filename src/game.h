@@ -29,6 +29,14 @@ public:
 		bool isOutsideBoard(Object::Position position);
 	} level;
 
+	struct Editor {
+	private:
+		bool active;
+	public:
+		unsigned short currentObject;
+		void setObject(unsigned short id);
+	} editor;
+
 	void loadLevel(const std::string &id);
 	void calculateLasers();
 	void updateDots();

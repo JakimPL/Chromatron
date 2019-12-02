@@ -58,6 +58,22 @@ Object::Position::operator sf::Vector2f()
 	return vector;
 }
 
+short Object::Position::getX()
+{
+	return x;
+}
+
+short Object::Position::getY()
+{
+	return y;
+}
+
+void Object::Position::setPosition(short xx, short yy)
+{
+	x = xx;
+	y = yy;
+}
+
 void Dot::updateState()
 {
 	state = (actualColor == color);

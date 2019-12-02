@@ -16,15 +16,20 @@ public:
 	std::vector<sf::Texture*> textures;
 
 	struct Position {
+	private:
 		short x;
 		short y;
-		void moveInDirection(unsigned short dir, int length);
+	public:
 		bool operator<(const Position &pos) const;
 		bool operator==(const Position &pos);
 		bool operator!=(const Position &pos);
 		operator sf::Vector2f();
 		static Position createPosition(short xx, short yy);
 		static Position createPosition(sf::Vector2f vector);
+		short getX();
+		short getY();
+		void moveInDirection(unsigned short dir, int length);
+		void setPosition(short xx, short yy);
 	} position;
 
 	void rotate(bool clockwise);
