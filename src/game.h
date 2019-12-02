@@ -50,6 +50,7 @@ public:
 	} editor;
 
 	void loadLevel(const std::string &id);
+	void saveLevel(const std::string &id);
 	void calculateLasers();
 	void updateDots();
 };

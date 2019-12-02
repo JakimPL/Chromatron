@@ -45,6 +45,10 @@ int main(int argc, char* argv[])
 					(game.editor.isActive() ? game.editor.turnOff() : game.editor.turnOn());
 					break;
 				}
+				case Key::S: {
+					game.saveLevel("001");
+					break;
+				}
 				default:
 					break;
 				}

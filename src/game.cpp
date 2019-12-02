@@ -56,13 +56,13 @@ void Game::loadLevel(const std::string &id)
 				level.objectMap[currentPosition] = nullptr;
 
 				// Read level obstacle data
-				bool temp;
-				levelFile.read((char*)&temp, 1);
-				level.obstacles[currentPosition] = temp;
+				bool obstacle;
+				levelFile.read((char*)&obstacle, 1);
+				level.obstacles[currentPosition] = obstacle;
 			}
 		}
 
-		// Read objects data
+		// Read objects' data
 		unsigned short objectsCount;
 		readByte(&levelFile, objectsCount);
 
@@ -117,8 +117,80 @@ void Game::loadLevel(const std::string &id)
 				setObject(bender, x, y, id, direction);
 			}
 		}
+
+		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
+	}
+}
+
+void Game::saveLevel(const std::string &id)
+{
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
+	std::ofstream levelFile(location, std::ios::binary);
+	if (levelFile.good()) {
+		// Save level dimensions
+		writeByte(&levelFile, level.width);
+		writeByte(&levelFile, level.height);
+
+		// Resize obstacle map
+		for (short y = 0; y < level.height; ++y) {
+			for (short x = 0; x < level.width; ++x) {
+				Object::Position currentPosition;
+				currentPosition.setPosition(x, y);
+
+				// Save level obstacle data
+				levelFile.write((char*) & (level.obstacles[currentPosition]), 1);
+			}
+		}
+
+		// Save objects' data
+		unsigned short objectsCount = 0;
+		for (size_t type = 0; type < OBJ_COUNT; ++type) {
+			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
+				objectsCount++;
+			}
+		}
+		writeByte(&levelFile, objectsCount);
+
+		for (size_t type = 0; type < OBJ_COUNT; ++type) {
+			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
+				Object* object = level.objectList[type][index];
+
+				// Add an object
+				writeByte(&levelFile, object->id);
+				writeByte(&levelFile, object->position.getX());
+				writeByte(&levelFile, object->position.getY());
+
+				if (object->id == OBJ_BEAMER) {
+					Beamer* beamer = (Beamer*) object;
+
+					writeByte(&levelFile, beamer->color.red);
+					writeByte(&levelFile, beamer->color.green);
+					writeByte(&levelFile, beamer->color.blue);
+					writeByte(&levelFile, beamer->direction);
+				} else if (object->id == OBJ_DOT) {
+					Dot* dot = (Dot*) object;
+
+					writeByte(&levelFile, dot->color.red);
+					writeByte(&levelFile, dot->color.green);
+					writeByte(&levelFile, dot->color.blue);
+				} else if (object->id == OBJ_MIRROR) {
+					Mirror* mirror = (Mirror*) object;
+
+					writeByte(&levelFile, mirror->direction);
+				} else if (object->id == OBJ_BENDER) {
+					Bender* bender = (Bender*) object;
+
+					writeByte(&levelFile, bender->direction);
+				}
+			}
+		}
+
+		levelFile.close();
+
+	} else {
+		throw std::runtime_error("failed to save " + location + " file");
 	}
 }
 

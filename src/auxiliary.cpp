@@ -15,3 +15,9 @@ void readByte(std::ifstream* file, unsigned short &var)
 	file->read(&buffer, 1);
 	var = static_cast<unsigned short>(buffer);
 }
+
+void writeByte(std::ofstream* file, unsigned short var)
+{
+	char buffer = static_cast<char>(var);
+	file->write(&buffer, 1);
+}
