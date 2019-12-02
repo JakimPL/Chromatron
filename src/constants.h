@@ -21,6 +21,8 @@
 #define TILE_SIZE 24
 #define OUTLINE_SIZE 1
 
+#define NULLPOS {-1, -1}
+
 static std::string PATH_DATA = "./data/";
 static std::string PATH_LEV_PREFIX = "LEV/level";
 static std::string PATH_LEV_SUFFIX = ".lev";

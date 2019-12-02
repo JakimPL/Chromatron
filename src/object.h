@@ -11,13 +11,21 @@ public:
 	bool rotatable = false;
 	bool movable = false;
 	unsigned short id;
-	unsigned short x;
-	unsigned short y;
 	unsigned short direction = 0;
 	sf::Sprite sprite;
 	std::vector<sf::Texture*> textures;
 
+	struct Position {
+		short x;
+		short y;
+		void moveInDirection(unsigned short dir, int length);
+		bool operator==(const Position &pos);
+		bool operator!=(const Position &pos);
+		operator sf::Vector2f();
+	} position;
+
 	void rotate(bool clockwise);
+
 };
 
 class Beamer : public Object
@@ -25,7 +33,7 @@ class Beamer : public Object
 public:
 	Beamer(Color col) : color(col)
 	{
-		rotatable = false;
+		rotatable = true;
 		movable = false;
 	}
 

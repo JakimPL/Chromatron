@@ -2,11 +2,6 @@
 
 #include "main.h"
 
-bool isMouseOn(short x, short y, sf::Vector2f mousePosition)
-{
-	return (mousePosition.x >= OFFSET_X + TILE_SIZE * x && mousePosition.x < OFFSET_X + TILE_SIZE * (x + 1) && mousePosition.y >= OFFSET_Y + TILE_SIZE * y && mousePosition.y < OFFSET_Y + TILE_SIZE * (y + 1));
-}
-
 int main(int argc, char* argv[])
 {
 	// Handle application's parameters
@@ -25,9 +20,12 @@ int main(int argc, char* argv[])
 	// Load a level
 	game.loadLevel("000");
 
-	bool gameEvent = true;
-	bool mouseClicked = false;
 	// Game main loop
+	bool gameEvent = true;
+	Object::Position nullPosition = NULLPOS;
+	Object::Position dragPosition = nullPosition;
+	sf::Sprite dragSprite;
+
 	while (window.isOpen()) {
 		Ev event;
 		while (window.pollEvent(event)) {
@@ -35,24 +33,45 @@ int main(int argc, char* argv[])
 				window.close();
 			}
 
+			// Game events: mouse
+			sf::Vector2f mousePosition =  window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			for (short y = 0; y < game.level.height; ++y) {
+				for (short x = 0; x < game.level.width; ++x) {
+					if (isMouseOn(x, y, mousePosition)) {
+						// If mouse buttion is pressed
+						if (event.type == sf::Event::MouseButtonPressed) {
+							if (game.level.objectMap[x][y] != nullptr) {
+								if (game.level.objectMap[x][y]->movable) {
+									dragPosition = {x, y};
+									dragSprite = game.level.objectMap[x][y]->sprite;
+								}
+							}
+						}
+						if (event.type == sf::Event::MouseButtonReleased) {
+							dragPosition = NULLPOS;
+							if (game.level.objectMap[x][y] != nullptr) {
+								game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
+								gameEvent = true;
+							}
+						}
+					}
+				}
+			}
+
 			window.clear();
 
+			if (gameEvent) {
+				game.calculateLasers();
+				gameEvent = false;
+			}
+
 			// Draw the board
-			sf::Vector2f mousePosition =  window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			for (short y = 0; y < game.level.height; ++y) {
 				for (short x = 0; x < game.level.width; ++x) {
 					sf::Color outlineColor, fillColor;
 					if (isMouseOn(x, y, mousePosition)) {
 						outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
 						fillColor = (game.level.obstacles[x][y] ? yellow : lgray);
-
-						// If LMB is pressed
-						if (event.type == sf::Event::MouseButtonPressed) {
-							if (game.level.objectMap[x][y] != NULL) {
-								game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
-								gameEvent = true;
-							}
-						}
 					} else {
 						outlineColor = (game.level.obstacles[x][y] ? lgray : dgray);
 						fillColor = (game.level.obstacles[x][y] ? dgray : gray);
@@ -61,11 +80,6 @@ int main(int argc, char* argv[])
 					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
 					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 				}
-			}
-
-			if (gameEvent) {
-				game.calculateLasers();
-				gameEvent = false;
 			}
 
 			// Draw lasers
@@ -84,9 +98,17 @@ int main(int argc, char* argv[])
 			// Draw game objects
 			for (size_t type = 0; type < OBJ_COUNT; ++type) {
 				for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
-					// Draw the sprite
-					window.draw(game.level.objectList[type][index]->sprite);
+					// Draw the sprite unless it's dragged
+					if (dragPosition.x != game.level.objectList[type][index]->position.x || dragPosition.y != game.level.objectList[type][index]->position.y) {
+						window.draw(game.level.objectList[type][index]->sprite);
+					}
 				}
+			}
+
+			// Draw the dragged element (if there is any)
+			if (dragPosition != nullPosition) {
+				dragSprite.setPosition(mousePosition);
+				window.draw(dragSprite);
 			}
 
 			window.display();

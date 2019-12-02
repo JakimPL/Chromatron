@@ -47,9 +47,8 @@ void Game::loadLevel(const std::string &id)
 		readByte(&levelFile, level.height);
 
 		// Resize obstacle map
-		level.obstacles.resize(level.height, std::vector<bool>(level.width));
-		for (unsigned short y = 0; y < level.height; ++y) {
-			for (unsigned short x = 0; x < level.width; ++x) {
+		for (short y = 0; y < level.height; ++y) {
+			for (short x = 0; x < level.width; ++x) {
 				// Fill object map with OBJ_EMPTY
 				level.objectMap[x][y] = nullptr;
 
@@ -132,9 +131,9 @@ void Game::calculateLasers()
 		Beamer* beamer = (Beamer*) level.objectList[OBJ_BEAMER][beamerIndex];
 		beamer->laser.clear();
 
-		double xx_start, xx, yy_start, yy;
-		xx = xx_start = static_cast<double>(beamer->x);
-		yy = yy_start = static_cast<double>(beamer->y);
+		Object::Position now = beamer->position;
+		Object::Position start = beamer->position;
+
 		Color col = beamer->color;
 		unsigned short dir = beamer->direction;
 
@@ -142,11 +141,10 @@ void Game::calculateLasers()
 		while (!end) {
 			bool stop = false;
 			while (!stop) {
-				xx += moveInDirection_x(dir, 1);
-				yy += moveInDirection_y(dir, 1);
+				now.moveInDirection(dir, 1);
 
-				auto x = static_cast<unsigned short>(xx);
-				auto y = static_cast<unsigned short>(yy);
+				auto x = now.x;
+				auto y = now.y;
 
 				if (level.objectMap[x][y] != nullptr) {
 					if (level.objectMap[x][y]->id == OBJ_BEAMER) {
@@ -166,16 +164,14 @@ void Game::calculateLasers()
 					}
 				}
 
-				if (xx < 0 || yy < 0 || xx >= level.width || yy >= level.height) {
+				if (x < 0 || y < 0 || x >= level.width || y >= level.height) {
 					stop = end = true;
 				}
 			}
 
-			Ray ray(OFFSET_X + (xx_start + 0.5) * TILE_SIZE, OFFSET_Y + (yy_start + 0.5) * TILE_SIZE, OFFSET_X + (xx + 0.5) * TILE_SIZE, OFFSET_Y + (yy + 0.5) * TILE_SIZE, col);
+			Ray ray(OFFSET_X + (start.x + 0.5) * TILE_SIZE, OFFSET_Y + (start.y + 0.5) * TILE_SIZE, OFFSET_X + (now.x + 0.5) * TILE_SIZE, OFFSET_Y + (now.y + 0.5) * TILE_SIZE, col);
 			beamer->laser.push_back(ray);
-
-			xx_start = xx;
-			yy_start = yy;
+			start = now;
 		}
 	}
 
@@ -190,14 +186,14 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object * object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction)
+void Game::setObject(Object * object, short x, short y, unsigned short id, unsigned short direction)
 {
-	object->x = x;
-	object->y = y;
+	object->position.x = x;
+	object->position.y = y;
 	object->id = id;
 	object->direction = direction;
 	object->sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
-	object->sprite.setPosition(OFFSET_X + TILE_SIZE * (x + 0.5), OFFSET_Y + TILE_SIZE * (y + 0.5));
+	object->sprite.setPosition(object->position);
 
 	object->textures.push_back(textures[id]);
 	object->sprite.setTexture(*(object->textures)[0]);
@@ -209,15 +205,4 @@ void Game::setObject(Object * object, unsigned short x, unsigned short y, unsign
 
 	level.objectList[id].push_back(object);
 	level.objectMap[x][y] = object;
-}
-
-// Move in a direction
-double Game::moveInDirection_x(unsigned short dir, double length)
-{
-	return length * (dir % 4 > 0 ? (dir / 4 > 0 ? -1 : 1) : 0);
-}
-
-double Game::moveInDirection_y(unsigned short dir, double length)
-{
-	return length * ((dir + 2) % 4 > 0 ? ((((dir + 2) % 8) / 4 > 0) ? 1 : -1) : 0);
 }

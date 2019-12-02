@@ -12,9 +12,7 @@
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
-	void setObject(Object* object, unsigned short x, unsigned short y, unsigned short id, unsigned short direction = 0);
-	static double moveInDirection_x(unsigned short dir, double length);
-	static double moveInDirection_y(unsigned short dir, double length);
+	void setObject(Object* object, short x, short y, unsigned short id, unsigned short direction = 0);
 public:
 	Game();
 	~Game();
@@ -22,9 +20,9 @@ public:
 	struct Level {
 		unsigned short width;
 		unsigned short height;
-		std::vector<std::vector<bool>> obstacles;
 		std::vector<Object*> objectList[OBJ_COUNT];
-		std::map<unsigned short, std::map<unsigned short, Object*>> objectMap;
+		std::map<short, std::map<short, bool>> obstacles;
+		std::map<short, std::map<short, Object*>> objectMap;
 		Game* game;
 	} level;
 
