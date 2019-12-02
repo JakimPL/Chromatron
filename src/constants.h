@@ -3,13 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#define OBJ_EMPTY 0
-#define OBJ_BEAMER 1
-#define OBJ_DOT 2
-#define OBJ_MIRROR 3
-#define OBJ_BENDER 4
-#define OBJ_COUNT 5
-
 #define OBJ_DOTF 5
 
 #define DIRS 8
@@ -21,7 +14,7 @@
 #define TILE_SIZE 24
 #define OUTLINE_SIZE 1
 
-#define NULLPOS {-1, -1}
+#define NULLPOSITION {-1, -1}
 
 static std::string PATH_DATA = "./data/";
 static std::string PATH_LEV_PREFIX = "LEV/level";
@@ -45,5 +38,14 @@ static sf::Color blue(0, 0, 255);
 static sf::Color lred(255, 128, 128);
 static sf::Color lgreen(128, 255, 128);
 static sf::Color lblue(128, 128, 255);
+
+enum Objects {
+	OBJ_EMPTY,
+	OBJ_BEAMER,
+	OBJ_DOT,
+	OBJ_MIRROR,
+	OBJ_BENDER,
+	OBJ_COUNT,
+};
 
 #endif

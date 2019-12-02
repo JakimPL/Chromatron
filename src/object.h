@@ -36,7 +36,7 @@ class Beamer : public Object
 public:
 	Beamer(Color col) : color(col)
 	{
-		rotatable = true;
+		rotatable = false;
 		movable = false;
 	}
 

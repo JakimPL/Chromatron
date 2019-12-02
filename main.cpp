@@ -20,11 +20,11 @@ int main(int argc, char* argv[])
 	// Load a level
 	game.loadLevel("000");
 
-	// Game main loop
-
-	Object::Position nullPosition = NULLPOS;
+	Object::Position nullPosition = NULLPOSITION;
 	Object::Position dragPosition = nullPosition;
 	sf::Sprite dragSprite;
+
+	// Game main loop
 	bool gameEvent = true;
 	while (window.isOpen()) {
 		Ev event;
@@ -38,7 +38,6 @@ int main(int argc, char* argv[])
 			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
 			Object* object = game.level.objectMap[mousePosition];
 
-			// If mouse buttion is pressed
 			if (event.type == sf::Event::MouseButtonPressed) {
 				if (object != nullptr) {
 					if (object->movable) {
@@ -49,7 +48,7 @@ int main(int argc, char* argv[])
 			}
 
 			if (event.type == sf::Event::MouseButtonReleased) {
-				// If drag position is not null, move an object to the new location (if possible)
+				// If the drag position is not null, move an object to the new location (if possible)
 				if (dragPosition != nullPosition) {
 					gameEvent = game.level.moveObject(dragPosition, mousePosition);
 				}

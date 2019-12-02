@@ -201,7 +201,7 @@ void Game::setObject(Object* object, short x, short y, unsigned short id, unsign
 	object->sprite.setRotation(direction * 45);
 
 	if (id == OBJ_DOT) {
-		object->textures.push_back(textures[OBJ_DOTF]);
+		object->textures.push_back(textures[OBJ_COUNT]);
 	}
 
 	level.objectList[id].push_back(object);
