@@ -10,6 +10,11 @@ void Object::rotate(bool clockwise)
 	}
 }
 
+void Object::updateSprite()
+{
+	sprite.setPosition(position);
+}
+
 void Object::Position::moveInDirection(unsigned short dir, int length)
 {
 	x += length * (dir % 4 > 0 ? (dir / 4 > 0 ? -1 : 1) : 0);

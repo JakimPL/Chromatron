@@ -190,7 +190,7 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object * object, short x, short y, unsigned short id, unsigned short direction)
+void Game::setObject(Object* object, short x, short y, unsigned short id, unsigned short direction)
 {
 	object->position.x = x;
 	object->position.y = y;
@@ -209,4 +209,26 @@ void Game::setObject(Object * object, short x, short y, unsigned short id, unsig
 
 	level.objectList[id].push_back(object);
 	level.objectMap[x][y] = object;
+}
+
+bool Game::Level::moveObject(Object::Position start, Object::Position end)
+{
+	if (start == end) {
+		return false;
+	}
+
+	short x_start = start.x;
+	short y_start = start.y;
+	short x_end = end.x;
+	short y_end = end.y;
+	bool success = (objectMap[x_end][y_end] == nullptr && !obstacles[x_end][y_end]);
+
+	if (success) {
+		objectMap[x_start][y_start]->position = end;
+		objectMap[x_end][y_end] = objectMap[x_start][y_start];
+		objectMap[x_start][y_start] = nullptr;
+		objectMap[x_end][y_end]->updateSprite();
+	}
+
+	return success;
 }

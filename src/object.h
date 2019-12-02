@@ -25,6 +25,7 @@ public:
 	} position;
 
 	void rotate(bool clockwise);
+	void updateSprite();
 };
 
 class Beamer : public Object

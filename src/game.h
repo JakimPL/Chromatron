@@ -24,6 +24,8 @@ public:
 		std::map<short, std::map<short, bool>> obstacles;
 		std::map<short, std::map<short, Object*>> objectMap;
 		Game* game;
+
+		bool moveObject(Object::Position start, Object::Position end);
 	} level;
 
 	void loadLevel(const std::string &id);

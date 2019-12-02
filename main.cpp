@@ -21,11 +21,11 @@ int main(int argc, char* argv[])
 	game.loadLevel("000");
 
 	// Game main loop
-	bool gameEvent = true;
+
 	Object::Position nullPosition = NULLPOS;
 	Object::Position dragPosition = nullPosition;
 	sf::Sprite dragSprite;
-
+	bool gameEvent = true;
 	while (window.isOpen()) {
 		Ev event;
 		while (window.pollEvent(event)) {
@@ -39,31 +39,43 @@ int main(int argc, char* argv[])
 				for (short x = 0; x < game.level.width; ++x) {
 					if (isMouseOn(x, y, mousePosition)) {
 						// If mouse buttion is pressed
+						Object::Position currentPosition = {x, y};
 						if (event.type == sf::Event::MouseButtonPressed) {
 							if (game.level.objectMap[x][y] != nullptr) {
 								if (game.level.objectMap[x][y]->movable) {
-									dragPosition = {x, y};
+									dragPosition = currentPosition;
 									dragSprite = game.level.objectMap[x][y]->sprite;
 								}
 							}
 						}
+
 						if (event.type == sf::Event::MouseButtonReleased) {
-							dragPosition = nullPosition;
-							if (game.level.objectMap[x][y] != nullptr) {
-								game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
-								gameEvent = true;
+							// If drag position is not null, move an object to the new location (if possible)
+							if (dragPosition != nullPosition) {
+								gameEvent = game.level.moveObject(dragPosition, {x, y});
 							}
+
+							// Rotate an object if possible
+							if (dragPosition == currentPosition || dragPosition == nullPosition) {
+								if (game.level.objectMap[x][y] != nullptr) {
+									game.level.objectMap[x][y]->rotate(event.mouseButton.button == sf::Mouse::Left);
+									gameEvent = true;
+								}
+							}
+
+							dragPosition = nullPosition;
 						}
 					}
 				}
 			}
 
-			window.clear();
-
+			// Update game status: calculate lasers
 			if (gameEvent) {
 				game.calculateLasers();
 				gameEvent = false;
 			}
+
+			window.clear();
 
 			// Draw the board
 			for (short y = 0; y < game.level.height; ++y) {
