@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 
 	// Load a level
 	game.loadLevel("000");
+	game.editor.turnOn();
 
 	Object::Position nullPosition = NULLPOSITION;
 	Object::Position dragPosition = nullPosition;
@@ -33,27 +34,15 @@ int main(int argc, char* argv[])
 				window.close();
 			}
 
-			// Game events: keyboard
+			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
+			Object* object = game.level.objectMap[mousePosition];
+
+			// Global events: keyboard
 			if (event.type == sf::Event::KeyPressed) {
 				switch (event.key.code) {
-				case Key::Num1: {
-					game.editor.setObject(OBJ_BEAMER);
-					break;
-				}
-				case Key::Num2: {
-					game.editor.setObject(OBJ_BEAMER);
-					break;
-				}
-				case Key::Num3: {
-					game.editor.setObject(OBJ_DOT);
-					break;
-				}
-				case Key::Num4: {
-					game.editor.setObject(OBJ_MIRROR);
-					break;
-				}
-				case Key::Num5: {
-					game.editor.setObject(OBJ_BENDER);
+				case Key::E: {
+					(game.editor.isActive() ? game.editor.turnOff() : game.editor.turnOn());
 					break;
 				}
 				default:
@@ -61,37 +50,72 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			// Game events: mouse
-			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
-			Object* object = game.level.objectMap[mousePosition];
-
-			if (event.type == sf::Event::MouseButtonPressed) {
-				if (object != nullptr) {
-					if (object->movable) {
-						dragPosition = mousePosition;
-						dragSprite = object->sprite;
+			if (game.editor.isActive()) {
+				// Editor events: keyboard
+				if (event.type == sf::Event::KeyPressed) {
+					switch (event.key.code) {
+					case Key::Tab: {
+						game.editor.switchMode();
+						break;
+					}
+					case Key::Num1: {
+						game.editor.setObject(OBJ_BEAMER);
+						break;
+					}
+					case Key::Num2: {
+						game.editor.setObject(OBJ_DOT);
+						break;
+					}
+					case Key::Num3: {
+						game.editor.setObject(OBJ_MIRROR);
+						break;
+					}
+					case Key::Num4: {
+						game.editor.setObject(OBJ_BENDER);
+						break;
+					}
+					default:
+						break;
 					}
 				}
-			}
 
-			if (event.type == sf::Event::MouseButtonReleased) {
-				// If the drag position is not null, move an object to the new location (if possible)
-				if (dragPosition != nullPosition) {
-					gameEvent = game.level.moveObject(dragPosition, mousePosition);
+				if (game.editor.mode) {
+					if (event.type == sf::Event::MouseButtonPressed) {
+						if (event.mouseButton.button == sf::Mouse::Left) {
+							gameEvent =	game.level.addObject(game.editor.getObject(), mousePosition);
+						} else if (event.mouseButton.button == sf::Mouse::Right) {
+							gameEvent = game.level.removeObject(mousePosition);
+						}
+					}
 				}
-
-				// Rotate an object if possible
-				if (dragPosition == mousePosition || dragPosition == nullPosition) {
+			} else {
+				// Game events: mouse
+				if (event.type == sf::Event::MouseButtonPressed) {
 					if (object != nullptr) {
-						object->rotate(event.mouseButton.button == sf::Mouse::Right);
-						gameEvent = true;
+						if (object->movable) {
+							dragPosition = mousePosition;
+							dragSprite = object->sprite;
+						}
 					}
 				}
 
-				dragPosition = nullPosition;
-			}
+				if (event.type == sf::Event::MouseButtonReleased) {
+					// If the drag position is not null, move an object to the new location (if possible)
+					if (dragPosition != nullPosition) {
+						gameEvent = game.level.moveObject(dragPosition, mousePosition);
+					}
 
+					// Rotate an object if possible
+					if (dragPosition == mousePosition || dragPosition == nullPosition) {
+						if (object != nullptr) {
+							object->rotate(event.mouseButton.button == sf::Mouse::Right);
+							gameEvent = true;
+						}
+					}
+
+					dragPosition = nullPosition;
+				}
+			}
 
 			// Update game status: calculate lasers
 			if (gameEvent) {
@@ -141,11 +165,17 @@ int main(int argc, char* argv[])
 					}
 				}
 			}
+			if (game.editor.isActive()) {
 
-			// Draw the dragged element (if there is any)
-			if (dragPosition != nullPosition) {
-				dragSprite.setPosition(mousePosition);
-				window.draw(dragSprite);
+				game.editor.sprite.setPosition(mousePosition);
+				window.draw(game.editor.sprite);
+
+			} else {
+				// Draw the dragged element (if there is any)
+				if (dragPosition != nullPosition) {
+					dragSprite.setPosition(mousePosition);
+					window.draw(dragSprite);
+				}
 			}
 
 			window.display();

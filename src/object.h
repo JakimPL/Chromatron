@@ -39,7 +39,7 @@ public:
 class Beamer : public Object
 {
 public:
-	Beamer(Color col) : color(col)
+	Beamer(Color col = COL_BLACK) : color(col)
 	{
 		rotatable = false;
 		movable = false;
@@ -52,7 +52,7 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(Color col) : color(col), actualColor(false, false, false)
+	Dot(Color col = COL_BLACK) : color(col), actualColor(false, false, false)
 	{
 		rotatable = false;
 		movable = false;

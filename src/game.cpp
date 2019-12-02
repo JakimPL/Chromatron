@@ -21,7 +21,7 @@ Game::~Game()
 	}
 }
 
-// Load a sprite
+// Load a sprite from a file
 sf::Texture* Game::loadTexture(const std::string &filename)
 {
 	std::string location = PATH_DATA + PATH_IMG_PREFIX + filename + PATH_IMG_SUFFIX;
@@ -156,10 +156,10 @@ void Game::calculateLasers()
 						dot->actualColor = dot->actualColor + color;
 					} else if (level.objectMap[now]->id == OBJ_MIRROR) {
 						Mirror* mirror = (Mirror*) level.objectMap[now];
-						int diff = (DIRS + mirror->direction - dir) % DIRS - 4;
+						int diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
 						if (std::abs(diff) <= 1) {
 							stop = true;
-							dir = (DIRS + dir - (diff == 0 ? 4 : 2 * diff)) % DIRS;
+							dir = (DIR_COUNT + dir - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
 						} else {
 							stop = end = true;
 						}
@@ -208,13 +208,47 @@ void Game::setObject(Object* object, short x, short y, unsigned short id, unsign
 	level.objectMap[object->position] = object;
 }
 
-bool Game::Level::moveObject(Object::Position start, Object::Position end)
+void Game::setObject(Object* object, Object::Position position, unsigned short id, unsigned short direction)
 {
-	if (start == end || isOutsideBoard(end)) {
-		return false;
+	setObject(object, position.getX(), position.getY(), id, direction);
+}
+
+bool Game::Level::addObject(unsigned short id, Object::Position position)
+{
+	bool success = isPlaceFree(position);
+
+	if (success) {
+		if (id == OBJ_BEAMER) {
+			Beamer* beamer = new Beamer();
+			this->game->setObject(beamer, position, id, DIR_NORTH);
+		} else if (id == OBJ_DOT) {
+			Dot* dot = new Dot();
+			this->game->setObject(dot, position, id, DIR_NORTH);
+		} else if (id == OBJ_MIRROR) {
+			Mirror* mirror = new Mirror();
+			this->game->setObject(mirror, position, id, DIR_NORTH);
+		} else if (id == OBJ_BENDER) {
+			Bender* bender = new Bender();
+			this->game->setObject(bender, position, id, DIR_NORTH);
+		}
 	}
 
-	bool success = (objectMap[end] == nullptr && !obstacles[end]);
+	return success;
+}
+
+bool Game::Level::isPlaceFree(Object::Position position)
+{
+	return (objectMap[position] == nullptr && !obstacles[position] && !isOutsideBoard(position));
+}
+
+bool Game::Level::isOutsideBoard(Object::Position position)
+{
+	return (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height);
+}
+
+bool Game::Level::moveObject(Object::Position start, Object::Position end)
+{
+	bool success = isPlaceFree(end);
 
 	if (success) {
 		objectMap[start]->position = end;
@@ -226,9 +260,40 @@ bool Game::Level::moveObject(Object::Position start, Object::Position end)
 	return success;
 }
 
-bool Game::Level::isOutsideBoard(Object::Position position)
+bool Game::Level::removeObject(Object::Position position)
 {
-	return position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height;
+	bool success = (objectMap[position] != nullptr);
+
+	unsigned short id = objectMap[position]->id;
+
+	if (success) {
+		objectList[id].erase(std::find(objectList[id].begin(), objectList[id].end(), objectMap[position]));
+		delete objectMap[position];
+		objectMap[position] = nullptr;
+	}
+
+	return success;
+}
+
+bool Game::Editor::isActive()
+{
+	return active;
+}
+
+void Game::Editor::switchMode()
+{
+	mode = !mode;
+}
+
+void Game::Editor::turnOn()
+{
+	active = true;
+	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
+}
+
+void Game::Editor::turnOff()
+{
+	active = false;
 }
 
 void Game::Editor::setObject(unsigned short id)
@@ -236,4 +301,11 @@ void Game::Editor::setObject(unsigned short id)
 	if (active) {
 		currentObject = id;
 	}
+
+	sprite.setTexture(*textures[id]);
+}
+
+unsigned short Game::Editor::getObject()
+{
+	return currentObject;
 }

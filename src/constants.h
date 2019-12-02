@@ -5,8 +5,6 @@
 
 #define OBJ_DOTF 5
 
-#define DIRS 8
-
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define OFFSET_X 32
@@ -15,6 +13,8 @@
 #define OUTLINE_SIZE 1
 
 #define NULLPOSITION {}
+
+#define COL_BLACK {false, false, false}
 
 static std::string PATH_DATA = "./data/";
 static std::string PATH_LEV_PREFIX = "LEV/level";
@@ -46,6 +46,18 @@ enum Objects {
 	OBJ_MIRROR,
 	OBJ_BENDER,
 	OBJ_COUNT,
+};
+
+enum Directions {
+	DIR_NORTH,
+	DIR_NORTHEAST,
+	DIR_EAST,
+	DIR_SOUTHEAST,
+	DIR_SOUTH,
+	DIR_SOUTHWEST,
+	DIR_WEST,
+	DIR_NORTHWEST,
+	DIR_COUNT
 };
 
 #endif

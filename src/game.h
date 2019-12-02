@@ -13,6 +13,7 @@ class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
 	void setObject(Object* object, short x, short y, unsigned short id, unsigned short direction = 0);
+	void setObject(Object* object, Object::Position position, unsigned short id, unsigned short direction = 0);
 public:
 	Game();
 	~Game();
@@ -25,16 +26,27 @@ public:
 		std::map<Object::Position, Object*> objectMap;
 		Game* game;
 
-		bool moveObject(Object::Position start, Object::Position end);
+		bool addObject(unsigned short id, Object::Position position);
+		bool isPlaceFree(Object::Position position);
 		bool isOutsideBoard(Object::Position position);
+		bool moveObject(Object::Position start, Object::Position end);
+		bool removeObject(Object::Position position);
 	} level;
 
 	struct Editor {
 	private:
 		bool active;
+		unsigned short currentObject = OBJ_BEAMER;
 	public:
-		unsigned short currentObject;
+		bool mode = true;
+		sf::Sprite sprite;
+
+		bool isActive();
+		unsigned short getObject();
 		void setObject(unsigned short id);
+		void switchMode();
+		void turnOn();
+		void turnOff();
 	} editor;
 
 	void loadLevel(const std::string &id);

@@ -5,7 +5,7 @@
 void Object::rotate(bool clockwise)
 {
 	if (rotatable) {
-		direction = (direction + (clockwise ? 1 : DIRS - 1)) % DIRS;
+		direction = (direction + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT;
 		sprite.setRotation(direction * 45);
 	}
 }
