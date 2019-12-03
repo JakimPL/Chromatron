@@ -30,17 +30,9 @@ int main(int argc, char* argv[])
 				window.close();
 			}
 
-			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
-
+			Object::Position mousePosition = Object::Position::createPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 			gameEvents(game, event, drag, mousePosition);
-			window.clear();
-
-			drawBoard(game, window, mousePosition);
-			drawLasers(game, window);
-			drawGameObject(game, window, drag, mousePosition);
-
-			window.display();
+			draw(game, window, drag, mousePosition);
 		}
 	}
 

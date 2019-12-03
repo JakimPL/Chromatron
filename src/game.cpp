@@ -382,6 +382,14 @@ bool Game::Level::rotateObject(Object::Position position)
 	return success;
 }
 
+bool Game::Level::setObstacle(Object::Position position, bool obstacle)
+{
+	removeObject(position);
+	obstacles[position] = obstacle;
+
+	return true;
+}
+
 bool Game::Editor::isActive()
 {
 	return active;
@@ -389,7 +397,7 @@ bool Game::Editor::isActive()
 
 void Game::Editor::switchMode()
 {
-	editMode = !editMode;
+	mode = static_cast<EditorMode>((mode + 1) % static_cast<int>(ED_COUNT));
 }
 
 void Game::Editor::turn(bool editorOn)

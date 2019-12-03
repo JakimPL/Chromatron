@@ -10,6 +10,13 @@
 #include "drag.h"
 #include "object.h"
 
+enum EditorMode {
+	ED_EDIT_OBJECTS,
+	ED_ADD_OR_REMOVE_OBJECTS,
+	ED_ADD_OR_REMOVE_OBSTACLES,
+	ED_COUNT
+};
+
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
@@ -36,6 +43,7 @@ public:
 		bool moveObject(Object::Position start, Object::Position end);
 		bool removeObject(Object::Position position);
 		bool rotateObject(Object::Position position);
+		bool setObstacle(Object::Position position, bool obstacle);
 	} level;
 
 	struct Editor {
@@ -43,7 +51,7 @@ public:
 		bool active;
 		unsigned short currentObject = OBJ_BEAMER;
 	public:
-		bool editMode = true;
+		EditorMode mode;
 		sf::Sprite sprite;
 
 		bool isActive();

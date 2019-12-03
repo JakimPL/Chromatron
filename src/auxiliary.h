@@ -14,6 +14,7 @@ extern sf::Texture loadTexture(const std::string &filename);
 extern void readByte(std::ifstream *file, unsigned short &var);
 extern void writeByte(std::ofstream *file, unsigned short var);
 extern void deleteGameObjects(Game &game);
+extern void draw(Game &game, sf::RenderWindow &window, Drag &drag, Object::Position mousePosition);
 extern void drawBoard(Game &game, sf::RenderWindow &window, Object::Position mousePosition);
 extern void drawLasers(Game &game, sf::RenderWindow &window, bool blackLasers);
 extern void drawLasers(Game &game, sf::RenderWindow &window);
