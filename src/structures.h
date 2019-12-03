@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
+#include "constants.h"
 
 class Color
 {
@@ -23,6 +24,7 @@ public:
 
 	// Converts to sf::Color object
 	sf::Color convertToColor();
+	static Color createColor(Colors colorId);
 };
 
 typedef std::vector<sf::Vertex> Ray;

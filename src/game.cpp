@@ -308,6 +308,17 @@ bool Game::Level::addObject(unsigned short id, Object::Position position)
 	return success;
 }
 
+bool Game::Level::changeObjectColor(Object::Position position)
+{
+	bool success = (objectMap[position] != nullptr);
+
+	if (success) {
+
+	}
+
+	return success;
+}
+
 bool Game::Level::isPlaceFree(Object::Position position)
 {
 	return (objectMap[position] == nullptr && !obstacles[position] && !isOutsideBoard(position));
@@ -347,6 +358,17 @@ bool Game::Level::removeObject(Object::Position position)
 	return success;
 }
 
+bool Game::Level::rotateObject(Object::Position position)
+{
+	bool success = (objectMap[position] != nullptr);
+
+	if (success) {
+		objectMap[position]->rotate(true, true);
+	}
+
+	return success;
+}
+
 bool Game::Editor::isActive()
 {
 	return active;
@@ -354,7 +376,7 @@ bool Game::Editor::isActive()
 
 void Game::Editor::switchMode()
 {
-	mode = !mode;
+	editMode = !editMode;
 }
 
 void Game::Editor::turnOn()

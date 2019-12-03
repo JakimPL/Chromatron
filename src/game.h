@@ -27,10 +27,12 @@ public:
 		Game* game;
 
 		bool addObject(unsigned short id, Object::Position position);
+		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);
 		bool isOutsideBoard(Object::Position position);
 		bool moveObject(Object::Position start, Object::Position end);
 		bool removeObject(Object::Position position);
+		bool rotateObject(Object::Position position);
 	} level;
 
 	struct Editor {
@@ -38,7 +40,7 @@ public:
 		bool active;
 		unsigned short currentObject = OBJ_BEAMER;
 	public:
-		bool mode = true;
+		bool editMode = true;
 		sf::Sprite sprite;
 
 		bool isActive();

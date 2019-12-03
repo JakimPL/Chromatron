@@ -83,13 +83,23 @@ int main(int argc, char* argv[])
 					}
 				}
 
-				if (game.editor.mode) {
+				// Editor events: mouse
+				if (game.editor.editMode) {
+					if (event.type == sf::Event::MouseButtonPressed) {
+						if (event.mouseButton.button == sf::Mouse::Left) {
+							gameEvent = game.level.rotateObject(mousePosition);
+						} else if (event.mouseButton.button == sf::Mouse::Right) {
+							gameEvent = game.level.changeObjectColor(mousePosition);
+						}
+					}
+				} else {
 					if (event.type == sf::Event::MouseButtonPressed) {
 						if (event.mouseButton.button == sf::Mouse::Left) {
 							gameEvent =	game.level.addObject(game.editor.getObject(), mousePosition);
 						} else if (event.mouseButton.button == sf::Mouse::Right) {
 							gameEvent = game.level.removeObject(mousePosition);
 						}
+
 					}
 				}
 			} else {

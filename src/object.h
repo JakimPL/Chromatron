@@ -13,7 +13,6 @@ public:
 	unsigned short id;
 	unsigned short direction = 0;
 	sf::Sprite sprite;
-	std::vector<sf::Texture*> textures;
 
 	struct Position {
 	private:
@@ -21,8 +20,8 @@ public:
 		short y;
 	public:
 		bool operator<(const Position &pos) const;
-		bool operator==(const Position &pos);
-		bool operator!=(const Position &pos);
+		bool operator==(const Position &pos) const;
+		bool operator!=(const Position &pos) const;
 		operator sf::Vector2f();
 		static Position createPosition(short xx, short yy);
 		static Position createPosition(sf::Vector2f vector);
@@ -32,14 +31,16 @@ public:
 		void setPosition(short xx, short yy);
 	} position;
 
-	void rotate(bool clockwise);
+	std::vector<sf::Texture*> textures;
+
+	void rotate(bool clockwise, bool force = false);
 	void updateSprite();
 };
 
 class Beamer : public Object
 {
 public:
-	Beamer(Color col = COL_BLACK) : color(col)
+	Beamer(Color col = COL_BLACK_TUPLE) : color(col)
 	{
 		rotatable = false;
 		movable = false;
@@ -52,7 +53,7 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(Color col = COL_BLACK) : color(col), actualColor(false, false, false)
+	Dot(Color col = COL_BLACK_TUPLE) : color(col), actualColor(false, false, false)
 	{
 		rotatable = false;
 		movable = false;

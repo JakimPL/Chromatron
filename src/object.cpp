@@ -2,9 +2,9 @@
 #include "constants.h"
 #include "object.h"
 
-void Object::rotate(bool clockwise)
+void Object::rotate(bool clockwise, bool force)
 {
-	if (rotatable) {
+	if (rotatable || force) {
 		direction = (direction + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT;
 		sprite.setRotation(direction * 45);
 	}
@@ -42,12 +42,12 @@ bool Object::Position::operator<(const Position &pos) const
 	return x < pos.x || (x == pos.x && y < pos.y);
 }
 
-bool Object::Position::operator==(const Position &pos)
+bool Object::Position::operator==(const Position &pos) const
 {
 	return x == pos.x && y == pos.y;
 }
 
-bool Object::Position::operator!=(const Position &pos)
+bool Object::Position::operator!=(const Position &pos) const
 {
 	return x != pos.x || y != pos.y;
 }
@@ -78,4 +78,7 @@ void Dot::updateState()
 {
 	state = (actualColor == color);
 	sprite.setTexture(*textures[state ? 1 : 0]);
+
+	direction = DIR_NORTH;
+	sprite.setRotation(0);
 }
