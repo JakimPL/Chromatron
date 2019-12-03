@@ -2,11 +2,44 @@
 #include "constants.h"
 #include "object.h"
 
+// Objects' constructors
 Object::Object(Color col) : color(col)
 {
 
 }
 
+Beamer::Beamer(Color col)
+{
+	rotatable = false;
+	movable = false;
+	colorable = true;
+	color = col;
+}
+
+Dot::Dot(Color col) : actualColor(COL_BLACK_TUPLE)
+{
+	rotatable = false;
+	movable = false;
+	colorable = true;
+	color = col;
+	sprite.setColor(color.convertToColor());
+}
+
+Mirror::Mirror()
+{
+	rotatable = true;
+	movable = true;
+	colorable = false;
+}
+
+Bender::Bender()
+{
+	rotatable = true;
+	movable = true;
+	colorable = false;
+}
+
+// Class functions
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {

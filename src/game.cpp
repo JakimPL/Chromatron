@@ -310,10 +310,10 @@ bool Game::Level::addObject(unsigned short id, Object::Position position)
 
 bool Game::Level::changeObjectColor(Object::Position position)
 {
-	bool success = (objectMap[position] != nullptr);
+	bool success = (objectMap[position] != nullptr && objectMap[position]->colorable);
 
 	if (success) {
-
+		objectMap[position]->color.nextColor();
 	}
 
 	return success;

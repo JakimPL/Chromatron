@@ -11,6 +11,7 @@ public:
 	Object(Color col = COL_BLACK_TUPLE);
 	bool rotatable = false;
 	bool movable = false;
+	bool colorable = false;
 	unsigned short id;
 	unsigned short direction = 0;
 	sf::Sprite sprite;
@@ -42,12 +43,7 @@ public:
 class Beamer : public Object
 {
 public:
-	Beamer(Color col = COL_BLACK_TUPLE)
-	{
-		rotatable = false;
-		movable = false;
-		color = col;
-	}
+	Beamer(Color col = COL_BLACK_TUPLE);
 
 	Laser laser;
 };
@@ -55,13 +51,7 @@ public:
 class Dot : public Object
 {
 public:
-	Dot(Color col = COL_BLACK_TUPLE) : actualColor(COL_BLACK_TUPLE)
-	{
-		rotatable = false;
-		movable = false;
-		color = col;
-		sprite.setColor(color.convertToColor());
-	}
+	Dot(Color col = COL_BLACK_TUPLE);
 
 	Color actualColor;
 	bool state = false;
@@ -72,21 +62,14 @@ public:
 class Mirror : public Object
 {
 public:
-	Mirror()
-	{
-		rotatable = true;
-		movable = true;
-	}
+	Mirror();
+
 };
 
 class Bender : public Object
 {
 public:
-	Bender()
-	{
-		rotatable = true;
-		movable = true;
-	}
+	Bender();
 };
 
 #endif
