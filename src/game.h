@@ -20,6 +20,7 @@ public:
 	~Game();
 
 	struct Level {
+		bool event = true;
 		unsigned short width;
 		unsigned short height;
 		std::vector<Object*> objectList[OBJ_COUNT];

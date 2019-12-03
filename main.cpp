@@ -78,11 +78,11 @@ void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Po
 	}
 }
 
-void gameEvents(Game &game, bool &gameEvent)
+void gameEvents(Game &game)
 {
-	if (gameEvent) {
+	if (game.level.event) {
 		game.calculateLasers();
-		gameEvent = false;
+		game.level.event = false;
 	}
 }
 
@@ -136,32 +136,46 @@ void keyboardEditorEvents(Game &game, Ev &event)
 	}
 }
 
-bool mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
+void mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
 {
 	if (game.editor.editMode) {
 		if (event.type == sf::Event::MouseButtonPressed) {
 			if (event.mouseButton.button == sf::Mouse::Left) {
-				return game.level.rotateObject(mousePosition);
+				game.level.event = game.level.rotateObject(mousePosition);
 			} else if (event.mouseButton.button == sf::Mouse::Right) {
-				return game.level.changeObjectColor(mousePosition);
+				game.level.event = game.level.changeObjectColor(mousePosition);
 			}
 		}
 	} else {
 		if (event.type == sf::Event::MouseButtonPressed) {
 			if (event.mouseButton.button == sf::Mouse::Left) {
-				return game.level.addObject(game.editor.getObject(), mousePosition);
+				game.level.event = game.level.addObject(game.editor.getObject(), mousePosition);
 			} else if (event.mouseButton.button == sf::Mouse::Right) {
-				return game.level.removeObject(mousePosition);
+				game.level.event = game.level.removeObject(mousePosition);
 			}
 		}
 	}
-
-	return false;
 }
 
 void mouseGameEvents(Game &game, Ev &event, Drag &drag, Object::Position mousePosition)
 {
+	if (event.type == sf::Event::MouseButtonPressed) {
+		game.level.event = game.level.dragObject(drag, mousePosition);
+	}
 
+	if (event.type == sf::Event::MouseButtonReleased) {
+		// If the drag position is not null, move an object to the new location (if possible)
+		if (!drag.position.isNull()) {
+			game.level.event = game.level.moveObject(drag.position, mousePosition);
+		}
+
+		// Rotate an object if possible
+		if (drag.position == mousePosition) {
+			game.level.event = game.level.rotateObject(mousePosition);
+		}
+
+		drag.position.setNull();
+	}
 }
 
 int main(int argc, char* argv[])
@@ -174,6 +188,7 @@ int main(int argc, char* argv[])
 
 	// Create a game object
 	Game game;
+	Drag drag;
 
 	// Initialize the window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chromatron");
@@ -184,10 +199,6 @@ int main(int argc, char* argv[])
 	game.loadLevel("000");
 	game.editor.turn(editorOn);
 
-	Drag drag;
-
-	// Game main loop
-	bool gameEvent = true;
 	while (window.isOpen()) {
 		Ev event;
 		while (window.pollEvent(event)) {
@@ -195,41 +206,20 @@ int main(int argc, char* argv[])
 				window.close();
 			}
 
+			bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
 			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
 
-			// Global events: keyboard
 			keyboardGlobalEvents(game, event);
-			bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
 
 			if (game.editor.isActive() && !shiftPressed) {
-				// Editor events: keyboard
 				keyboardEditorEvents(game, event);
-				gameEvent = mouseEditorEvents(game, event, mousePosition);
+				mouseEditorEvents(game, event, mousePosition);
 			} else {
 				mouseGameEvents(game, event, drag, mousePosition);
-
-				if (event.type == sf::Event::MouseButtonPressed) {
-					gameEvent = game.level.dragObject(drag, mousePosition);
-				}
-
-				if (event.type == sf::Event::MouseButtonReleased) {
-					// If the drag position is not null, move an object to the new location (if possible)
-					if (!drag.position.isNull()) {
-						gameEvent = game.level.moveObject(drag.position, mousePosition);
-					}
-
-					// Rotate an object if possible
-					if (drag.position == mousePosition) {
-						gameEvent = game.level.rotateObject(mousePosition);
-					}
-
-					drag.position.setNull();
-				}
 			}
 
-			// Update game status: calculate lasers
-			gameEvents(game, gameEvent);
+			gameEvents(game);
 			window.clear();
 
 			drawBoard(game, window, mousePosition);
