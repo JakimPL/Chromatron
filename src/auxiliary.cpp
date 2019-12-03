@@ -37,6 +37,7 @@ void draw(Game &game, sf::RenderWindow &window, Drag &drag, Object::Position mou
 	drawBoard(game, window, mousePosition);
 	drawLasers(game, window);
 	drawGameObject(game, window, drag, mousePosition);
+	drawStack(game, window);
 
 	window.display();
 }
@@ -101,7 +102,7 @@ void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Po
 		}
 	}
 	if (game.editor.isActive() && !shiftPressed) {
-		if (game.editor.mode != ED_EDIT_OBJECTS) {
+		if (game.editor.mode == ED_ADD_OR_REMOVE_OBJECTS) {
 			game.editor.sprite.setPosition(mousePosition);
 			window.draw(game.editor.sprite);
 		}
@@ -110,6 +111,22 @@ void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Po
 		if (!drag.position.isNull()) {
 			drag.sprite.setPosition(mousePosition);
 			window.draw(drag.sprite);
+		}
+	}
+}
+
+void drawStack(Game &game, sf::RenderWindow &window)
+{
+	int offsetX = 2 * OFFSET_X + TILE_SIZE * game.level.width;
+	int offsetY = OFFSET_Y;
+	for (unsigned short y = 0; y < game.level.stack.height; ++y) {
+		for (unsigned short x = 0; x < game.level.stack.width; ++x) {
+			sf::Color outlineColor, fillColor;
+			outlineColor = dgray;
+			fillColor = gray;
+
+			window.draw(rectangleCreate(offsetX + TILE_SIZE * x, offsetY + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
+			window.draw(rectangleCreate(offsetX + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 		}
 	}
 }
@@ -195,7 +212,7 @@ void mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
 	} else if (game.editor.mode == ED_ADD_OR_REMOVE_OBJECTS) {
 		if (event.type == sf::Event::MouseButtonPressed) {
 			if (event.mouseButton.button == sf::Mouse::Left) {
-				game.level.event = game.level.addObject(game.editor.getObject(), mousePosition);
+				game.level.event = game.level.addObject(mousePosition, game.editor.getObject());
 			} else if (event.mouseButton.button == sf::Mouse::Right) {
 				game.level.event = game.level.removeObject(mousePosition);
 			}
@@ -203,7 +220,6 @@ void mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
 	} else if (game.editor.mode == ED_ADD_OR_REMOVE_OBSTACLES) {
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 			game.level.event = game.level.setObstacle(mousePosition, true);
-
 		} else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 			game.level.event = game.level.setObstacle(mousePosition, false);
 		}

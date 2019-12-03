@@ -19,6 +19,7 @@ extern void drawBoard(Game &game, sf::RenderWindow &window, Object::Position mou
 extern void drawLasers(Game &game, sf::RenderWindow &window, bool blackLasers);
 extern void drawLasers(Game &game, sf::RenderWindow &window);
 extern void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Position mousePosition);
+extern void drawStack(Game &game, sf::RenderWindow &window);
 extern void gameEvents(Game &game, Ev &event, Drag &drag, Object::Position position);
 extern void keyboardGlobalEvents(Game &game, Ev &event);
 extern void keyboardEditorEvents(Game &game, Ev &event);

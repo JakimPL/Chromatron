@@ -7,6 +7,7 @@
 
 Game::Game()
 {
+	level.stack.initialize();
 	for (size_t index = 0; index < OBJ_COUNT; ++index) {
 		textures.push_back(loadTexture(IMG_NAMES[index]));
 	}
@@ -33,7 +34,6 @@ sf::Texture* Game::loadTexture(const std::string &filename)
 	return image;
 }
 
-// Load a level from a file
 void Game::loadLevel(const std::string &id)
 {
 	///TODO: error handling
@@ -89,7 +89,7 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Beamer* beamer = new Beamer(color);
-				setObject(beamer, x, y, static_cast<Objects>(id), direction);
+				setObject(beamer, x, y, static_cast<Objects>(id), static_cast<Directions>(direction));
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 
@@ -107,14 +107,26 @@ void Game::loadLevel(const std::string &id)
 				readByte(&levelFile, direction);
 
 				Mirror* mirror = new Mirror();
-				setObject(mirror, x, y, static_cast<Objects>(id), direction);
+				setObject(mirror, x, y, static_cast<Objects>(id), static_cast<Directions>(direction));
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Bender* bender = new Bender();
-				setObject(bender, x, y, static_cast<Objects>(id), direction);
+				setObject(bender, x, y, static_cast<Objects>(id), static_cast<Directions>(direction));
+			}
+		}
+
+		unsigned short width, height;
+		readByte(&levelFile, width);
+		readByte(&levelFile, height);
+
+		for (size_t row = 0; row < height; ++row) {
+			for (size_t column = 0; column < width; ++column) {
+				unsigned short object;
+				readByte(&levelFile, object);
+				object = level.stack.map[row][column];
 			}
 		}
 
@@ -261,7 +273,7 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object* object, short x, short y, Objects id, unsigned short direction)
+void Game::setObject(Object* object, short x, short y, Objects id, Directions direction)
 {
 	object->id = id;
 	object->position.setPosition(x, y);
@@ -281,12 +293,12 @@ void Game::setObject(Object* object, short x, short y, Objects id, unsigned shor
 	level.objectMap[object->position] = object;
 }
 
-void Game::setObject(Object* object, Object::Position position, Objects id, unsigned short direction)
+void Game::setObject(Object* object, Object::Position position, Objects id, Directions direction)
 {
 	setObject(object, position.getX(), position.getY(), id, direction);
 }
 
-bool Game::Level::addObject(Objects id, Object::Position position)
+bool Game::Level::addObject(Object::Position position, Objects id)
 {
 	bool success = isPlaceFree(position);
 
@@ -418,4 +430,12 @@ void Game::Editor::setObject(Objects id)
 Objects Game::Editor::getObject()
 {
 	return currentObject;
+}
+
+void Stack::initialize()
+{
+	map.resize(height);
+	for (size_t row = 0; row < height; ++row) {
+		map[row].resize(width);
+	}
 }

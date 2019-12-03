@@ -17,11 +17,18 @@ enum EditorMode {
 	ED_COUNT
 };
 
+struct Stack {
+	unsigned short width = STACK_WIDTH;
+	unsigned short height = STACK_HEIGHT;
+	std::vector<std::vector<Objects>> map;
+	void initialize();
+};
+
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
-	void setObject(Object* object, short x, short y, Objects id, unsigned short direction = 0);
-	void setObject(Object* object, Object::Position position, Objects id, unsigned short direction = 0);
+	void setObject(Object* object, short x, short y, Objects id, Directions direction = DIR_NORTH);
+	void setObject(Object* object, Object::Position position, Objects id, Directions direction = DIR_NORTH);
 public:
 	Game();
 	~Game();
@@ -33,9 +40,10 @@ public:
 		std::vector<Object*> objectList[OBJ_COUNT];
 		std::map<Object::Position, bool> obstacles;
 		std::map<Object::Position, Object*> objectMap;
+		Stack stack;
 		Game* game;
 
-		bool addObject(Objects id, Object::Position position);
+		bool addObject(Object::Position position, Objects id);
 		bool dragObject(Drag &drag, Object::Position position);
 		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);

@@ -12,6 +12,9 @@
 #define TILE_SIZE 24
 #define OUTLINE_SIZE 1
 
+#define STACK_WIDTH 6
+#define STACK_HEIGHT 4
+
 #define NULLPOSITION {}
 
 #define COL_BLACK_TUPLE   {false, false, false}
@@ -23,7 +26,7 @@
 #define COL_CYAN_TUPLE    {false, true,  true}
 #define COL_WHITE_TUPLE   {true,  true,  true}
 
-enum Colors {
+enum Colors : unsigned short {
 	COL_BLACK,
 	COL_BLUE,
 	COL_GREEN,
@@ -35,7 +38,7 @@ enum Colors {
 	COL_COUNT
 };
 
-enum Directions {
+enum Directions : unsigned short {
 	DIR_NORTH,
 	DIR_NORTHEAST,
 	DIR_EAST,
@@ -47,7 +50,7 @@ enum Directions {
 	DIR_COUNT
 };
 
-enum Objects {
+enum Objects : unsigned short {
 	OBJ_EMPTY,
 	OBJ_BEAMER,
 	OBJ_DOT,
