@@ -19,17 +19,21 @@ public:
 
 	struct Position {
 	private:
-		short x;
-		short y;
+		short x = -1;
+		short y = -1;
 	public:
+		static Position createPosition(short xx, short yy);
+		static Position createPosition(sf::Vector2f vector);
+
 		bool operator<(const Position &pos) const;
 		bool operator==(const Position &pos) const;
 		bool operator!=(const Position &pos) const;
 		operator sf::Vector2f();
-		static Position createPosition(short xx, short yy);
-		static Position createPosition(sf::Vector2f vector);
+
 		short getX();
 		short getY();
+		bool isNull();
+		void setNull();
 		void moveInDirection(unsigned short dir, int length);
 		void setPosition(short xx, short yy);
 	} position;
@@ -70,6 +74,11 @@ class Bender : public Object
 {
 public:
 	Bender();
+};
+
+struct Drag {
+	Object::Position position;
+	sf::Sprite sprite;
 };
 
 #endif

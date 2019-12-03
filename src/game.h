@@ -47,8 +47,7 @@ public:
 		unsigned short getObject();
 		void setObject(unsigned short id);
 		void switchMode();
-		void turnOn();
-		void turnOff();
+		void turn(bool editorOn);
 	} editor;
 
 	void loadLevel(const std::string &id);

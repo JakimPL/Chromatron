@@ -2,11 +2,145 @@
 
 #include "main.h"
 
+void drawBoard(Game &game, sf::RenderWindow &window, Object::Position mousePosition)
+{
+	for (short y = 0; y < game.level.height; ++y) {
+		for (short x = 0; x < game.level.width; ++x) {
+			sf::Color outlineColor, fillColor;
+			Object::Position currentPosition;
+			currentPosition.setPosition(x, y);
+			if (currentPosition == mousePosition) {
+				outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
+				fillColor = (game.level.obstacles[currentPosition] ? yellow : lgray);
+			} else {
+				outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
+				fillColor = (game.level.obstacles[currentPosition] ? dgray : gray);
+			}
+
+			window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
+			window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
+		}
+	}
+}
+
+void drawLasers(Game &game, sf::RenderWindow &window, bool blackLasers = false)
+{
+	for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
+		Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
+		size_t rays = beamer->laser.size();
+
+		for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {
+			size_t size = beamer->laser[rayIndex].size();
+			sf::Vertex vertices[size];
+			std::copy(beamer->laser[rayIndex].begin(), beamer->laser[rayIndex].end(), vertices);
+			if (blackLasers) {
+				for (size_t node = 0; node < size; ++node) {
+					vertices[node].color = black;
+				}
+			}
+
+			window.draw(vertices, size, sf::LinesStrip, (blackLasers ? sf::BlendNone : sf::BlendAdd));
+		}
+	}
+}
+
+void drawGameObject(Game &game, sf::RenderWindow &window, Object::Position mousePosition, sf::Sprite &dragSprite)
+{
+
+}
+
+void gameEvents(Game &game, bool &gameEvent)
+{
+	if (gameEvent) {
+		game.calculateLasers();
+		gameEvent = false;
+	}
+
+}
+
+void keyboardGlobalEvents(Game &game, Ev &event)
+{
+	if (event.type == sf::Event::KeyPressed) {
+		switch (event.key.code) {
+		case Key::E: {
+			game.editor.turn(!game.editor.isActive());
+			break;
+		}
+		case Key::S: {
+			if (game.editor.isActive()) {
+				game.saveLevel("001");
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+void keyboardEditorEvents(Game &game, Ev &event)
+{
+	if (event.type == sf::Event::KeyPressed) {
+		switch (event.key.code) {
+		case Key::Tab: {
+			game.editor.switchMode();
+			break;
+		}
+		case Key::Num1: {
+			game.editor.setObject(OBJ_BEAMER);
+			break;
+		}
+		case Key::Num2: {
+			game.editor.setObject(OBJ_DOT);
+			break;
+		}
+		case Key::Num3: {
+			game.editor.setObject(OBJ_MIRROR);
+			break;
+		}
+		case Key::Num4: {
+			game.editor.setObject(OBJ_BENDER);
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+bool mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
+{
+	if (game.editor.editMode) {
+		if (event.type == sf::Event::MouseButtonPressed) {
+			if (event.mouseButton.button == sf::Mouse::Left) {
+				return game.level.rotateObject(mousePosition);
+			} else if (event.mouseButton.button == sf::Mouse::Right) {
+				return game.level.changeObjectColor(mousePosition);
+			}
+		}
+	} else {
+		if (event.type == sf::Event::MouseButtonPressed) {
+			if (event.mouseButton.button == sf::Mouse::Left) {
+				return game.level.addObject(game.editor.getObject(), mousePosition);
+			} else if (event.mouseButton.button == sf::Mouse::Right) {
+				return game.level.removeObject(mousePosition);
+			}
+
+		}
+	}
+}
+
+void mouseGameEvents(Game &game, Ev &event, Object::Position mousePosition, Object::Position dragPosition)
+{
+
+}
+
 int main(int argc, char* argv[])
 {
 	// Handle application's parameters
+	bool editorOn = false;
 	for (int arg = 0; arg < argc; ++arg) {
-		///TODO: Handle application's parameters
+		editorOn = std::string(argv[arg]) == "--editor";
 	}
 
 	// Create a game object
@@ -19,7 +153,7 @@ int main(int argc, char* argv[])
 
 	// Load a level
 	game.loadLevel("000");
-	game.editor.turnOff();
+	game.editor.turn(editorOn);
 
 	Object::Position nullPosition = NULLPOSITION;
 	Object::Position dragPosition = nullPosition;
@@ -41,80 +175,15 @@ int main(int argc, char* argv[])
 			Object* object = game.level.objectMap[mousePosition];
 
 			// Global events: keyboard
-			shiftPressed = false;
-			if (event.type == sf::Event::KeyPressed) {
-				switch (event.key.code) {
-				case Key::E: {
-					(game.editor.isActive() ? game.editor.turnOff() : game.editor.turnOn());
-					break;
-				}
-				case Key::S: {
-					if (game.editor.isActive()) {
-						game.saveLevel("001");
-					}
-					break;
-				}
-				case Key::LShift: {
-					shiftPressed = true;
-					break;
-				}
-				default:
-					break;
-				}
-			}
-
+			keyboardGlobalEvents(game, event);
 			shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
 
 			if (game.editor.isActive() && !shiftPressed) {
 				// Editor events: keyboard
-				if (event.type == sf::Event::KeyPressed) {
-					switch (event.key.code) {
-					case Key::Tab: {
-						game.editor.switchMode();
-						break;
-					}
-					case Key::Num1: {
-						game.editor.setObject(OBJ_BEAMER);
-						break;
-					}
-					case Key::Num2: {
-						game.editor.setObject(OBJ_DOT);
-						break;
-					}
-					case Key::Num3: {
-						game.editor.setObject(OBJ_MIRROR);
-						break;
-					}
-					case Key::Num4: {
-						game.editor.setObject(OBJ_BENDER);
-						break;
-					}
-					default:
-						break;
-					}
-				}
-
-				// Editor events: mouse
-				if (game.editor.editMode) {
-					if (event.type == sf::Event::MouseButtonPressed) {
-						if (event.mouseButton.button == sf::Mouse::Left) {
-							gameEvent = game.level.rotateObject(mousePosition);
-						} else if (event.mouseButton.button == sf::Mouse::Right) {
-							gameEvent = game.level.changeObjectColor(mousePosition);
-						}
-					}
-				} else {
-					if (event.type == sf::Event::MouseButtonPressed) {
-						if (event.mouseButton.button == sf::Mouse::Left) {
-							gameEvent =	game.level.addObject(game.editor.getObject(), mousePosition);
-						} else if (event.mouseButton.button == sf::Mouse::Right) {
-							gameEvent = game.level.removeObject(mousePosition);
-						}
-
-					}
-				}
+				keyboardEditorEvents(game, event);
+				gameEvent = mouseEditorEvents(game, event, mousePosition);
 			} else {
-				// Game events: mouse
+				mouseGameEvents(game, event, mousePosition, dragPosition);
 				if (event.type == sf::Event::MouseButtonPressed) {
 					if (object != nullptr) {
 						if (object->movable || game.editor.isActive()) {
@@ -143,60 +212,15 @@ int main(int argc, char* argv[])
 			}
 
 			// Update game status: calculate lasers
-			if (gameEvent) {
-				game.calculateLasers();
-				gameEvent = false;
-			}
-
+			gameEvents(game, gameEvent);
 			window.clear();
 
 			// Draw the board
-			for (short y = 0; y < game.level.height; ++y) {
-				for (short x = 0; x < game.level.width; ++x) {
-					sf::Color outlineColor, fillColor;
-					Object::Position currentPosition;
-					currentPosition.setPosition(x, y);
-					if (currentPosition == mousePosition) {
-						outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
-						fillColor = (game.level.obstacles[currentPosition] ? yellow : lgray);
-					} else {
-						outlineColor = (game.level.obstacles[currentPosition] ? lgray : dgray);
-						fillColor = (game.level.obstacles[currentPosition] ? dgray : gray);
-					}
-
-					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
-					window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
-				}
-			}
+			drawBoard(game, window, mousePosition);
 
 			// Draw lasers: first create "black" beams, next blend additive beams
-			for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
-				Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
-				size_t rays = beamer->laser.size();
-
-				for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {
-					size_t size = beamer->laser[rayIndex].size();
-					sf::Vertex verticesBlack[size];
-					std::copy(beamer->laser[rayIndex].begin(), beamer->laser[rayIndex].end(), verticesBlack);
-					for (size_t node = 0; node < size; ++node) {
-						verticesBlack[node].color = black;
-					}
-
-					window.draw(verticesBlack, size, sf::LinesStrip, sf::BlendNone);
-				}
-			}
-
-			for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
-				Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
-				size_t rays = beamer->laser.size();
-
-				for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {
-					size_t size = beamer->laser[rayIndex].size();
-					sf::Vertex vertices[size];
-					std::copy(beamer->laser[rayIndex].begin(), beamer->laser[rayIndex].end(), vertices);
-					window.draw(vertices, size, sf::LinesStrip, sf::BlendAdd);
-				}
-			}
+			drawLasers(game, window, true);
+			drawLasers(game, window);
 
 			// Draw game objects
 			for (size_t type = 0; type < OBJ_COUNT; ++type) {

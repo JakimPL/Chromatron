@@ -379,15 +379,10 @@ void Game::Editor::switchMode()
 	editMode = !editMode;
 }
 
-void Game::Editor::turnOn()
+void Game::Editor::turn(bool editorOn)
 {
-	active = true;
+	active = editorOn;
 	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
-}
-
-void Game::Editor::turnOff()
-{
-	active = false;
 }
 
 void Game::Editor::setObject(unsigned short id)
