@@ -238,7 +238,7 @@ void Game::calculateLasers()
 					}
 				}
 
-				if (level.isOutsideBoard(now)) {
+				if (level.isOutsideBoard(now) || level.obstacles[now]) {
 					stop = end = true;
 				}
 			}

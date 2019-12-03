@@ -169,15 +169,32 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			// Draw lasers
+			// Draw lasers: first create "black" beams, next blend additive beams
 			for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
 				Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
 				size_t rays = beamer->laser.size();
+
+				for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {
+					size_t size = beamer->laser[rayIndex].size();
+					sf::Vertex verticesBlack[size];
+					std::copy(beamer->laser[rayIndex].begin(), beamer->laser[rayIndex].end(), verticesBlack);
+					for (size_t node = 0; node < size; ++node) {
+						verticesBlack[node].color = black;
+					}
+
+					window.draw(verticesBlack, size, sf::LinesStrip, sf::BlendNone);
+				}
+			}
+
+			for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
+				Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
+				size_t rays = beamer->laser.size();
+
 				for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {
 					size_t size = beamer->laser[rayIndex].size();
 					sf::Vertex vertices[size];
 					std::copy(beamer->laser[rayIndex].begin(), beamer->laser[rayIndex].end(), vertices);
-					window.draw(vertices, size, sf::LinesStrip);
+					window.draw(vertices, size, sf::LinesStrip, sf::BlendAdd);
 				}
 			}
 
