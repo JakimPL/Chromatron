@@ -257,6 +257,7 @@ void Game::updateDots()
 	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
 		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
 		dot->updateState();
+		dot->setSpriteColor();
 	}
 }
 
@@ -329,6 +330,18 @@ bool Game::Level::isOutsideBoard(Object::Position position)
 	return (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height);
 }
 
+bool Game::Level::dragObject(Drag &drag, Object::Position position)
+{
+	bool success = (objectMap[position] != nullptr) && (objectMap[position]->movable || game->editor.isActive());
+
+	if (success) {
+		drag.position = position;
+		drag.sprite = objectMap[position]->sprite;
+	}
+
+	return success;
+}
+
 bool Game::Level::moveObject(Object::Position start, Object::Position end)
 {
 	bool success = isPlaceFree(end);
@@ -363,7 +376,7 @@ bool Game::Level::rotateObject(Object::Position position)
 	bool success = (objectMap[position] != nullptr);
 
 	if (success) {
-		objectMap[position]->rotate(true, true);
+		objectMap[position]->rotate(true, game->editor.isActive());
 	}
 
 	return success;

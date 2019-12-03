@@ -2,6 +2,15 @@
 
 #include "main.h"
 
+void deleteGameObjects(Game &game)
+{
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
+			delete game.level.objectList[type][index];
+		}
+	}
+}
+
 void drawBoard(Game &game, sf::RenderWindow &window, Object::Position mousePosition)
 {
 	for (short y = 0; y < game.level.height; ++y) {
@@ -75,7 +84,6 @@ void gameEvents(Game &game, bool &gameEvent)
 		game.calculateLasers();
 		gameEvent = false;
 	}
-
 }
 
 void keyboardGlobalEvents(Game &game, Ev &event)
@@ -145,7 +153,6 @@ bool mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
 			} else if (event.mouseButton.button == sf::Mouse::Right) {
 				return game.level.removeObject(mousePosition);
 			}
-
 		}
 	}
 
@@ -190,7 +197,6 @@ int main(int argc, char* argv[])
 
 			sf::Vector2f mousePositionVector = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			Object::Position mousePosition = Object::Position::createPosition(mousePositionVector);
-			Object* object = game.level.objectMap[mousePosition];
 
 			// Global events: keyboard
 			keyboardGlobalEvents(game, event);
@@ -202,13 +208,9 @@ int main(int argc, char* argv[])
 				gameEvent = mouseEditorEvents(game, event, mousePosition);
 			} else {
 				mouseGameEvents(game, event, drag, mousePosition);
+
 				if (event.type == sf::Event::MouseButtonPressed) {
-					if (object != nullptr) {
-						if (object->movable || game.editor.isActive()) {
-							drag.position = mousePosition;
-							drag.sprite = object->sprite;
-						}
-					}
+					gameEvent = game.level.dragObject(drag, mousePosition);
 				}
 
 				if (event.type == sf::Event::MouseButtonReleased) {
@@ -218,11 +220,8 @@ int main(int argc, char* argv[])
 					}
 
 					// Rotate an object if possible
-					if (drag.position == mousePosition || drag.position.isNull()) {
-						if (object != nullptr) {
-							object->rotate(event.mouseButton.button == sf::Mouse::Right, game.editor.isActive());
-							gameEvent = true;
-						}
+					if (drag.position == mousePosition) {
+						gameEvent = game.level.rotateObject(mousePosition);
 					}
 
 					drag.position.setNull();
@@ -243,11 +242,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Delete level objects
-	for (size_t type = 0; type < OBJ_COUNT; ++type) {
-		for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
-			delete game.level.objectList[type][index];
-		}
-	}
+	deleteGameObjects(game);
 
 	return 0;
 }

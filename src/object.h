@@ -61,6 +61,7 @@ public:
 	bool state = false;
 
 	void updateState();
+	void setSpriteColor();
 };
 
 class Mirror : public Object

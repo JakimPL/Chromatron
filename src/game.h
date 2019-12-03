@@ -7,6 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "constants.h"
+#include "drag.h"
 #include "object.h"
 
 class Game
@@ -27,6 +28,7 @@ public:
 		Game* game;
 
 		bool addObject(unsigned short id, Object::Position position);
+		bool dragObject(Drag &drag, Object::Position position);
 		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);
 		bool isOutsideBoard(Object::Position position);

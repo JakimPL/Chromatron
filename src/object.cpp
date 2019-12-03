@@ -22,7 +22,7 @@ Dot::Dot(Color col) : actualColor(COL_BLACK_TUPLE)
 	movable = false;
 	colorable = true;
 	color = col;
-	sprite.setColor(color.convertToColor());
+	setSpriteColor();
 }
 
 Mirror::Mirror()
@@ -51,6 +51,11 @@ void Object::rotate(bool clockwise, bool force)
 void Object::updateSprite()
 {
 	sprite.setPosition(position);
+}
+
+void Dot::setSpriteColor()
+{
+	sprite.setColor(color.convertToColor());
 }
 
 Object::Position Object::Position::createPosition(short xx, short yy)
