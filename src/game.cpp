@@ -89,7 +89,7 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Beamer* beamer = new Beamer(color);
-				setObject(beamer, x, y, id, direction);
+				setObject(beamer, x, y, static_cast<Objects>(id), direction);
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 
@@ -100,21 +100,21 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Dot* dot = new Dot(color);
-				setObject(dot, x, y, id);
+				setObject(dot, x, y, static_cast<Objects>(id));
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Mirror* mirror = new Mirror();
-				setObject(mirror, x, y, id, direction);
+				setObject(mirror, x, y, static_cast<Objects>(id), direction);
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Bender* bender = new Bender();
-				setObject(bender, x, y, id, direction);
+				setObject(bender, x, y, static_cast<Objects>(id), direction);
 			}
 		}
 
@@ -261,7 +261,7 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object* object, short x, short y, unsigned short id, unsigned short direction)
+void Game::setObject(Object* object, short x, short y, Objects id, unsigned short direction)
 {
 	object->id = id;
 	object->position.setPosition(x, y);
@@ -281,12 +281,12 @@ void Game::setObject(Object* object, short x, short y, unsigned short id, unsign
 	level.objectMap[object->position] = object;
 }
 
-void Game::setObject(Object* object, Object::Position position, unsigned short id, unsigned short direction)
+void Game::setObject(Object* object, Object::Position position, Objects id, unsigned short direction)
 {
 	setObject(object, position.getX(), position.getY(), id, direction);
 }
 
-bool Game::Level::addObject(unsigned short id, Object::Position position)
+bool Game::Level::addObject(Objects id, Object::Position position)
 {
 	bool success = isPlaceFree(position);
 
@@ -360,7 +360,7 @@ bool Game::Level::removeObject(Object::Position position)
 {
 	bool success = (objectMap[position] != nullptr);
 
-	unsigned short id = objectMap[position]->id;
+	Objects id = objectMap[position]->id;
 
 	if (success) {
 		objectList[id].erase(std::find(objectList[id].begin(), objectList[id].end(), objectMap[position]));
@@ -406,7 +406,7 @@ void Game::Editor::turn(bool editorOn)
 	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
 }
 
-void Game::Editor::setObject(unsigned short id)
+void Game::Editor::setObject(Objects id)
 {
 	if (active) {
 		currentObject = id;
@@ -415,7 +415,7 @@ void Game::Editor::setObject(unsigned short id)
 	sprite.setTexture(*textures[id]);
 }
 
-unsigned short Game::Editor::getObject()
+Objects Game::Editor::getObject()
 {
 	return currentObject;
 }

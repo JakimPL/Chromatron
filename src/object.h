@@ -12,7 +12,7 @@ public:
 	bool rotatable = false;
 	bool movable = false;
 	bool colorable = false;
-	unsigned short id;
+	Objects id;
 	unsigned short direction = 0;
 	sf::Sprite sprite;
 	Color color;

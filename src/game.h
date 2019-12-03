@@ -20,8 +20,8 @@ enum EditorMode {
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
-	void setObject(Object* object, short x, short y, unsigned short id, unsigned short direction = 0);
-	void setObject(Object* object, Object::Position position, unsigned short id, unsigned short direction = 0);
+	void setObject(Object* object, short x, short y, Objects id, unsigned short direction = 0);
+	void setObject(Object* object, Object::Position position, Objects id, unsigned short direction = 0);
 public:
 	Game();
 	~Game();
@@ -35,7 +35,7 @@ public:
 		std::map<Object::Position, Object*> objectMap;
 		Game* game;
 
-		bool addObject(unsigned short id, Object::Position position);
+		bool addObject(Objects id, Object::Position position);
 		bool dragObject(Drag &drag, Object::Position position);
 		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);
@@ -49,14 +49,14 @@ public:
 	struct Editor {
 	private:
 		bool active;
-		unsigned short currentObject = OBJ_BEAMER;
+		Objects currentObject = OBJ_BEAMER;
 	public:
 		EditorMode mode;
 		sf::Sprite sprite;
 
 		bool isActive();
-		unsigned short getObject();
-		void setObject(unsigned short id);
+		Objects getObject();
+		void setObject(Objects id);
 		void switchMode();
 		void turn(bool editorOn);
 	} editor;
