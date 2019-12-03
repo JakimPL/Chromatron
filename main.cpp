@@ -19,11 +19,13 @@ int main(int argc, char* argv[])
 
 	// Load a level
 	game.loadLevel("000");
-	game.editor.turnOn();
+	game.editor.turnOff();
 
 	Object::Position nullPosition = NULLPOSITION;
 	Object::Position dragPosition = nullPosition;
 	sf::Sprite dragSprite;
+
+	bool shiftPressed;
 
 	// Game main loop
 	bool gameEvent = true;
@@ -39,6 +41,7 @@ int main(int argc, char* argv[])
 			Object* object = game.level.objectMap[mousePosition];
 
 			// Global events: keyboard
+			shiftPressed = false;
 			if (event.type == sf::Event::KeyPressed) {
 				switch (event.key.code) {
 				case Key::E: {
@@ -46,7 +49,13 @@ int main(int argc, char* argv[])
 					break;
 				}
 				case Key::S: {
-					game.saveLevel("001");
+					if (game.editor.isActive()) {
+						game.saveLevel("001");
+					}
+					break;
+				}
+				case Key::LShift: {
+					shiftPressed = true;
 					break;
 				}
 				default:
@@ -54,7 +63,9 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			if (game.editor.isActive()) {
+			shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
+
+			if (game.editor.isActive() && !shiftPressed) {
 				// Editor events: keyboard
 				if (event.type == sf::Event::KeyPressed) {
 					switch (event.key.code) {
@@ -106,7 +117,7 @@ int main(int argc, char* argv[])
 				// Game events: mouse
 				if (event.type == sf::Event::MouseButtonPressed) {
 					if (object != nullptr) {
-						if (object->movable) {
+						if (object->movable || game.editor.isActive()) {
 							dragPosition = mousePosition;
 							dragSprite = object->sprite;
 						}
@@ -122,7 +133,7 @@ int main(int argc, char* argv[])
 					// Rotate an object if possible
 					if (dragPosition == mousePosition || dragPosition == nullPosition) {
 						if (object != nullptr) {
-							object->rotate(event.mouseButton.button == sf::Mouse::Right);
+							object->rotate(event.mouseButton.button == sf::Mouse::Right, game.editor.isActive());
 							gameEvent = true;
 						}
 					}
@@ -179,11 +190,11 @@ int main(int argc, char* argv[])
 					}
 				}
 			}
-			if (game.editor.isActive()) {
-
-				game.editor.sprite.setPosition(mousePosition);
-				window.draw(game.editor.sprite);
-
+			if (game.editor.isActive() && !shiftPressed) {
+				if (!game.editor.editMode) {
+					game.editor.sprite.setPosition(mousePosition);
+					window.draw(game.editor.sprite);
+				}
 			} else {
 				// Draw the dragged element (if there is any)
 				if (dragPosition != nullPosition) {
