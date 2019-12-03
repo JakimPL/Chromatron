@@ -8,11 +8,13 @@
 class Object
 {
 public:
+	Object(Color col = COL_BLACK_TUPLE);
 	bool rotatable = false;
 	bool movable = false;
 	unsigned short id;
 	unsigned short direction = 0;
 	sf::Sprite sprite;
+	Color color;
 
 	struct Position {
 	private:
@@ -40,27 +42,27 @@ public:
 class Beamer : public Object
 {
 public:
-	Beamer(Color col = COL_BLACK_TUPLE) : color(col)
+	Beamer(Color col = COL_BLACK_TUPLE)
 	{
 		rotatable = false;
 		movable = false;
+		color = col;
 	}
 
-	Color color;
 	Laser laser;
 };
 
 class Dot : public Object
 {
 public:
-	Dot(Color col = COL_BLACK_TUPLE) : color(col), actualColor(false, false, false)
+	Dot(Color col = COL_BLACK_TUPLE) : actualColor(COL_BLACK_TUPLE)
 	{
 		rotatable = false;
 		movable = false;
+		color = col;
 		sprite.setColor(color.convertToColor());
 	}
 
-	Color color;
 	Color actualColor;
 	bool state = false;
 

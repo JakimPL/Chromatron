@@ -2,6 +2,11 @@
 #include "constants.h"
 #include "object.h"
 
+Object::Object(Color col) : color(col)
+{
+
+}
+
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {
