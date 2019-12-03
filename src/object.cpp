@@ -96,6 +96,17 @@ Object::Position::operator sf::Vector2f()
 	return vector;
 }
 
+bool Object::Position::isNull()
+{
+	return x == -1 && y == -1;
+}
+
+void Object::Position::setNull()
+{
+	x = -1;
+	y = -1;
+}
+
 short Object::Position::getX()
 {
 	return x;

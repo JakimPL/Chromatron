@@ -76,9 +76,4 @@ public:
 	Bender();
 };
 
-struct Drag {
-	Object::Position position;
-	sf::Sprite sprite;
-};
-
 #endif

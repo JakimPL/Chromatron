@@ -44,9 +44,29 @@ void drawLasers(Game &game, sf::RenderWindow &window, bool blackLasers = false)
 	}
 }
 
-void drawGameObject(Game &game, sf::RenderWindow &window, Object::Position mousePosition, sf::Sprite &dragSprite)
+void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Position mousePosition)
 {
-
+	bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
+			// Draw the sprite unless it's dragged
+			if (drag.position != game.level.objectList[type][index]->position) {
+				window.draw(game.level.objectList[type][index]->sprite);
+			}
+		}
+	}
+	if (game.editor.isActive() && !shiftPressed) {
+		if (!game.editor.editMode) {
+			game.editor.sprite.setPosition(mousePosition);
+			window.draw(game.editor.sprite);
+		}
+	} else {
+		// Draw the dragged element (if there is any)
+		if (!drag.position.isNull()) {
+			drag.sprite.setPosition(mousePosition);
+			window.draw(drag.sprite);
+		}
+	}
 }
 
 void gameEvents(Game &game, bool &gameEvent)
@@ -128,9 +148,11 @@ bool mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition)
 
 		}
 	}
+
+	return false;
 }
 
-void mouseGameEvents(Game &game, Ev &event, Object::Position mousePosition, Object::Position dragPosition)
+void mouseGameEvents(Game &game, Ev &event, Drag &drag, Object::Position mousePosition)
 {
 
 }
@@ -155,11 +177,7 @@ int main(int argc, char* argv[])
 	game.loadLevel("000");
 	game.editor.turn(editorOn);
 
-	Object::Position nullPosition = NULLPOSITION;
-	Object::Position dragPosition = nullPosition;
-	sf::Sprite dragSprite;
-
-	bool shiftPressed;
+	Drag drag;
 
 	// Game main loop
 	bool gameEvent = true;
@@ -176,38 +194,38 @@ int main(int argc, char* argv[])
 
 			// Global events: keyboard
 			keyboardGlobalEvents(game, event);
-			shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
+			bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
 
 			if (game.editor.isActive() && !shiftPressed) {
 				// Editor events: keyboard
 				keyboardEditorEvents(game, event);
 				gameEvent = mouseEditorEvents(game, event, mousePosition);
 			} else {
-				mouseGameEvents(game, event, mousePosition, dragPosition);
+				mouseGameEvents(game, event, drag, mousePosition);
 				if (event.type == sf::Event::MouseButtonPressed) {
 					if (object != nullptr) {
 						if (object->movable || game.editor.isActive()) {
-							dragPosition = mousePosition;
-							dragSprite = object->sprite;
+							drag.position = mousePosition;
+							drag.sprite = object->sprite;
 						}
 					}
 				}
 
 				if (event.type == sf::Event::MouseButtonReleased) {
 					// If the drag position is not null, move an object to the new location (if possible)
-					if (dragPosition != nullPosition) {
-						gameEvent = game.level.moveObject(dragPosition, mousePosition);
+					if (!drag.position.isNull()) {
+						gameEvent = game.level.moveObject(drag.position, mousePosition);
 					}
 
 					// Rotate an object if possible
-					if (dragPosition == mousePosition || dragPosition == nullPosition) {
+					if (drag.position == mousePosition || drag.position.isNull()) {
 						if (object != nullptr) {
 							object->rotate(event.mouseButton.button == sf::Mouse::Right, game.editor.isActive());
 							gameEvent = true;
 						}
 					}
 
-					dragPosition = nullPosition;
+					drag.position.setNull();
 				}
 			}
 
@@ -215,34 +233,10 @@ int main(int argc, char* argv[])
 			gameEvents(game, gameEvent);
 			window.clear();
 
-			// Draw the board
 			drawBoard(game, window, mousePosition);
-
-			// Draw lasers: first create "black" beams, next blend additive beams
 			drawLasers(game, window, true);
 			drawLasers(game, window);
-
-			// Draw game objects
-			for (size_t type = 0; type < OBJ_COUNT; ++type) {
-				for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
-					// Draw the sprite unless it's dragged
-					if (dragPosition != game.level.objectList[type][index]->position) {
-						window.draw(game.level.objectList[type][index]->sprite);
-					}
-				}
-			}
-			if (game.editor.isActive() && !shiftPressed) {
-				if (!game.editor.editMode) {
-					game.editor.sprite.setPosition(mousePosition);
-					window.draw(game.editor.sprite);
-				}
-			} else {
-				// Draw the dragged element (if there is any)
-				if (dragPosition != nullPosition) {
-					dragSprite.setPosition(mousePosition);
-					window.draw(dragSprite);
-				}
-			}
+			drawGameObject(game, window, drag, mousePosition);
 
 			window.display();
 		}

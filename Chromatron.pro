@@ -33,6 +33,7 @@ HEADERS += \
 	main.h \
 	src/auxiliary.h \
 	src/constants.h \
+	src/drag.h \
 	src/game.h \
 	src/object.h \
 	src/structures.h
