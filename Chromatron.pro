@@ -19,6 +19,7 @@ SOURCES += \
         src/auxiliary.cpp \
         src/game.cpp \
         src/object.cpp \
+        src/stack.cpp \
         src/structures.cpp
 
 LIBS += -L/usr/lib -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
@@ -36,4 +37,5 @@ HEADERS += \
 	src/drag.h \
 	src/game.h \
 	src/object.h \
+	src/stack.h \
 	src/structures.h

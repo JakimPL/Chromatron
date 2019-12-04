@@ -7,15 +7,13 @@
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define OFFSET_X 32
-#define OFFSET_Y 32
+#define OFFSET_X 24
+#define OFFSET_Y 24
 #define TILE_SIZE 24
 #define OUTLINE_SIZE 1
 
 #define STACK_WIDTH 6
 #define STACK_HEIGHT 4
-
-#define NULLPOSITION {}
 
 #define COL_BLACK_TUPLE   {false, false, false}
 #define COL_RED_TUPLE     {true,  false, false}

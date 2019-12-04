@@ -43,7 +43,7 @@ Bender::Bender()
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {
-		direction = (direction + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT;
+		direction = static_cast<Directions>((static_cast<unsigned short>(direction) + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT);
 		sprite.setRotation(direction * 45);
 	}
 }
@@ -126,6 +126,12 @@ void Object::Position::setPosition(short xx, short yy)
 {
 	x = xx;
 	y = yy;
+}
+
+void Object::Position::setPosition(Position position)
+{
+	x = position.x;
+	y = position.y;
 }
 
 void Dot::updateState()

@@ -9,19 +9,13 @@
 #include "constants.h"
 #include "drag.h"
 #include "object.h"
+#include "stack.h"
 
 enum EditorMode {
 	ED_EDIT_OBJECTS,
 	ED_ADD_OR_REMOVE_OBJECTS,
 	ED_ADD_OR_REMOVE_OBSTACLES,
 	ED_COUNT
-};
-
-struct Stack {
-	unsigned short width = STACK_WIDTH;
-	unsigned short height = STACK_HEIGHT;
-	std::vector<std::vector<Objects>> map;
-	void initialize();
 };
 
 class Game

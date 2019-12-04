@@ -1,13 +1,16 @@
 #include <fstream>
 #include <iostream>
 
-#include "auxiliary.h"
-#include "constants.h"
 #include "game.h"
+#include "auxiliary.h"
 
 Game::Game()
 {
 	level.stack.initialize();
+
+	sf::Vector2f floatOffset(2 * OFFSET_X + TILE_SIZE * level.width, 2 * OFFSET_Y);
+	level.stack.offset.setPosition(Object::Position::createPosition(floatOffset));
+
 	for (size_t index = 0; index < OBJ_COUNT; ++index) {
 		textures.push_back(loadTexture(IMG_NAMES[index]));
 	}
@@ -430,12 +433,4 @@ void Game::Editor::setObject(Objects id)
 Objects Game::Editor::getObject()
 {
 	return currentObject;
-}
-
-void Stack::initialize()
-{
-	map.resize(height);
-	for (size_t row = 0; row < height; ++row) {
-		map[row].resize(width);
-	}
 }

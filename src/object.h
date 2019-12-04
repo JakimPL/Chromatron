@@ -13,7 +13,7 @@ public:
 	bool movable = false;
 	bool colorable = false;
 	Objects id;
-	unsigned short direction = 0;
+	Directions direction = DIR_NORTH;
 	sf::Sprite sprite;
 	Color color;
 
@@ -36,6 +36,7 @@ public:
 		void setNull();
 		void moveInDirection(unsigned short dir, int length);
 		void setPosition(short xx, short yy);
+		void setPosition(Position position);
 	} position;
 
 	std::vector<sf::Texture*> textures;
