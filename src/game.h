@@ -46,6 +46,7 @@ public:
 		bool removeObject(Object::Position position);
 		bool rotateObject(Object::Position position);
 		bool setObstacle(Object::Position position, bool obstacle);
+		void updateStack();
 	} level;
 
 	struct Editor {

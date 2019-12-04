@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 				window.close();
 			}
 
-			Object::Position mousePosition = Object::Position::createPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			Object::Position mousePosition = floatToPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 			gameEvents(game, event, drag, mousePosition);
 			draw(game, window, drag, mousePosition);
 		}

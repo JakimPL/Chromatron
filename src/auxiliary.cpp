@@ -35,9 +35,9 @@ void draw(Game &game, sf::RenderWindow &window, Drag &drag, Object::Position mou
 	window.clear();
 
 	drawBoard(game, window, mousePosition);
+	drawStack(game, window);
 	drawLasers(game, window);
 	drawGameObject(game, window, drag, mousePosition);
-	drawStack(game, window);
 
 	window.display();
 }
@@ -57,8 +57,7 @@ void drawBoard(Game &game, sf::RenderWindow &window, Object::Position mousePosit
 				fillColor = (game.level.obstacles[currentPosition] ? dgray : gray);
 			}
 
-			window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x, OFFSET_Y + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
-			window.draw(rectangleCreate(OFFSET_X + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
+			drawTile(window, currentPosition, outlineColor, fillColor);
 		}
 	}
 }
@@ -117,18 +116,21 @@ void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Po
 
 void drawStack(Game &game, sf::RenderWindow &window)
 {
-	int offsetX = 2 * OFFSET_X + TILE_SIZE * game.level.width;
-	int offsetY = OFFSET_Y;
 	for (unsigned short y = 0; y < game.level.stack.height; ++y) {
 		for (unsigned short x = 0; x < game.level.stack.width; ++x) {
-			sf::Color outlineColor, fillColor;
-			outlineColor = dgray;
-			fillColor = gray;
+			Object::Position currentPosition;
+			currentPosition.setPosition(x, y);
 
-			window.draw(rectangleCreate(offsetX + TILE_SIZE * x, offsetY + TILE_SIZE * y, TILE_SIZE, TILE_SIZE, outlineColor));
-			window.draw(rectangleCreate(offsetX + TILE_SIZE * x + OUTLINE_SIZE, OFFSET_Y + TILE_SIZE * y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
+			drawTile(window, game.level.stack.offset + currentPosition, dgray, gray);
 		}
 	}
+}
+
+void drawTile(sf::RenderWindow &window, Object::Position position, sf::Color outlineColor, sf::Color fillColor)
+{
+	sf::Vector2f vector = positionToFloat(position);
+	window.draw(rectangleCreate(vector.x, vector.y, TILE_SIZE, TILE_SIZE, outlineColor));
+	window.draw(rectangleCreate(vector.x + OUTLINE_SIZE, vector.y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 }
 
 void gameEvents(Game &game, Ev &event, Drag &drag, Object::Position position)
@@ -245,4 +247,26 @@ void mouseGameEvents(Game &game, Ev &event, Drag &drag, Object::Position mousePo
 
 		drag.position.setNull();
 	}
+}
+
+Object::Position floatToPosition(sf::Vector2f vector)
+{
+	Object::Position position;
+	position.setPosition(static_cast<short>(vector.x / TILE_SIZE - OFFSET_X), static_cast<short>(vector.y / TILE_SIZE - OFFSET_Y));
+	return position;
+}
+
+Object::Position floatToPosition(float x, float y)
+{
+	return floatToPosition(sf::Vector2f(x, y));
+}
+
+sf::Vector2f positionToFloat(Object::Position position)
+{
+	return sf::Vector2f((position.getX() + OFFSET_X) * TILE_SIZE, (position.getY() + OFFSET_Y) * TILE_SIZE);
+}
+
+sf::Vector2f positionToFloat(short x, short y)
+{
+	return sf::Vector2f((x + OFFSET_X) * TILE_SIZE, (y + OFFSET_Y) * TILE_SIZE);
 }

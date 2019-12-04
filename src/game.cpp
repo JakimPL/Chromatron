@@ -8,14 +8,11 @@ Game::Game()
 {
 	level.stack.initialize();
 
-	sf::Vector2f floatOffset(2 * OFFSET_X + TILE_SIZE * level.width, 2 * OFFSET_Y);
-	level.stack.offset.setPosition(Object::Position::createPosition(floatOffset));
-
 	for (size_t index = 0; index < OBJ_COUNT; ++index) {
 		textures.push_back(loadTexture(IMG_NAMES[index]));
 	}
 
-	textures.push_back(loadTexture(IMG_NAMES[OBJ_DOTF]));
+	textures.push_back(loadTexture(IMG_NAMES[OBJ_COUNT]));
 }
 
 Game::~Game()
@@ -133,6 +130,7 @@ void Game::loadLevel(const std::string &id)
 			}
 		}
 
+		level.updateStack();
 		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
@@ -403,6 +401,13 @@ bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 	obstacles[position] = obstacle;
 
 	return true;
+}
+
+void Game::Level::updateStack()
+{
+	Object::Position offset;
+	offset.setPosition(width + STACK_OFFSET_X, STACK_OFFSET_Y);
+	stack.offset.setPosition(offset);
 }
 
 bool Game::Editor::isActive()

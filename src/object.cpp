@@ -58,26 +58,18 @@ void Dot::setSpriteColor()
 	sprite.setColor(color.convertToColor());
 }
 
-Object::Position Object::Position::createPosition(short xx, short yy)
-{
-	Object::Position position;
-	position.x = xx;
-	position.y = yy;
-	return position;
-}
-
-Object::Position Object::Position::createPosition(sf::Vector2f vector)
-{
-	Object::Position position;
-	position.x = static_cast<short>((vector.x - OFFSET_X) / TILE_SIZE);
-	position.y = static_cast<short>((vector.y - OFFSET_Y) / TILE_SIZE);
-	return position;
-}
-
 void Object::Position::moveInDirection(unsigned short dir, int length)
 {
 	x += length * (dir % 4 > 0 ? (dir / 4 > 0 ? -1 : 1) : 0);
 	y += length * ((dir + 2) % 4 > 0 ? ((((dir + 2) % 8) / 4 > 0) ? 1 : -1) : 0);
+}
+
+Object::Position Object::Position::operator+(const Position &pos)
+{
+	Object::Position newPosition;
+	newPosition.x = x + pos.x;
+	newPosition.y = y + pos.y;
+	return newPosition;
 }
 
 bool Object::Position::operator<(const Position &pos) const
@@ -97,7 +89,7 @@ bool Object::Position::operator!=(const Position &pos) const
 
 Object::Position::operator sf::Vector2f()
 {
-	sf::Vector2f vector(OFFSET_X + TILE_SIZE * (x + 0.5f), OFFSET_Y + TILE_SIZE * (y + 0.5f));
+	sf::Vector2f vector(TILE_SIZE * (x + OFFSET_X + 0.5f), TILE_SIZE * (y + OFFSET_Y + 0.5f));
 	return vector;
 }
 

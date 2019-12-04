@@ -20,10 +20,15 @@ extern void drawLasers(Game &game, sf::RenderWindow &window, bool blackLasers);
 extern void drawLasers(Game &game, sf::RenderWindow &window);
 extern void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Object::Position mousePosition);
 extern void drawStack(Game &game, sf::RenderWindow &window);
+extern void drawTile(sf::RenderWindow &window, Object::Position position, sf::Color outlineColor, sf::Color fillColor);
 extern void gameEvents(Game &game, Ev &event, Drag &drag, Object::Position position);
 extern void keyboardGlobalEvents(Game &game, Ev &event);
 extern void keyboardEditorEvents(Game &game, Ev &event);
 extern void mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition);
 extern void mouseGameEvents(Game &game, Ev &event, Drag &drag, Object::Position mousePosition);
+extern Object::Position floatToPosition(sf::Vector2f vector);
+extern Object::Position floatToPosition(float x, float y);
+extern sf::Vector2f positionToFloat(Object::Position position);
+extern sf::Vector2f positionToFloat(short x, short y);
 
 #endif

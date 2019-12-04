@@ -22,9 +22,7 @@ public:
 		short x = -1;
 		short y = -1;
 	public:
-		static Position createPosition(short xx, short yy);
-		static Position createPosition(sf::Vector2f vector);
-
+		Position operator+(const Position &pos);
 		bool operator<(const Position &pos) const;
 		bool operator==(const Position &pos) const;
 		bool operator!=(const Position &pos) const;
