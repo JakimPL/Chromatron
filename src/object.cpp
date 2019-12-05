@@ -72,6 +72,22 @@ Object::Position Object::Position::operator+(const Position &pos)
 	return newPosition;
 }
 
+Object::Position Object::Position::operator-(const Position &pos)
+{
+	Object::Position newPosition;
+	newPosition.x = x - pos.x;
+	newPosition.y = y - pos.y;
+	return newPosition;
+}
+
+Object::Position Object::Position::operator-()
+{
+	Object::Position newPosition;
+	newPosition.x = -x;
+	newPosition.y = -y;
+	return newPosition;
+}
+
 bool Object::Position::operator<(const Position &pos) const
 {
 	return x < pos.x || (x == pos.x && y < pos.y);

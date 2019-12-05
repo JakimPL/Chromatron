@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -135,7 +134,7 @@ void Game::loadLevel(const std::string &id)
 				readByte(&levelFile, object);
 
 				Object::Position currentPosition = shortToPosition(row, column);
-				object = level.stack.map[currentPosition];
+				//object = level.stack.objectMap[currentPosition];
 			}
 		}
 
@@ -242,7 +241,7 @@ void Game::calculateLasers()
 			while (!stop) {
 				now.moveInDirection(dir, 1);
 
-				if (level.objectMap[now] != nullptr) {
+				if (level.objectMap[now] != nullptr && !level.objectMap[now]->inStack) {
 					if (level.objectMap[now]->id == OBJ_BEAMER) {
 						stop = end = true;
 					} else if (level.objectMap[now]->id == OBJ_DOT) {
@@ -322,6 +321,11 @@ bool Game::Level::isPlaceFree(Object::Position position)
 	return (objectMap[position] == nullptr && !obstacles[position] && !isOutsideBoard(position));
 }
 
+bool Game::Level::isPlaceTaken(Object::Position position)
+{
+	return (objectMap[position] != nullptr && !objectMap[position]->inStack);
+}
+
 bool Game::Level::isOutsideBoard(Object::Position position)
 {
 	return (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height);
@@ -329,11 +333,28 @@ bool Game::Level::isOutsideBoard(Object::Position position)
 
 bool Game::Level::dragObject(Drag &drag, Object::Position position)
 {
-	bool success = (objectMap[position] != nullptr) && (objectMap[position]->movable || game->editor.isActive());
+	bool success = isPlaceTaken(position) && (objectMap[position]->movable || game->editor.isActive());
 
 	if (success) {
+		drag.fromStack = false;
 		drag.position = position;
 		drag.sprite = objectMap[position]->sprite;
+		objectMap[position]->inStack = false;
+	}
+
+	return success;
+}
+
+bool Game::Level::dragStackObject(Drag &drag, Object::Position mousePosition)
+{
+	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
+	bool success = stack.isPlaceTaken(stackPosition);
+
+	if (success) {
+		drag.fromStack = true;
+		drag.position = stackPosition;
+		drag.sprite = stack.objectMap[stackPosition]->sprite;
+		stack.objectMap[stackPosition]->inStack = true;
 	}
 
 	return success;
@@ -416,6 +437,37 @@ void Game::Level::setTile(Object::Position position)
 {
 	tileSprites[position].setTexture(*tiles[static_cast<size_t>(obstacles[position])]);
 	tileSprites[position].setPosition(positionToFloat(position));
+}
+
+bool Game::Level::moveFromStack(Object::Position stackPosition, Object::Position mousePosition)
+{
+	bool success = !stack.isPlaceFree(stackPosition) && isPlaceFree(mousePosition);
+
+	if (success) {
+		objectMap[mousePosition] = stack.objectMap[stackPosition];
+		objectMap[mousePosition]->position = mousePosition;
+		objectMap[mousePosition]->sprite.setPosition(mousePosition);
+		objectMap[mousePosition]->inStack = false;
+		stack.objectMap[stackPosition] = nullptr;
+	}
+
+	return success;
+}
+
+bool Game::Level::moveToStack(Object::Position gamePosition, Object::Position mousePosition)
+{
+	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
+	bool success = stack.isPlaceFree(stackPosition) && objectMap[gamePosition] != nullptr;
+
+	if (success) {
+		stack.objectMap[stackPosition] = objectMap[gamePosition];
+		stack.objectMap[stackPosition]->position = stackPosition;
+		stack.objectMap[stackPosition]->sprite.setPosition(stackPosition + stack.offset);
+		stack.objectMap[stackPosition]->inStack = true;
+		objectMap[gamePosition] = nullptr;
+	}
+
+	return success;
 }
 
 void Game::Level::updateStack()

@@ -68,7 +68,7 @@ void draw(GameState gameState)
 	drawBoard(gameState);
 	drawStack(gameState);
 	drawLasers(gameState);
-	drawGameObject(gameState);
+	drawGameObjects(gameState);
 
 	gameState.window.display();
 }
@@ -78,7 +78,6 @@ void drawBoard(GameState gameState)
 	for (short y = 0; y < gameState.game.level.height; ++y) {
 		for (short x = 0; x < gameState.game.level.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
-
 			drawTile(gameState, currentPosition);
 		}
 	}
@@ -111,24 +110,23 @@ void drawLasers(GameState gameState, bool blackLasers)
 	}
 }
 
-void drawGameObject(GameState gameState)
+void drawGameObjects(GameState gameState)
 {
 	bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
 		for (size_t index = 0; index < gameState.game.level.objectList[type].size(); ++index) {
-			// Draw the sprite unless it's dragged
-			if (gameState.drag.position != gameState.game.level.objectList[type][index]->position) {
+			if (gameState.drag.fromStack != gameState.game.level.objectList[type][index]->inStack || gameState.drag.position != gameState.game.level.objectList[type][index]->position) {
 				gameState.window.draw(gameState.game.level.objectList[type][index]->sprite);
 			}
 		}
 	}
+
 	if (gameState.game.editor.isActive() && !shiftPressed) {
 		if (gameState.game.editor.mode == ED_ADD_OR_REMOVE_OBJECTS) {
 			gameState.game.editor.sprite.setPosition(gameState.mousePosition);
 			gameState.window.draw(gameState.game.editor.sprite);
 		}
 	} else {
-		// Draw the dragged element (if there is any)
 		if (!gameState.drag.position.isNull()) {
 			gameState.drag.sprite.setPosition(gameState.mousePosition);
 			gameState.window.draw(gameState.drag.sprite);
@@ -250,17 +248,34 @@ void mouseEditorEvents(GameState gameState)
 
 void mouseGameEvents(GameState gameState)
 {
+	bool onStack = (gameState.game.level.stack.isOnStack(gameState.mousePosition));
 	if (gameState.event.type == sf::Event::MouseButtonPressed) {
-		gameState.game.level.event = gameState.game.level.dragObject(gameState.drag, gameState.mousePosition);
+		if (onStack) {
+			gameState.game.level.event = gameState.game.level.dragStackObject(gameState.drag, gameState.mousePosition);
+		} else {
+			gameState.game.level.event = gameState.game.level.dragObject(gameState.drag, gameState.mousePosition);
+		}
 	}
 
 	if (gameState.event.type == sf::Event::MouseButtonReleased) {
-		if (!gameState.drag.position.isNull()) {
-			gameState.game.level.event = gameState.game.level.moveObject(gameState.drag.position, gameState.mousePosition);
-		}
+		if (onStack) {
+			if (!gameState.drag.position.isNull()) {
+				gameState.game.level.event = gameState.game.level.moveToStack(gameState.drag.position, gameState.mousePosition);
+			}
+		} else {
+			if (!gameState.drag.fromStack) {
+				if (!gameState.drag.position.isNull()) {
+					gameState.game.level.event = gameState.game.level.moveObject(gameState.drag.position, gameState.mousePosition);
+				}
 
-		if (gameState.drag.position == gameState.mousePosition) {
-			gameState.game.level.event = gameState.game.level.rotateObject(gameState.mousePosition);
+				if (gameState.drag.position == gameState.mousePosition) {
+					gameState.game.level.event = gameState.game.level.rotateObject(gameState.mousePosition);
+				}
+			} else {
+				if (!gameState.drag.position.isNull()) {
+					gameState.game.level.event = gameState.game.level.moveFromStack(gameState.drag.position, gameState.mousePosition);
+				}
+			}
 		}
 
 		gameState.drag.position.setNull();

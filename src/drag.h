@@ -5,6 +5,7 @@
 #include "object.h"
 
 struct Drag {
+	bool fromStack = false;
 	Object::Position position;
 	sf::Sprite sprite;
 };

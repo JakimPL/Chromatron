@@ -9,6 +9,7 @@ class Object
 {
 public:
 	Object(Color col = COL_BLACK_TUPLE);
+	bool inStack = false;
 	bool rotatable = false;
 	bool movable = false;
 	bool colorable = false;
@@ -23,6 +24,8 @@ public:
 		short y = -1;
 	public:
 		Position operator+(const Position &pos);
+		Position operator-(const Position &pos);
+		Position operator-();
 		bool operator<(const Position &pos) const;
 		bool operator==(const Position &pos) const;
 		bool operator!=(const Position &pos) const;

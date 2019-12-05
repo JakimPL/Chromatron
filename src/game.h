@@ -30,9 +30,11 @@ public:
 		Game* game;
 
 		bool addObject(Object::Position position, ObjectID id);
-		bool dragObject(Drag &drag, Object::Position position);
+		bool dragObject(Drag &drag, Object::Position mousePosition);
+		bool dragStackObject(Drag &drag, Object::Position position);
 		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);
+		bool isPlaceTaken(Object::Position position);
 		bool isOutsideBoard(Object::Position position);
 		bool moveObject(Object::Position start, Object::Position end);
 		bool removeObject(Object::Position position);
@@ -41,6 +43,8 @@ public:
 		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH);
 		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);
 		void setTile(Object::Position position);
+		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
+		bool moveToStack(Object::Position gamePosition, Object::Position mousePosition);
 		void updateStack();
 	} level;
 

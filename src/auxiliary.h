@@ -22,7 +22,7 @@ extern void draw(GameState gameState);
 extern void drawBoard(GameState gameState);
 extern void drawLasers(GameState gameState, bool blackLasers);
 extern void drawLasers(GameState gameState);
-extern void drawGameObject(GameState gameState);
+extern void drawGameObjects(GameState gameState);
 extern void drawStack(GameState gameState);
 extern void drawTile(GameState gameState, Object::Position position, bool stack = false);
 extern void gameEvents(GameState gameState);
