@@ -14,6 +14,7 @@ extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color 
 extern sf::Texture loadTexture(const std::string &filename);
 extern void readByte(std::ifstream *file, unsigned short &var);
 extern void writeByte(std::ofstream *file, unsigned short var);
+extern void handleApplicationParameters(GameState gameState, int argc, char* argv[]);
 extern void deleteGameObjects(GameState gameState);
 extern void draw(GameState gameState);
 extern void drawBoard(GameState gameState);
@@ -23,6 +24,7 @@ extern void drawGameObject(GameState gameState);
 extern void drawStack(GameState gameState);
 extern void drawTile(GameState gameState, Object::Position position, sf::Color outlineColor, sf::Color fillColor);
 extern void gameEvents(GameState gameState);
+extern void initializeGame(GameState gameState);
 extern void mainLoop(GameState gameState);
 extern void keyboardGlobalEvents(GameState gameState);
 extern void keyboardEditorEvents(GameState gameState);

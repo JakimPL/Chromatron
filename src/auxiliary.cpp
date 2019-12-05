@@ -21,6 +21,22 @@ void writeByte(std::ofstream* file, unsigned short var)
 	file->write(&buffer, 1);
 }
 
+void handleApplicationParameters(GameState gameState, int argc, char* argv[])
+{
+	bool editorOn = false;
+	for (int arg = 0; arg < argc; ++arg) {
+		editorOn = std::string(argv[arg]) == "--editor";
+	}
+
+	gameState.game.editor.turn(editorOn);
+}
+
+void initializeGame(GameState gameState)
+{
+	gameState.window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
+	gameState.game.loadLevel("000");
+}
+
 void mainLoop(GameState gameState)
 {
 	while (gameState.window.isOpen()) {
@@ -131,8 +147,8 @@ void drawGameObject(GameState gameState)
 
 void drawStack(GameState gameState)
 {
-	for (unsigned short y = 0; y < gameState.game.level.stack.height; ++y) {
-		for (unsigned short x = 0; x < gameState.game.level.stack.width; ++x) {
+	for (short y = 0; y < gameState.game.level.stack.height; ++y) {
+		for (short x = 0; x < gameState.game.level.stack.width; ++x) {
 			Object::Position currentPosition;
 			currentPosition.setPosition(x, y);
 
@@ -250,12 +266,10 @@ void mouseGameEvents(GameState gameState)
 	}
 
 	if (gameState.event.type == sf::Event::MouseButtonReleased) {
-		// If the drag position is not null, move an object to the new location (if possible)
 		if (!gameState.drag.position.isNull()) {
 			gameState.game.level.event = gameState.game.level.moveObject(gameState.drag.position, gameState.mousePosition);
 		}
 
-		// Rotate an object if possible
 		if (gameState.drag.position == gameState.mousePosition) {
 			gameState.game.level.event = gameState.game.level.rotateObject(gameState.mousePosition);
 		}
