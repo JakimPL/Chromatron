@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -454,17 +455,33 @@ bool Game::Level::moveFromStack(Object::Position stackPosition, Object::Position
 	return success;
 }
 
-bool Game::Level::moveToStack(Object::Position gamePosition, Object::Position mousePosition)
+bool Game::Level::moveToStack(Object::Position dragPosition, Object::Position mousePosition)
 {
 	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
-	bool success = stack.isPlaceFree(stackPosition) && objectMap[gamePosition] != nullptr;
+	bool success = stack.isPlaceFree(stackPosition) && isPlaceTaken(dragPosition);
 
 	if (success) {
-		stack.objectMap[stackPosition] = objectMap[gamePosition];
+		stack.objectMap[stackPosition] = objectMap[dragPosition];
 		stack.objectMap[stackPosition]->position = stackPosition;
 		stack.objectMap[stackPosition]->sprite.setPosition(stackPosition + stack.offset);
 		stack.objectMap[stackPosition]->inStack = true;
-		objectMap[gamePosition] = nullptr;
+		objectMap[dragPosition] = nullptr;
+	}
+
+	return success;
+}
+
+bool Game::Level::moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition)
+{
+	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
+	bool success = stack.isPlaceTaken(dragPosition) && stack.isPlaceFree(stackPosition);
+
+	if (success) {
+		stack.objectMap[stackPosition] = stack.objectMap[dragPosition];
+		stack.objectMap[stackPosition]->position = stackPosition;
+		stack.objectMap[stackPosition]->sprite.setPosition(stackPosition + stack.offset);
+		stack.objectMap[stackPosition]->inStack = true;
+		stack.objectMap[dragPosition] = nullptr;
 	}
 
 	return success;

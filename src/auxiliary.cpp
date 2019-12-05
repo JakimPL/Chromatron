@@ -260,7 +260,11 @@ void mouseGameEvents(GameState gameState)
 	if (gameState.event.type == sf::Event::MouseButtonReleased) {
 		if (onStack) {
 			if (!gameState.drag.position.isNull()) {
-				gameState.game.level.event = gameState.game.level.moveToStack(gameState.drag.position, gameState.mousePosition);
+				if (!gameState.drag.fromStack) {
+					gameState.game.level.event = gameState.game.level.moveToStack(gameState.drag.position, gameState.mousePosition);
+				} else {
+					gameState.game.level.event = gameState.game.level.moveFromStackToStack(gameState.drag.position, gameState.mousePosition);
+				}
 			}
 		} else {
 			if (!gameState.drag.fromStack) {

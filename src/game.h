@@ -44,7 +44,8 @@ public:
 		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);
 		void setTile(Object::Position position);
 		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
-		bool moveToStack(Object::Position gamePosition, Object::Position mousePosition);
+		bool moveToStack(Object::Position dragPosition, Object::Position mousePosition);
+		bool moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition);
 		void updateStack();
 	} level;
 
