@@ -31,7 +31,7 @@ public:
 
 		bool addObject(Object::Position position, ObjectID id);
 		bool dragObject(Drag &drag, Object::Position mousePosition);
-		bool dragStackObject(Drag &drag, Object::Position position);
+		bool dragStackObject(Drag &drag, Object::Position mousePosition);
 		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);
 		bool isPlaceTaken(Object::Position position);
@@ -39,6 +39,7 @@ public:
 		bool moveObject(Object::Position start, Object::Position end);
 		bool removeObject(Object::Position position);
 		bool rotateObject(Object::Position position);
+		bool rotateStackObject(Object::Position position);
 		bool setObstacle(Object::Position position, bool obstacle);
 		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH);
 		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);

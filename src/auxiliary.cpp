@@ -265,6 +265,10 @@ void mouseGameEvents(GameState gameState)
 				} else {
 					gameState.game.level.event = gameState.game.level.moveFromStackToStack(gameState.drag.position, gameState.mousePosition);
 				}
+
+				if (gameState.drag.position == gameState.mousePosition - gameState.game.level.stack.offset) {
+					gameState.game.level.event = gameState.game.level.rotateStackObject(gameState.mousePosition);
+				}
 			}
 		} else {
 			if (!gameState.drag.fromStack) {

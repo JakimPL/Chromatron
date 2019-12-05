@@ -125,12 +125,12 @@ void Game::loadLevel(const std::string &id)
 			}
 		}
 
-		unsigned short width, height;
-		readByte(&levelFile, width);
-		readByte(&levelFile, height);
+		unsigned short stackWidth, stackHeight;
+		readByte(&levelFile, stackWidth);
+		readByte(&levelFile, stackHeight);
 
-		for (size_t row = 0; row < height; ++row) {
-			for (size_t column = 0; column < width; ++column) {
+		for (size_t row = 0; row < stackWidth; ++row) {
+			for (size_t column = 0; column < stackHeight; ++column) {
 				unsigned short object;
 				readByte(&levelFile, object);
 
@@ -377,7 +377,7 @@ bool Game::Level::moveObject(Object::Position start, Object::Position end)
 
 bool Game::Level::removeObject(Object::Position position)
 {
-	bool success = (objectMap[position] != nullptr);
+	bool success = isPlaceTaken(position);
 
 	ObjectID id = objectMap[position]->id;
 
@@ -392,10 +392,22 @@ bool Game::Level::removeObject(Object::Position position)
 
 bool Game::Level::rotateObject(Object::Position position)
 {
-	bool success = (objectMap[position] != nullptr);
+	bool success = isPlaceTaken(position);
 
 	if (success) {
 		objectMap[position]->rotate(true, game->editor.isActive());
+	}
+
+	return success;
+}
+
+bool Game::Level::rotateStackObject(Object::Position position)
+{
+	Object::Position stackPosition = stack.getRelativePosition(position);
+	bool success = stack.isPlaceTaken(stackPosition);
+
+	if (success) {
+		stack.objectMap[stackPosition]->rotate(true, game->editor.isActive());
 	}
 
 	return success;
