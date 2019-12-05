@@ -6,6 +6,7 @@
 #include "src/constants.h"
 #include "src/drag.h"
 #include "src/game.h"
+#include "src/gamestate.h"
 #include "src/stack.h"
 #include "src/structures.h"
 #include "src/object.h"

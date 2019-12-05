@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
 	// Create a game object
 	Game game;
 	Drag drag;
+	sf::Event event;
 
 	// Initialize the window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chromatron");
@@ -21,8 +22,11 @@ int main(int argc, char* argv[])
 
 	game.loadLevel("000");
 	game.editor.turn(editorOn);
-	mainLoop(game, window, drag);
-	deleteGameObjects(game);
+
+	GameState gameState(game, window, drag, event);
+
+	mainLoop(gameState);
+	deleteGameObjects(gameState);
 
 	return 0;
 }

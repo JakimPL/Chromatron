@@ -15,6 +15,8 @@
 #define STACK_OFFSET_X 1
 #define STACK_OFFSET_Y 0
 
+#define MAX_COLOR 255
+
 #define COL_BLACK_TUPLE   {false, false, false}
 #define COL_RED_TUPLE     {true,  false, false}
 #define COL_GREEN_TUPLE   {false, true,  false}
@@ -70,9 +72,6 @@ static std::string PATH_LEV_SUFFIX = ".lev";
 static std::string PATH_IMG_PREFIX = "IMG/";
 static std::string PATH_IMG_SUFFIX = ".png";
 static std::vector<std::string> IMG_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
-
-typedef sf::Keyboard Key;
-typedef sf::Event Ev;
 
 static sf::Color  black(0,   0,   0);
 static sf::Color   gray(128, 128, 128);
