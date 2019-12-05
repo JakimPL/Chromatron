@@ -6,19 +6,25 @@
 
 Game::Game()
 {
-	level.stack.initialize();
-
 	for (size_t index = 0; index < OBJ_COUNT; ++index) {
-		textures.push_back(loadTexture(IMG_NAMES[index]));
+		textures.push_back(loadTexture(IMG_OBJECT_NAMES[index]));
 	}
 
-	textures.push_back(loadTexture(IMG_NAMES[OBJ_COUNT]));
+	textures.push_back(loadTexture(IMG_OBJECT_NAMES[OBJ_COUNT]));
+
+	for (size_t index = 0; index < TIL_COUNT; ++index) {
+		tiles.push_back(loadTexture(IMG_TILE_NAMES[index]));
+	}
 }
 
 Game::~Game()
 {
 	for (size_t index = 0; index < textures.size(); ++index) {
 		delete textures[index];
+	}
+
+	for (size_t index = 0; index < tiles.size(); ++index) {
+		delete tiles[index];
 	}
 }
 
@@ -59,6 +65,7 @@ void Game::loadLevel(const std::string &id)
 				bool obstacle;
 				levelFile.read((char*)&obstacle, 1);
 				level.obstacles[currentPosition] = obstacle;
+				level.setTile(currentPosition);
 			}
 		}
 
@@ -89,7 +96,7 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Beamer* beamer = new Beamer(color);
-				setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
+				level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 
@@ -100,21 +107,21 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Dot* dot = new Dot(color);
-				setObject(dot, x, y, static_cast<ObjectID>(id));
+				level.setObject(dot, x, y, static_cast<ObjectID>(id));
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Mirror* mirror = new Mirror();
-				setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
+				level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Bender* bender = new Bender();
-				setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
+				level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
 			}
 		}
 
@@ -126,7 +133,9 @@ void Game::loadLevel(const std::string &id)
 			for (size_t column = 0; column < width; ++column) {
 				unsigned short object;
 				readByte(&levelFile, object);
-				object = level.stack.map[row][column];
+
+				Object::Position currentPosition = shortToPosition(row, column);
+				object = level.stack.map[currentPosition];
 			}
 		}
 
@@ -274,31 +283,6 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction)
-{
-	object->id = id;
-	object->position.setPosition(x, y);
-	object->direction = direction;
-
-	object->sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
-	object->sprite.setPosition(object->position);
-	object->textures.push_back(textures[id]);
-	object->sprite.setTexture(*(object->textures)[0]);
-	object->sprite.setRotation(direction * 45);
-
-	if (id == OBJ_DOT) {
-		object->textures.push_back(textures[OBJ_COUNT]);
-	}
-
-	level.objectList[id].push_back(object);
-	level.objectMap[object->position] = object;
-}
-
-void Game::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction)
-{
-	setObject(object, position.getX(), position.getY(), id, direction);
-}
-
 bool Game::Level::addObject(Object::Position position, ObjectID id)
 {
 	bool success = isPlaceFree(position);
@@ -306,16 +290,16 @@ bool Game::Level::addObject(Object::Position position, ObjectID id)
 	if (success) {
 		if (id == OBJ_BEAMER) {
 			Beamer* beamer = new Beamer();
-			this->game->setObject(beamer, position, id, DIR_NORTH);
+			setObject(beamer, position, id, DIR_NORTH);
 		} else if (id == OBJ_DOT) {
 			Dot* dot = new Dot();
-			this->game->setObject(dot, position, id, DIR_NORTH);
+			setObject(dot, position, id, DIR_NORTH);
 		} else if (id == OBJ_MIRROR) {
 			Mirror* mirror = new Mirror();
-			this->game->setObject(mirror, position, id, DIR_NORTH);
+			setObject(mirror, position, id, DIR_NORTH);
 		} else if (id == OBJ_BENDER) {
 			Bender* bender = new Bender();
-			this->game->setObject(bender, position, id, DIR_NORTH);
+			setObject(bender, position, id, DIR_NORTH);
 		}
 	}
 
@@ -403,11 +387,49 @@ bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 	return true;
 }
 
+void Game::Level::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction)
+{
+	object->id = id;
+	object->position.setPosition(x, y);
+	object->direction = direction;
+
+	object->sprite.setOrigin(ORIGIN);
+	object->sprite.setPosition(object->position);
+	object->textures.push_back(textures[id]);
+	object->sprite.setTexture(*(object->textures)[0]);
+	object->sprite.setRotation(direction * 45);
+
+	if (id == OBJ_DOT) {
+		object->textures.push_back(textures[OBJ_COUNT]);
+	}
+
+	game->level.objectList[id].push_back(object);
+	game->level.objectMap[object->position] = object;
+}
+
+void Game::Level::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction)
+{
+	setObject(object, position.getX(), position.getY(), id, direction);
+}
+
+void Game::Level::setTile(Object::Position position)
+{
+	tileSprites[position].setTexture(*tiles[static_cast<size_t>(obstacles[position])]);
+	tileSprites[position].setPosition(positionToFloat(position));
+}
+
 void Game::Level::updateStack()
 {
 	Object::Position offset;
 	offset.setPosition(width + STACK_OFFSET_X, STACK_OFFSET_Y);
 	stack.offset.setPosition(offset);
+	for (size_t row = 0; row < height; ++row) {
+		for (size_t column = 0; column < width; ++column) {
+			Object::Position currentPosition = shortToPosition(row, column);
+			stack.sprites[currentPosition].setTexture(*tiles[TIL_EMPTY]);
+			stack.sprites[currentPosition].setPosition(positionToFloat(currentPosition + offset));
+		}
+	}
 }
 
 bool Game::Editor::isActive()

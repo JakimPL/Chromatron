@@ -16,6 +16,7 @@
 #define STACK_OFFSET_Y 0
 
 #define MAX_COLOR 255
+#define ORIGIN TILE_SIZE / 2, TILE_SIZE / 2
 
 #define COL_BLACK_TUPLE   {false, false, false}
 #define COL_RED_TUPLE     {true,  false, false}
@@ -66,12 +67,19 @@ enum EditorMode : unsigned short {
 	ED_COUNT
 };
 
+enum Tile : unsigned short {
+	TIL_EMPTY,
+	TIL_OBSTACLE,
+	TIL_COUNT
+};
+
 static std::string PATH_DATA       = "./data/";
 static std::string PATH_LEV_PREFIX = "LEV/level";
 static std::string PATH_LEV_SUFFIX = ".lev";
 static std::string PATH_IMG_PREFIX = "IMG/";
 static std::string PATH_IMG_SUFFIX = ".png";
-static std::vector<std::string> IMG_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
+static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
+static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 
 static sf::Color  black(0,   0,   0);
 static sf::Color   gray(128, 128, 128);

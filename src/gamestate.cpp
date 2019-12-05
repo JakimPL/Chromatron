@@ -8,8 +8,5 @@ GameState::GameState(Game &gam, sf::RenderWindow &win, Drag &drg, sf::Event &ev)
 
 void GameState::update()
 {
-	sf::Event ev;
-	event = ev;
-
 	mousePosition = floatToPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 }

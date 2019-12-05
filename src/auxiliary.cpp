@@ -77,18 +77,9 @@ void drawBoard(GameState gameState)
 {
 	for (short y = 0; y < gameState.game.level.height; ++y) {
 		for (short x = 0; x < gameState.game.level.width; ++x) {
-			sf::Color outlineColor, fillColor;
-			Object::Position currentPosition;
-			currentPosition.setPosition(x, y);
-			if (currentPosition == gameState.mousePosition) {
-				outlineColor = (gameState.game.level.obstacles[currentPosition] ? lgray : dgray);
-				fillColor = (gameState.game.level.obstacles[currentPosition] ? yellow : lgray);
-			} else {
-				outlineColor = (gameState.game.level.obstacles[currentPosition] ? lgray : dgray);
-				fillColor = (gameState.game.level.obstacles[currentPosition] ? dgray : gray);
-			}
+			Object::Position currentPosition = shortToPosition(x, y);
 
-			drawTile(gameState, currentPosition, outlineColor, fillColor);
+			drawTile(gameState, currentPosition);
 		}
 	}
 }
@@ -149,19 +140,17 @@ void drawStack(GameState gameState)
 {
 	for (short y = 0; y < gameState.game.level.stack.height; ++y) {
 		for (short x = 0; x < gameState.game.level.stack.width; ++x) {
-			Object::Position currentPosition;
-			currentPosition.setPosition(x, y);
+			Object::Position currentPosition = shortToPosition(x, y);
 
-			drawTile(gameState, gameState.game.level.stack.offset + currentPosition, dgray, gray);
+			drawTile(gameState, currentPosition, true);
 		}
 	}
 }
 
-void drawTile(GameState gameState, Object::Position position, sf::Color outlineColor, sf::Color fillColor)
+void drawTile(GameState gameState, Object::Position position, bool stack)
 {
-	sf::Vector2f vector = positionToFloat(position);
-	gameState.window.draw(rectangleCreate(vector.x, vector.y, TILE_SIZE, TILE_SIZE, outlineColor));
-	gameState.window.draw(rectangleCreate(vector.x + OUTLINE_SIZE, vector.y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
+	sf::Sprite sprite = (stack ? gameState.game.level.stack.sprites[position] : gameState.game.level.tileSprites[position]);
+	gameState.window.draw(sprite);
 }
 
 void gameEvents(GameState gameState)
@@ -280,14 +269,19 @@ void mouseGameEvents(GameState gameState)
 
 Object::Position floatToPosition(sf::Vector2f vector)
 {
-	Object::Position position;
-	position.setPosition(static_cast<short>(vector.x / TILE_SIZE - OFFSET_X), static_cast<short>(vector.y / TILE_SIZE - OFFSET_Y));
-	return position;
+	return shortToPosition(static_cast<short>(vector.x / TILE_SIZE - OFFSET_X), static_cast<short>(vector.y / TILE_SIZE - OFFSET_Y));
 }
 
 Object::Position floatToPosition(float x, float y)
 {
 	return floatToPosition(sf::Vector2f(x, y));
+}
+
+Object::Position shortToPosition(short x, short y)
+{
+	Object::Position position;
+	position.setPosition(x, y);
+	return position;
 }
 
 sf::Vector2f positionToFloat(Object::Position position)

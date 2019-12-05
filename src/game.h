@@ -14,8 +14,6 @@
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
-	void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH);
-	void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);
 public:
 	Game();
 	~Game();
@@ -26,6 +24,7 @@ public:
 		unsigned short height;
 		std::vector<Object*> objectList[OBJ_COUNT];
 		std::map<Object::Position, bool> obstacles;
+		std::map<Object::Position, sf::Sprite> tileSprites;
 		std::map<Object::Position, Object*> objectMap;
 		Stack stack;
 		Game* game;
@@ -39,6 +38,9 @@ public:
 		bool removeObject(Object::Position position);
 		bool rotateObject(Object::Position position);
 		bool setObstacle(Object::Position position, bool obstacle);
+		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH);
+		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);
+		void setTile(Object::Position position);
 		void updateStack();
 	} level;
 
