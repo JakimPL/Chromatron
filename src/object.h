@@ -12,8 +12,8 @@ public:
 	bool rotatable = false;
 	bool movable = false;
 	bool colorable = false;
-	Objects id;
-	Directions direction = DIR_NORTH;
+	ObjectID id;
+	DirectionID direction = DIR_NORTH;
 	sf::Sprite sprite;
 	Color color;
 

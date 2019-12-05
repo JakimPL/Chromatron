@@ -19,24 +19,9 @@ int main(int argc, char* argv[])
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	window.setView(view);
 
-	// Load a level
 	game.loadLevel("000");
 	game.editor.turn(editorOn);
-
-	while (window.isOpen()) {
-		Ev event;
-		while (window.pollEvent(event)) {
-			if (event.type == Ev::Closed or event.key.code == Key::Escape) {
-				window.close();
-			}
-
-			Object::Position mousePosition = floatToPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-			gameEvents(game, event, drag, mousePosition);
-			draw(game, window, drag, mousePosition);
-		}
-	}
-
-	// Delete level objects
+	mainLoop(game, window, drag);
 	deleteGameObjects(game);
 
 	return 0;

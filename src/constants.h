@@ -36,7 +36,7 @@ enum Colors : unsigned short {
 	COL_COUNT
 };
 
-enum Directions : unsigned short {
+enum DirectionID : unsigned short {
 	DIR_NORTH,
 	DIR_NORTHEAST,
 	DIR_EAST,
@@ -48,13 +48,20 @@ enum Directions : unsigned short {
 	DIR_COUNT
 };
 
-enum Objects : unsigned short {
+enum ObjectID : unsigned short {
 	OBJ_EMPTY,
 	OBJ_BEAMER,
 	OBJ_DOT,
 	OBJ_MIRROR,
 	OBJ_BENDER,
 	OBJ_COUNT,
+};
+
+enum EditorMode : unsigned short {
+	ED_EDIT_OBJECTS,
+	ED_ADD_OR_REMOVE_OBJECTS,
+	ED_ADD_OR_REMOVE_OBSTACLES,
+	ED_COUNT
 };
 
 static std::string PATH_DATA       = "./data/";

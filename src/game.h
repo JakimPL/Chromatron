@@ -11,18 +11,11 @@
 #include "object.h"
 #include "stack.h"
 
-enum EditorMode {
-	ED_EDIT_OBJECTS,
-	ED_ADD_OR_REMOVE_OBJECTS,
-	ED_ADD_OR_REMOVE_OBSTACLES,
-	ED_COUNT
-};
-
 class Game
 {
 	sf::Texture* loadTexture(const std::string &filename);
-	void setObject(Object* object, short x, short y, Objects id, Directions direction = DIR_NORTH);
-	void setObject(Object* object, Object::Position position, Objects id, Directions direction = DIR_NORTH);
+	void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH);
+	void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);
 public:
 	Game();
 	~Game();
@@ -37,7 +30,7 @@ public:
 		Stack stack;
 		Game* game;
 
-		bool addObject(Object::Position position, Objects id);
+		bool addObject(Object::Position position, ObjectID id);
 		bool dragObject(Drag &drag, Object::Position position);
 		bool changeObjectColor(Object::Position position);
 		bool isPlaceFree(Object::Position position);
@@ -52,17 +45,19 @@ public:
 	struct Editor {
 	private:
 		bool active;
-		Objects currentObject = OBJ_BEAMER;
+		ObjectID currentObject = OBJ_BEAMER;
 	public:
 		EditorMode mode;
 		sf::Sprite sprite;
 
 		bool isActive();
-		Objects getObject();
-		void setObject(Objects id);
+		ObjectID getObject();
+		void setObject(ObjectID id);
 		void switchMode();
 		void turn(bool editorOn);
 	} editor;
+
+	Drag drag;
 
 	void loadLevel(const std::string &id);
 	void saveLevel(const std::string &id);

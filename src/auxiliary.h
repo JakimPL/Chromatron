@@ -22,6 +22,7 @@ extern void drawGameObject(Game &game, sf::RenderWindow &window, Drag &drag, Obj
 extern void drawStack(Game &game, sf::RenderWindow &window);
 extern void drawTile(sf::RenderWindow &window, Object::Position position, sf::Color outlineColor, sf::Color fillColor);
 extern void gameEvents(Game &game, Ev &event, Drag &drag, Object::Position position);
+extern void mainLoop(Game &game, sf::RenderWindow &window, Drag &drag);
 extern void keyboardGlobalEvents(Game &game, Ev &event);
 extern void keyboardEditorEvents(Game &game, Ev &event);
 extern void mouseEditorEvents(Game &game, Ev &event, Object::Position mousePosition);

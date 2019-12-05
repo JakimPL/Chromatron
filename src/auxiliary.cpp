@@ -21,6 +21,22 @@ void writeByte(std::ofstream* file, unsigned short var)
 	file->write(&buffer, 1);
 }
 
+void mainLoop(Game &game, sf::RenderWindow &window, Drag &drag)
+{
+	while (window.isOpen()) {
+		Ev event;
+		while (window.pollEvent(event)) {
+			if (event.type == Ev::Closed or event.key.code == Key::Escape) {
+				window.close();
+			}
+
+			Object::Position mousePosition = floatToPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+			gameEvents(game, event, drag, mousePosition);
+			draw(game, window, drag, mousePosition);
+		}
+	}
+}
+
 void deleteGameObjects(Game &game)
 {
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {

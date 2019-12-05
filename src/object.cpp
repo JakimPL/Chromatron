@@ -43,7 +43,7 @@ Bender::Bender()
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {
-		direction = static_cast<Directions>((static_cast<unsigned short>(direction) + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT);
+		direction = static_cast<DirectionID>((static_cast<unsigned short>(direction) + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT);
 		sprite.setRotation(direction * 45);
 	}
 }

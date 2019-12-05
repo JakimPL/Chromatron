@@ -9,7 +9,7 @@ struct Stack {
 	unsigned short height = STACK_HEIGHT;
 
 	Object::Position offset;
-	std::vector<std::vector<Objects>> map;
+	std::vector<std::vector<ObjectID>> map;
 	void initialize();
 };
 

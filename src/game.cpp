@@ -62,11 +62,11 @@ void Game::loadLevel(const std::string &id)
 			}
 		}
 
-		// Read objects' data
-		unsigned short objectsCount;
-		readByte(&levelFile, objectsCount);
+		// Read ObjectID' data
+		unsigned short ObjectIDCount;
+		readByte(&levelFile, ObjectIDCount);
 
-		for (unsigned short obj = 0; obj < objectsCount; ++obj) {
+		for (unsigned short obj = 0; obj < ObjectIDCount; ++obj) {
 			// Read the object's type
 			unsigned short id;
 			readByte(&levelFile, id);
@@ -89,7 +89,7 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Beamer* beamer = new Beamer(color);
-				setObject(beamer, x, y, static_cast<Objects>(id), static_cast<Directions>(direction));
+				setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
 			} else if (id == OBJ_DOT) {
 				unsigned short red, green, blue;
 
@@ -100,21 +100,21 @@ void Game::loadLevel(const std::string &id)
 				Color color(red > 0, green > 0, blue > 0);
 
 				Dot* dot = new Dot(color);
-				setObject(dot, x, y, static_cast<Objects>(id));
+				setObject(dot, x, y, static_cast<ObjectID>(id));
 			} else if (id == OBJ_MIRROR) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Mirror* mirror = new Mirror();
-				setObject(mirror, x, y, static_cast<Objects>(id), static_cast<Directions>(direction));
+				setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
 			} else if (id == OBJ_BENDER) {
 				unsigned short direction;
 
 				readByte(&levelFile, direction);
 
 				Bender* bender = new Bender();
-				setObject(bender, x, y, static_cast<Objects>(id), static_cast<Directions>(direction));
+				setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
 			}
 		}
 
@@ -157,14 +157,14 @@ void Game::saveLevel(const std::string &id)
 			}
 		}
 
-		// Save objects' data
-		unsigned short objectsCount = 0;
+		// Save ObjectID' data
+		unsigned short ObjectIDCount = 0;
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
-				objectsCount++;
+				ObjectIDCount++;
 			}
 		}
-		writeByte(&levelFile, objectsCount);
+		writeByte(&levelFile, ObjectIDCount);
 
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
@@ -274,7 +274,7 @@ void Game::updateDots()
 	}
 }
 
-void Game::setObject(Object* object, short x, short y, Objects id, Directions direction)
+void Game::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction)
 {
 	object->id = id;
 	object->position.setPosition(x, y);
@@ -294,12 +294,12 @@ void Game::setObject(Object* object, short x, short y, Objects id, Directions di
 	level.objectMap[object->position] = object;
 }
 
-void Game::setObject(Object* object, Object::Position position, Objects id, Directions direction)
+void Game::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction)
 {
 	setObject(object, position.getX(), position.getY(), id, direction);
 }
 
-bool Game::Level::addObject(Object::Position position, Objects id)
+bool Game::Level::addObject(Object::Position position, ObjectID id)
 {
 	bool success = isPlaceFree(position);
 
@@ -373,7 +373,7 @@ bool Game::Level::removeObject(Object::Position position)
 {
 	bool success = (objectMap[position] != nullptr);
 
-	Objects id = objectMap[position]->id;
+	ObjectID id = objectMap[position]->id;
 
 	if (success) {
 		objectList[id].erase(std::find(objectList[id].begin(), objectList[id].end(), objectMap[position]));
@@ -426,7 +426,7 @@ void Game::Editor::turn(bool editorOn)
 	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
 }
 
-void Game::Editor::setObject(Objects id)
+void Game::Editor::setObject(ObjectID id)
 {
 	if (active) {
 		currentObject = id;
@@ -435,7 +435,7 @@ void Game::Editor::setObject(Objects id)
 	sprite.setTexture(*textures[id]);
 }
 
-Objects Game::Editor::getObject()
+ObjectID Game::Editor::getObject()
 {
 	return currentObject;
 }
