@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -61,12 +60,15 @@ void Game::loadLevel(const std::string &id)
 	if (levelFile.good()) {
 		readByte(levelFile, level.width);
 		readByte(levelFile, level.height);
+		readByte(levelFile, level.stack.width);
+		readByte(levelFile, level.stack.height);
+
+		level.updateStack();
 
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
 				Object::Position currentPosition;
 				currentPosition.setPosition(x, y);
-
 				level.objectMap[currentPosition] = nullptr;
 
 				bool obstacle;
@@ -80,20 +82,9 @@ void Game::loadLevel(const std::string &id)
 		readByte(levelFile, objectsCount);
 
 		for (unsigned short obj = 0; obj < objectsCount; ++obj) {
-			readObject(levelFile, level, false);
+			readObject(levelFile, level);
 		}
 
-		unsigned short stackWidth, stackHeight;
-		readByte(levelFile, stackWidth);
-		readByte(levelFile, stackHeight);
-
-		unsigned short objectsStackCount = level.countObjects(true);
-
-		for (unsigned short obj = 0; obj < objectsStackCount; ++obj) {
-			readObject(levelFile, level, true);
-		}
-
-		level.updateStack();
 		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
@@ -107,12 +98,13 @@ void Game::saveLevel(const std::string &id)
 	if (levelFile.good()) {
 		writeByte(levelFile, level.width);
 		writeByte(levelFile, level.height);
+		writeByte(levelFile, level.stack.width);
+		writeByte(levelFile, level.stack.height);
 
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
 				Object::Position currentPosition;
 				currentPosition.setPosition(x, y);
-
 				levelFile.write((char*) & (level.obstacles[currentPosition]), 1);
 			}
 		}
@@ -123,19 +115,7 @@ void Game::saveLevel(const std::string &id)
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
 				Object* object = level.objectList[type][index];
-				writeObject(levelFile, level, object, false);
-			}
-		}
-
-		writeByte(levelFile, level.stack.width);
-		writeByte(levelFile, level.stack.height);
-
-		unsigned short objectsStackCount = level.countObjects(true);
-		writeByte(levelFile, objectsStackCount);
-
-		for (size_t type = 0; type < OBJ_COUNT; ++type) {
-			for (size_t index = 0; index < level.stack.objectList[type].size(); ++index) {
-				writeObject(levelFile, level, level.stack.objectList[type][index], true);
+				writeObject(levelFile, object);
 			}
 		}
 
@@ -168,7 +148,7 @@ void Game::calculateLasers()
 			while (!stop) {
 				now.moveInDirection(dir, 1);
 
-				if (level.objectMap[now] != nullptr && !level.objectMap[now]->inStack) {
+				if (level.isPlaceTaken(now)) {
 					if (level.objectMap[now]->id == OBJ_BEAMER) {
 						stop = end = true;
 					} else if (level.objectMap[now]->id == OBJ_DOT) {
@@ -372,15 +352,17 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
 
-	if (id == OBJ_DOT) {
-		object->textures.push_back(textures[OBJ_COUNT]);
+	game->level.objectList[id].push_back(object);
+
+	if (!inStack) {
+		game->level.objectMap[object->position] = object;
+	} else {
+		game->level.stack.objectMap[object->position] = object;
+		game->level.stack.objectList[id].push_back(object);
 	}
 
-	game->level.objectList[id].push_back(object);
-	game->level.objectMap[object->position] = object;
-
-	if (inStack) {
-		stack.objectMap[position];
+	if (id == OBJ_DOT) {
+		object->textures.push_back(textures[OBJ_COUNT]);
 	}
 }
 

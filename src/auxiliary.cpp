@@ -15,10 +15,13 @@ void readByte(std::ifstream &file, unsigned short &var)
 	var = static_cast<unsigned short>(buffer);
 }
 
-void readObject(std::ifstream &file, Game::Level &level, bool inStack)
+void readObject(std::ifstream &file, Game::Level &level)
 {
 	unsigned short id;
 	readByte(file, id);
+
+	unsigned short inStack;
+	readByte(file, inStack);
 
 	unsigned short x, y;
 	readByte(file, x);
@@ -36,7 +39,7 @@ void readObject(std::ifstream &file, Game::Level &level, bool inStack)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Beamer* beamer = new Beamer(color);
-		level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack);
+		level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0);
 	} else if (id == OBJ_DOT) {
 		unsigned short red, green, blue;
 
@@ -47,29 +50,29 @@ void readObject(std::ifstream &file, Game::Level &level, bool inStack)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Dot* dot = new Dot(color);
-		level.setObject(dot, x, y, static_cast<ObjectID>(id), DIR_NORTH, inStack);
+		level.setObject(dot, x, y, static_cast<ObjectID>(id), DIR_NORTH, inStack > 0);
 	} else if (id == OBJ_MIRROR) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Mirror* mirror = new Mirror();
-		level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack);
+		level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0);
 	} else if (id == OBJ_BENDER) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Bender* bender = new Bender();
-		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack);
+		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0);
 	}
 }
 
-void writeObject(std::ofstream &file, Game::Level &level, Object* object, bool inStack)
+void writeObject(std::ofstream &file, Object* object)
 {
 	if (object != nullptr) {
 		writeByte(file, object->id);
-
+		writeByte(file, object->inStack);
 		writeByte(file, object->position.getX());
 		writeByte(file, object->position.getY());
 
