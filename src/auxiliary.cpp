@@ -163,6 +163,8 @@ void draw(GameState gameState)
 
 void drawBoard(GameState gameState)
 {
+	gameState.window.draw(rectangleCreate(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, lgray));
+
 	for (short y = 0; y < gameState.game.level.height; ++y) {
 		for (short x = 0; x < gameState.game.level.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);

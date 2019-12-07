@@ -139,14 +139,19 @@ void Game::calculateLasers()
 		Color color = beamer->color;
 		sf::Color sfColor = color.convertToColor();
 
+		sf::Vector2f delta;
+
 		Ray ray;
 		ray.push_back(sf::Vertex(beamer->position, sfColor));
 
 		bool end = false;
 		while (!end) {
 			bool stop = false;
+			bool endAtMiddle = true;
 			while (!stop) {
+				delta = now;
 				now.moveInDirection(dir, 1);
+				delta = sf::Vector2f(now) - delta;
 
 				if (level.isPlaceTaken(now)) {
 					if (level.objectMap[now]->id == OBJ_BEAMER) {
@@ -168,10 +173,17 @@ void Game::calculateLasers()
 
 				if (level.isOutsideBoard(now) || level.obstacles[now]) {
 					stop = end = true;
+					endAtMiddle = false;
 				}
 			}
 
-			ray.push_back(sf::Vertex(now, sfColor));
+			sf::Vertex node(now, sfColor);
+			if (!endAtMiddle) {
+				node.position.x -= delta.x * 0.5f;
+				node.position.y -= delta.y * 0.5f;
+			}
+
+			ray.push_back(node);
 		}
 
 		beamer->laser.push_back(ray);

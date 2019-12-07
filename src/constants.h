@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 600
+#define SCREEN_HEIGHT 420
 #define OFFSET_X 1
 #define OFFSET_Y 1
 #define TILE_SIZE 24
