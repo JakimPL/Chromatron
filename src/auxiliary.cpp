@@ -169,11 +169,11 @@ void drawBoard(GameState gameState)
 		for (short x = 0; x < gameState.game.level.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
 			drawTile(gameState, currentPosition);
-
-			if (gameState.mousePosition == currentPosition) {
-				drawRectangle(gameState, currentPosition, dyellow, lgray);
-			}
 		}
+	}
+
+	if (!gameState.game.level.isOutsideBoard(gameState.mousePosition)) {
+		drawSelector(gameState, gameState.mousePosition);
 	}
 }
 
@@ -228,32 +228,79 @@ void drawGameObjects(GameState gameState)
 	}
 }
 
+void drawSelector(GameState gameState, Object::Position mousePosition)
+{
+
+	sf::Color fillColor, outlineColor;
+	bool outlineOnly = false;
+	if (gameState.game.editor.isActive()) {
+		switch (gameState.game.editor.mode) {
+		case ED_EDIT_OBJECTS: {
+			fillColor = dyellow;
+			outlineColor = lgray;
+			break;
+		}
+		case ED_ADD_OR_REMOVE_OBJECTS: {
+			fillColor = dred;
+			outlineColor = gray;
+			break;
+		}
+		default:
+			outlineColor = lgray;
+			outlineOnly = true;
+			break;
+		}
+	} else {
+		fillColor = dyellow;
+		outlineColor = lgray;
+	}
+
+	drawSelectorSquare(gameState, mousePosition, fillColor, outlineColor, outlineOnly);
+}
+
 void drawStack(GameState gameState)
 {
 	for (short y = 0; y < gameState.game.level.stack.height; ++y) {
 		for (short x = 0; x < gameState.game.level.stack.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
 			drawTile(gameState, currentPosition, true);
-			if (gameState.mousePosition - gameState.game.level.stack.offset == currentPosition) {
-				drawRectangle(gameState, currentPosition + gameState.game.level.stack.offset, dyellow, lgray);
-			}
 		}
+	}
+
+	if (gameState.game.level.stack.isOnStack(gameState.mousePosition)) {
+		drawSelector(gameState, gameState.mousePosition);
 	}
 }
 
-void drawRectangle(GameState gameState, Object::Position position, sf::Color fillColor, sf::Color outlineColor)
+void drawTile(GameState gameState, Object::Position position, bool inStack)
+{
+	sf::Sprite sprite = (inStack ? gameState.game.level.stack.sprites[position] : gameState.game.level.tileSprites[position]);
+	gameState.window.draw(sprite);
+}
+
+void drawSelectorSquare(GameState gameState, Object::Position position, sf::Color fillColor, sf::Color outlineColor, bool outlineOnly)
 {
 	sf::Vector2f realPosition(position);
 	realPosition.x -= TILE_SIZE / 2;
 	realPosition.y -= TILE_SIZE / 2;
-	gameState.window.draw(rectangleCreate(realPosition.x, realPosition.y, TILE_SIZE, TILE_SIZE, outlineColor));
-	gameState.window.draw(rectangleCreate(realPosition.x + OUTLINE_SIZE, realPosition.y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
-}
+	if (!outlineOnly) {
+		gameState.window.draw(rectangleCreate(realPosition.x, realPosition.y, TILE_SIZE, TILE_SIZE, outlineColor));
+		gameState.window.draw(rectangleCreate(realPosition.x + OUTLINE_SIZE, realPosition.y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
+	} else {
+		sf::Vertex outline[] = {
+			sf::Vertex(sf::Vector2f(realPosition) + sf::Vector2f(1, 1)),
+			sf::Vertex(sf::Vector2f(realPosition) + sf::Vector2f(TILE_SIZE, 1)),
+			sf::Vertex(sf::Vector2f(realPosition) + sf::Vector2f(TILE_SIZE, TILE_SIZE)),
+			sf::Vertex(sf::Vector2f(realPosition) + sf::Vector2f(1, TILE_SIZE)),
+			sf::Vertex(sf::Vector2f(realPosition))
+		};
 
-void drawTile(GameState gameState, Object::Position position, bool stack)
-{
-	sf::Sprite sprite = (stack ? gameState.game.level.stack.sprites[position] : gameState.game.level.tileSprites[position]);
-	gameState.window.draw(sprite);
+		for (size_t node = 0; node < 5; ++node) {
+			outline[node].color = outlineColor;
+		}
+
+		gameState.window.draw(outline, 5, sf::LinesStrip);
+	}
 }
 
 void gameEvents(GameState gameState)
@@ -372,7 +419,7 @@ void mouseGameEvents(GameState gameState)
 				}
 
 				if (gameState.drag.position == gameState.mousePosition - gameState.game.level.stack.offset) {
-					gameState.game.level.event = gameState.game.level.rotateStackObject(gameState.mousePosition);
+					gameState.game.level.event = gameState.game.level.rotateObject(gameState.mousePosition);
 				}
 			}
 		} else {

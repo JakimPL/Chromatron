@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -144,7 +145,7 @@ void Game::calculateLasers()
 		Ray ray;
 		ray.push_back(sf::Vertex(beamer->position, sfColor));
 
-		bool end = false;
+		bool end = beamer->inStack;
 		while (!end) {
 			bool stop = false;
 			bool endAtMiddle = true;
@@ -211,36 +212,56 @@ void Game::updateDots()
 
 bool Game::Level::addObject(Object::Position position, ObjectID id)
 {
-	bool success = isPlaceFree(position);
+	bool onStack = stack.isOnStack(position);
+	bool success = isPlaceFree(position, onStack);
 
 	if (success) {
-		if (id == OBJ_BEAMER) {
-			Beamer* beamer = new Beamer();
-			setObject(beamer, position, id, DIR_NORTH);
-		} else if (id == OBJ_DOT) {
-			Dot* dot = new Dot();
-			setObject(dot, position, id, DIR_NORTH);
-		} else if (id == OBJ_MIRROR) {
-			Mirror* mirror = new Mirror();
-			setObject(mirror, position, id, DIR_NORTH);
-		} else if (id == OBJ_BENDER) {
-			Bender* bender = new Bender();
-			setObject(bender, position, id, DIR_NORTH);
-		}
+		newObject(getRelativePosition(position), id, onStack);
 	}
 
 	return success;
 }
 
-bool Game::Level::changeObjectColor(Object::Position position)
+void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack)
 {
-	bool success = (objectMap[position] != nullptr && objectMap[position]->colorable);
+	if (id == OBJ_BEAMER) {
+		Beamer* beamer = new Beamer();
+		setObject(beamer, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_DOT) {
+		Dot* dot = new Dot();
+		setObject(dot, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_MIRROR) {
+		Mirror* mirror = new Mirror();
+		setObject(mirror, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_BENDER) {
+		Bender* bender = new Bender();
+		setObject(bender, position, id, DIR_NORTH, inStack);
+	}
+}
+
+bool Game::Level::changeObjectColor(Object::Position mousePosition)
+{
+	bool onStack = stack.isOnStack(mousePosition);
+	Object* object = getObject(mousePosition);
+	bool success = isPlaceTaken(mousePosition, onStack);
 
 	if (success) {
-		objectMap[position]->color.nextColor();
+		object->color.nextColor();
 	}
 
 	return success;
+}
+
+Object* Game::Level::getObject(Object::Position mousePosition)
+{
+	bool onStack = stack.isOnStack(mousePosition);
+	Object::Position position = getRelativePosition(mousePosition);
+	return (onStack ? stack.objectMap[position] : objectMap[position]);
+}
+
+Object::Position Game::Level::getRelativePosition(Object::Position mousePosition)
+{
+	return (stack.isOnStack(mousePosition) ? stack.getRelativePosition(mousePosition) : mousePosition);
 }
 
 bool Game::Level::isPlaceFree(Object::Position position)
@@ -248,9 +269,27 @@ bool Game::Level::isPlaceFree(Object::Position position)
 	return (objectMap[position] == nullptr && !obstacles[position] && !isOutsideBoard(position));
 }
 
+bool Game::Level::isPlaceFree(Object::Position position, bool onStack)
+{
+	if (onStack) {
+		return stack.isPlaceFree(getRelativePosition(position));
+	} else {
+		return isPlaceFree(position);
+	}
+}
+
 bool Game::Level::isPlaceTaken(Object::Position position)
 {
 	return (objectMap[position] != nullptr && !objectMap[position]->inStack);
+}
+
+bool Game::Level::isPlaceTaken(Object::Position position, bool onStack)
+{
+	if (onStack) {
+		return stack.isPlaceTaken(getRelativePosition(position));
+	} else {
+		return isPlaceTaken(position);
+	}
 }
 
 bool Game::Level::isOutsideBoard(Object::Position position)
@@ -315,24 +354,14 @@ bool Game::Level::removeObject(Object::Position position)
 	return success;
 }
 
-bool Game::Level::rotateObject(Object::Position position)
+bool Game::Level::rotateObject(Object::Position mousePosition)
 {
-	bool success = isPlaceTaken(position);
+	bool onStack = stack.isOnStack(mousePosition);
+	Object* object = getObject(mousePosition);
+	bool success = isPlaceTaken(mousePosition, onStack);
 
 	if (success) {
-		objectMap[position]->rotate(true, game->editor.isActive());
-	}
-
-	return success;
-}
-
-bool Game::Level::rotateStackObject(Object::Position position)
-{
-	Object::Position stackPosition = stack.getRelativePosition(position);
-	bool success = stack.isPlaceTaken(stackPosition);
-
-	if (success) {
-		stack.objectMap[stackPosition]->rotate(true, game->editor.isActive());
+		object->rotate(true, game->editor.isActive());
 	}
 
 	return success;
@@ -342,6 +371,7 @@ bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 {
 	removeObject(position);
 	obstacles[position] = obstacle;
+	setTile(position);
 
 	return true;
 }
