@@ -28,7 +28,6 @@ Game::~Game()
 	}
 }
 
-// Load a sprite from a file
 sf::Texture* Game::loadTexture(const std::string &filename)
 {
 	std::string location = PATH_DATA + PATH_IMG_PREFIX + filename + PATH_IMG_SUFFIX;
@@ -48,9 +47,8 @@ void Game::loadLevel(const std::string &id)
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
-		// Read level dimensions
-		readByte(&levelFile, level.width);
-		readByte(&levelFile, level.height);
+		readByte(levelFile, level.width);
+		readByte(levelFile, level.height);
 
 		// Resize obstacle map
 		for (short y = 0; y < level.height; ++y) {
@@ -58,10 +56,8 @@ void Game::loadLevel(const std::string &id)
 				Object::Position currentPosition;
 				currentPosition.setPosition(x, y);
 
-				// Fill object map with OBJ_EMPTY
 				level.objectMap[currentPosition] = nullptr;
 
-				// Read level obstacle data
 				bool obstacle;
 				levelFile.read((char*)&obstacle, 1);
 				level.obstacles[currentPosition] = obstacle;
@@ -69,73 +65,20 @@ void Game::loadLevel(const std::string &id)
 			}
 		}
 
-		// Read ObjectID' data
-		unsigned short ObjectIDCount;
-		readByte(&levelFile, ObjectIDCount);
+		unsigned short objectId;
+		readByte(levelFile, objectId);
 
-		for (unsigned short obj = 0; obj < ObjectIDCount; ++obj) {
-			// Read the object's type
-			unsigned short id;
-			readByte(&levelFile, id);
-
-			// Read object's position
-			unsigned short x, y;
-			readByte(&levelFile, x);
-			readByte(&levelFile, y);
-
-			// Add an object
-			if (id == OBJ_BEAMER) {
-				unsigned short red, green, blue;
-				unsigned short direction;
-
-				readByte(&levelFile, red);
-				readByte(&levelFile, green);
-				readByte(&levelFile, blue);
-				readByte(&levelFile, direction);
-
-				Color color(red > 0, green > 0, blue > 0);
-
-				Beamer* beamer = new Beamer(color);
-				level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
-			} else if (id == OBJ_DOT) {
-				unsigned short red, green, blue;
-
-				readByte(&levelFile, red);
-				readByte(&levelFile, green);
-				readByte(&levelFile, blue);
-
-				Color color(red > 0, green > 0, blue > 0);
-
-				Dot* dot = new Dot(color);
-				level.setObject(dot, x, y, static_cast<ObjectID>(id));
-			} else if (id == OBJ_MIRROR) {
-				unsigned short direction;
-
-				readByte(&levelFile, direction);
-
-				Mirror* mirror = new Mirror();
-				level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
-			} else if (id == OBJ_BENDER) {
-				unsigned short direction;
-
-				readByte(&levelFile, direction);
-
-				Bender* bender = new Bender();
-				level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction));
-			}
+		for (unsigned short obj = 0; obj < objectId; ++obj) {
+			readObject(levelFile, level, false);
 		}
 
 		unsigned short stackWidth, stackHeight;
-		readByte(&levelFile, stackWidth);
-		readByte(&levelFile, stackHeight);
+		readByte(levelFile, stackWidth);
+		readByte(levelFile, stackHeight);
 
 		for (size_t row = 0; row < stackWidth; ++row) {
 			for (size_t column = 0; column < stackHeight; ++column) {
-				unsigned short object;
-				readByte(&levelFile, object);
-
-				Object::Position currentPosition = shortToPosition(row, column);
-				//object = level.stack.objectMap[currentPosition];
+				readObject(levelFile, level, true);
 			}
 		}
 
@@ -151,61 +94,41 @@ void Game::saveLevel(const std::string &id)
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
 	std::ofstream levelFile(location, std::ios::binary);
 	if (levelFile.good()) {
-		// Save level dimensions
-		writeByte(&levelFile, level.width);
-		writeByte(&levelFile, level.height);
+		writeByte(levelFile, level.width);
+		writeByte(levelFile, level.height);
 
-		// Resize obstacle map
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
 				Object::Position currentPosition;
 				currentPosition.setPosition(x, y);
 
-				// Save level obstacle data
 				levelFile.write((char*) & (level.obstacles[currentPosition]), 1);
 			}
 		}
 
-		// Save ObjectID' data
-		unsigned short ObjectIDCount = 0;
+		unsigned short objectId = 0;
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
-				ObjectIDCount++;
+				objectId++;
 			}
 		}
-		writeByte(&levelFile, ObjectIDCount);
+		writeByte(levelFile, objectId);
 
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
 				Object* object = level.objectList[type][index];
+				writeObject(levelFile, level, object, false);
+			}
+		}
 
-				// Add an object
-				writeByte(&levelFile, object->id);
-				writeByte(&levelFile, object->position.getX());
-				writeByte(&levelFile, object->position.getY());
+		writeByte(levelFile, level.stack.width);
+		writeByte(levelFile, level.stack.height);
 
-				if (object->id == OBJ_BEAMER) {
-					Beamer* beamer = (Beamer*) object;
-
-					writeByte(&levelFile, beamer->color.red);
-					writeByte(&levelFile, beamer->color.green);
-					writeByte(&levelFile, beamer->color.blue);
-					writeByte(&levelFile, beamer->direction);
-				} else if (object->id == OBJ_DOT) {
-					Dot* dot = (Dot*) object;
-
-					writeByte(&levelFile, dot->color.red);
-					writeByte(&levelFile, dot->color.green);
-					writeByte(&levelFile, dot->color.blue);
-				} else if (object->id == OBJ_MIRROR) {
-					Mirror* mirror = (Mirror*) object;
-
-					writeByte(&levelFile, mirror->direction);
-				} else if (object->id == OBJ_BENDER) {
-					Bender* bender = (Bender*) object;
-
-					writeByte(&levelFile, bender->direction);
-				}
+		for (size_t row = 0; row < level.stack.width; ++row) {
+			for (size_t column = 0; column < level.stack.height; ++column) {
+				Object::Position currentPosition = shortToPosition(row, column);
+				Object* object = level.stack.objectMap[currentPosition];
+				writeObject(levelFile, level, object, true);
 			}
 		}
 
@@ -218,11 +141,7 @@ void Game::saveLevel(const std::string &id)
 
 void Game::calculateLasers()
 {
-	// Clear dots' actual color
-	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
-		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
-		dot->actualColor = {false, false, false};
-	}
+	clearDots();
 
 	for (size_t beamerIndex = 0; beamerIndex < level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
 		Beamer* beamer = (Beamer*) level.objectList[OBJ_BEAMER][beamerIndex];
@@ -272,6 +191,14 @@ void Game::calculateLasers()
 	}
 
 	updateDots();
+}
+
+void Game::clearDots()
+{
+	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
+		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+		dot->actualColor = {false, false, false};
+	}
 }
 
 void Game::updateDots()
@@ -421,14 +348,20 @@ bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 	return true;
 }
 
-void Game::Level::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction)
+void Game::Level::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction, bool inStack)
+{
+	setObject(object, shortToPosition(x, y), id, direction, inStack);
+}
+
+void Game::Level::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction, bool inStack)
 {
 	object->id = id;
-	object->position.setPosition(x, y);
+	object->position.setPosition(position);
 	object->direction = direction;
+	object->inStack = inStack;
 
 	object->sprite.setOrigin(ORIGIN);
-	object->sprite.setPosition(object->position);
+	object->sprite.setPosition(inStack ? object->position + stack.offset : object->position);
 	object->textures.push_back(textures[id]);
 	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
@@ -439,11 +372,10 @@ void Game::Level::setObject(Object* object, short x, short y, ObjectID id, Direc
 
 	game->level.objectList[id].push_back(object);
 	game->level.objectMap[object->position] = object;
-}
 
-void Game::Level::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction)
-{
-	setObject(object, position.getX(), position.getY(), id, direction);
+	if (inStack) {
+		stack.objectMap[position];
+	}
 }
 
 void Game::Level::setTile(Object::Position position)

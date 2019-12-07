@@ -2,7 +2,6 @@
 #include "constants.h"
 #include "object.h"
 
-// Objects' constructors
 Object::Object(Color col) : color(col)
 {
 
@@ -39,7 +38,6 @@ Bender::Bender()
 	colorable = false;
 }
 
-// Class functions
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {

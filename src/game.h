@@ -41,8 +41,8 @@ public:
 		bool rotateObject(Object::Position position);
 		bool rotateStackObject(Object::Position position);
 		bool setObstacle(Object::Position position, bool obstacle);
-		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH);
-		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH);
+		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
+		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
 		void setTile(Object::Position position);
 		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
 		bool moveToStack(Object::Position dragPosition, Object::Position mousePosition);
@@ -70,6 +70,7 @@ public:
 	void loadLevel(const std::string &id);
 	void saveLevel(const std::string &id);
 	void calculateLasers();
+	void clearDots();
 	void updateDots();
 };
 

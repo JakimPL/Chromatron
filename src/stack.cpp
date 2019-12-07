@@ -10,8 +10,7 @@ bool Stack::isFull()
 {
 	for (short y = 0; y < height; ++y) {
 		for (short x = 0; x < width; ++x) {
-			Object::Position currentPosition = shortToPosition(x, y);
-			if (objectMap[currentPosition] == nullptr) {
+			if (objectMap[shortToPosition(x, y)] == nullptr) {
 				return false;
 			}
 		}

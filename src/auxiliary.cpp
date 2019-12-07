@@ -8,17 +8,106 @@ sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 	return rectangle;
 }
 
-void readByte(std::ifstream* file, unsigned short &var)
+void readByte(std::ifstream &file, unsigned short &var)
 {
 	char buffer;
-	file->read(&buffer, 1);
+	file.read(&buffer, 1);
 	var = static_cast<unsigned short>(buffer);
 }
 
-void writeByte(std::ofstream* file, unsigned short var)
+void readObject(std::ifstream &file, Game::Level &level, bool stack)
+{
+	unsigned short id;
+	readByte(file, id);
+
+	unsigned short x, y;
+	if (!stack) {
+		readByte(file, x);
+		readByte(file, y);
+	}
+
+	if (id == OBJ_BEAMER) {
+		unsigned short red, green, blue;
+		unsigned short direction;
+
+		readByte(file, red);
+		readByte(file, green);
+		readByte(file, blue);
+		readByte(file, direction);
+
+		Color color(red > 0, green > 0, blue > 0);
+
+		Beamer* beamer = new Beamer(color);
+		level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), stack);
+	} else if (id == OBJ_DOT) {
+		unsigned short red, green, blue;
+
+		readByte(file, red);
+		readByte(file, green);
+		readByte(file, blue);
+
+		Color color(red > 0, green > 0, blue > 0);
+
+		Dot* dot = new Dot(color);
+		level.setObject(dot, x, y, static_cast<ObjectID>(id), DIR_NORTH, stack);
+	} else if (id == OBJ_MIRROR) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Mirror* mirror = new Mirror();
+		level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), stack);
+	} else if (id == OBJ_BENDER) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Bender* bender = new Bender();
+		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), stack);
+	}
+}
+
+void writeObject(std::ofstream &file, Game::Level &level, Object* object, bool stack)
+{
+	if (object != nullptr) {
+		writeByte(file, object->id);
+
+		if (!stack) {
+			writeByte(file, object->position.getX());
+			writeByte(file, object->position.getY());
+		}
+
+		if (object->id == OBJ_BEAMER) {
+			Beamer* beamer = (Beamer*) object;
+
+			writeByte(file, beamer->color.red);
+			writeByte(file, beamer->color.green);
+			writeByte(file, beamer->color.blue);
+			writeByte(file, beamer->direction);
+		} else if (object->id == OBJ_DOT) {
+			Dot* dot = (Dot*) object;
+
+			writeByte(file, dot->color.red);
+			writeByte(file, dot->color.green);
+			writeByte(file, dot->color.blue);
+		} else if (object->id == OBJ_MIRROR) {
+			Mirror* mirror = (Mirror*) object;
+
+			writeByte(file, mirror->direction);
+		} else if (object->id == OBJ_BENDER) {
+			Bender* bender = (Bender*) object;
+
+			writeByte(file, bender->direction);
+		}
+	} else {
+		writeByte(file, OBJ_EMPTY);
+	}
+}
+
+void writeByte(std::ofstream &file, unsigned short var)
 {
 	char buffer = static_cast<char>(var);
-	file->write(&buffer, 1);
+	file.write(&buffer, 1);
 }
 
 void handleApplicationParameters(GameState gameState, int argc, char* argv[])
