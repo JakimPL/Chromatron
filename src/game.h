@@ -23,13 +23,15 @@ public:
 		unsigned short width;
 		unsigned short height;
 		std::vector<Object*> objectList[OBJ_COUNT];
+		std::map<Object::Position, Object*> objectMap;
 		std::map<Object::Position, bool> obstacles;
 		std::map<Object::Position, sf::Sprite> tileSprites;
-		std::map<Object::Position, Object*> objectMap;
 		Stack stack;
 		Game* game;
 
 		bool addObject(Object::Position position, ObjectID id);
+		bool addToStack(Object::Position position);
+		unsigned short countObjects(bool inStack);
 		bool dragObject(Drag &drag, Object::Position mousePosition);
 		bool dragStackObject(Drag &drag, Object::Position mousePosition);
 		bool changeObjectColor(Object::Position position);

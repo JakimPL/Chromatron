@@ -15,16 +15,14 @@ void readByte(std::ifstream &file, unsigned short &var)
 	var = static_cast<unsigned short>(buffer);
 }
 
-void readObject(std::ifstream &file, Game::Level &level, bool stack)
+void readObject(std::ifstream &file, Game::Level &level, bool inStack)
 {
 	unsigned short id;
 	readByte(file, id);
 
 	unsigned short x, y;
-	if (!stack) {
-		readByte(file, x);
-		readByte(file, y);
-	}
+	readByte(file, x);
+	readByte(file, y);
 
 	if (id == OBJ_BEAMER) {
 		unsigned short red, green, blue;
@@ -38,7 +36,7 @@ void readObject(std::ifstream &file, Game::Level &level, bool stack)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Beamer* beamer = new Beamer(color);
-		level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), stack);
+		level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack);
 	} else if (id == OBJ_DOT) {
 		unsigned short red, green, blue;
 
@@ -49,33 +47,31 @@ void readObject(std::ifstream &file, Game::Level &level, bool stack)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Dot* dot = new Dot(color);
-		level.setObject(dot, x, y, static_cast<ObjectID>(id), DIR_NORTH, stack);
+		level.setObject(dot, x, y, static_cast<ObjectID>(id), DIR_NORTH, inStack);
 	} else if (id == OBJ_MIRROR) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Mirror* mirror = new Mirror();
-		level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), stack);
+		level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack);
 	} else if (id == OBJ_BENDER) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Bender* bender = new Bender();
-		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), stack);
+		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack);
 	}
 }
 
-void writeObject(std::ofstream &file, Game::Level &level, Object* object, bool stack)
+void writeObject(std::ofstream &file, Game::Level &level, Object* object, bool inStack)
 {
 	if (object != nullptr) {
 		writeByte(file, object->id);
 
-		if (!stack) {
-			writeByte(file, object->position.getX());
-			writeByte(file, object->position.getY());
-		}
+		writeByte(file, object->position.getX());
+		writeByte(file, object->position.getY());
 
 		if (object->id == OBJ_BEAMER) {
 			Beamer* beamer = (Beamer*) object;

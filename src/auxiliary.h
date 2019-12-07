@@ -15,9 +15,9 @@ extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color 
 extern sf::Texture loadTexture(const std::string &filename);
 extern void loadSprites();
 extern void readByte(std::ifstream &file, unsigned short &var);
-extern void readObject(std::ifstream &file, Game::Level &level, bool stack);
+extern void readObject(std::ifstream &file, Game::Level &level, bool inStack);
 extern void writeByte(std::ofstream &file, unsigned short var);
-extern void writeObject(std::ofstream &file, Game::Level &level, Object* object, bool stack);
+extern void writeObject(std::ofstream &file, Game::Level &level, Object* object, bool inStack);
 extern void handleApplicationParameters(GameState gameState, int argc, char* argv[]);
 extern void deleteGameObjects(GameState gameState);
 extern void draw(GameState gameState);

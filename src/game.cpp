@@ -39,6 +39,18 @@ sf::Texture* Game::loadTexture(const std::string &filename)
 	return image;
 }
 
+unsigned short Game::Level::countObjects(bool inStack)
+{
+	unsigned short objectsCount = 0;
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		for (size_t index = 0; index < (inStack ? stack.objectList[type] : objectList[type]).size(); ++index) {
+			objectsCount++;
+		}
+	}
+
+	return objectsCount;
+}
+
 void Game::loadLevel(const std::string &id)
 {
 	///TODO: error handling
@@ -50,7 +62,6 @@ void Game::loadLevel(const std::string &id)
 		readByte(levelFile, level.width);
 		readByte(levelFile, level.height);
 
-		// Resize obstacle map
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
 				Object::Position currentPosition;
@@ -65,10 +76,10 @@ void Game::loadLevel(const std::string &id)
 			}
 		}
 
-		unsigned short objectId;
-		readByte(levelFile, objectId);
+		unsigned short objectsCount;
+		readByte(levelFile, objectsCount);
 
-		for (unsigned short obj = 0; obj < objectId; ++obj) {
+		for (unsigned short obj = 0; obj < objectsCount; ++obj) {
 			readObject(levelFile, level, false);
 		}
 
@@ -76,10 +87,10 @@ void Game::loadLevel(const std::string &id)
 		readByte(levelFile, stackWidth);
 		readByte(levelFile, stackHeight);
 
-		for (size_t row = 0; row < stackWidth; ++row) {
-			for (size_t column = 0; column < stackHeight; ++column) {
-				readObject(levelFile, level, true);
-			}
+		unsigned short objectsStackCount = level.countObjects(true);
+
+		for (unsigned short obj = 0; obj < objectsStackCount; ++obj) {
+			readObject(levelFile, level, true);
 		}
 
 		level.updateStack();
@@ -106,13 +117,8 @@ void Game::saveLevel(const std::string &id)
 			}
 		}
 
-		unsigned short objectId = 0;
-		for (size_t type = 0; type < OBJ_COUNT; ++type) {
-			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
-				objectId++;
-			}
-		}
-		writeByte(levelFile, objectId);
+		unsigned short objectsCount = level.countObjects(false);
+		writeByte(levelFile, objectsCount);
 
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
@@ -124,11 +130,12 @@ void Game::saveLevel(const std::string &id)
 		writeByte(levelFile, level.stack.width);
 		writeByte(levelFile, level.stack.height);
 
-		for (size_t row = 0; row < level.stack.width; ++row) {
-			for (size_t column = 0; column < level.stack.height; ++column) {
-				Object::Position currentPosition = shortToPosition(row, column);
-				Object* object = level.stack.objectMap[currentPosition];
-				writeObject(levelFile, level, object, true);
+		unsigned short objectsStackCount = level.countObjects(true);
+		writeByte(levelFile, objectsStackCount);
+
+		for (size_t type = 0; type < OBJ_COUNT; ++type) {
+			for (size_t index = 0; index < level.stack.objectList[type].size(); ++index) {
+				writeObject(levelFile, level, level.stack.objectList[type][index], true);
 			}
 		}
 
@@ -197,7 +204,7 @@ void Game::clearDots()
 {
 	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
 		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
-		dot->actualColor = {false, false, false};
+		dot->actualColor = COL_BLACK_TUPLE;
 	}
 }
 
@@ -306,9 +313,8 @@ bool Game::Level::removeObject(Object::Position position)
 {
 	bool success = isPlaceTaken(position);
 
-	ObjectID id = objectMap[position]->id;
-
 	if (success) {
+		ObjectID id = objectMap[position]->id;
 		objectList[id].erase(std::find(objectList[id].begin(), objectList[id].end(), objectMap[position]));
 		delete objectMap[position];
 		objectMap[position] = nullptr;
@@ -393,6 +399,8 @@ bool Game::Level::moveFromStack(Object::Position stackPosition, Object::Position
 		objectMap[mousePosition]->position = mousePosition;
 		objectMap[mousePosition]->sprite.setPosition(mousePosition);
 		objectMap[mousePosition]->inStack = false;
+		ObjectID id = stack.objectMap[stackPosition]->id;
+		stack.objectList[id].erase(std::find(stack.objectList[id].begin(), stack.objectList[id].end(), stack.objectMap[stackPosition]));
 		stack.objectMap[stackPosition] = nullptr;
 	}
 
@@ -410,6 +418,7 @@ bool Game::Level::moveToStack(Object::Position dragPosition, Object::Position mo
 		stack.objectMap[stackPosition]->sprite.setPosition(stackPosition + stack.offset);
 		stack.objectMap[stackPosition]->inStack = true;
 		objectMap[dragPosition] = nullptr;
+		stack.objectList[stack.objectMap[stackPosition]->id].push_back(stack.objectMap[stackPosition]);
 	}
 
 	return success;
