@@ -169,6 +169,10 @@ void drawBoard(GameState gameState)
 		for (short x = 0; x < gameState.game.level.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
 			drawTile(gameState, currentPosition);
+
+			if (gameState.mousePosition == currentPosition) {
+				drawRectangle(gameState, currentPosition, dyellow, lgray);
+			}
 		}
 	}
 }
@@ -229,10 +233,21 @@ void drawStack(GameState gameState)
 	for (short y = 0; y < gameState.game.level.stack.height; ++y) {
 		for (short x = 0; x < gameState.game.level.stack.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
-
 			drawTile(gameState, currentPosition, true);
+			if (gameState.mousePosition - gameState.game.level.stack.offset == currentPosition) {
+				drawRectangle(gameState, currentPosition + gameState.game.level.stack.offset, dyellow, lgray);
+			}
 		}
 	}
+}
+
+void drawRectangle(GameState gameState, Object::Position position, sf::Color fillColor, sf::Color outlineColor)
+{
+	sf::Vector2f realPosition(position);
+	realPosition.x -= TILE_SIZE / 2;
+	realPosition.y -= TILE_SIZE / 2;
+	gameState.window.draw(rectangleCreate(realPosition.x, realPosition.y, TILE_SIZE, TILE_SIZE, outlineColor));
+	gameState.window.draw(rectangleCreate(realPosition.x + OUTLINE_SIZE, realPosition.y + OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, TILE_SIZE - 2 * OUTLINE_SIZE, fillColor));
 }
 
 void drawTile(GameState gameState, Object::Position position, bool stack)

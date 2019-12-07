@@ -81,17 +81,18 @@ static std::string PATH_IMG_SUFFIX = ".png";
 static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
 static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 
-static sf::Color  black(0,   0,   0);
-static sf::Color   gray(128, 128, 128);
-static sf::Color  lgray(192, 192, 192);
-static sf::Color  dgray(96,  96,  96);
-static sf::Color  white(255, 255, 255);
-static sf::Color yellow(255, 255, 0);
-static sf::Color    red(255, 0,   0);
-static sf::Color  green(0,   255, 0);
-static sf::Color   blue(0,   0,   255);
-static sf::Color   lred(255, 128, 128);
-static sf::Color lgreen(128, 255, 128);
-static sf::Color  lblue(128, 128, 255);
+static sf::Color   black(0,   0,   0);
+static sf::Color    gray(128, 128, 128);
+static sf::Color   lgray(192, 192, 192);
+static sf::Color   dgray(96,  96,  96);
+static sf::Color   white(255, 255, 255);
+static sf::Color  yellow(255, 255, 0);
+static sf::Color dyellow(128, 128, 0);
+static sf::Color     red(255, 0,   0);
+static sf::Color   green(0,   255, 0);
+static sf::Color    blue(0,   0,   255);
+static sf::Color    lred(255, 128, 128);
+static sf::Color  lgreen(128, 255, 128);
+static sf::Color   lblue(128, 128, 255);
 
 #endif
