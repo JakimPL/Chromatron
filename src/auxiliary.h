@@ -29,6 +29,7 @@ extern void drawTile(GameState gameState, Object::Position position, bool inStac
 extern void gameEvents(GameState gameState);
 extern void initializeGame(GameState gameState);
 extern void mainLoop(GameState gameState);
+extern void endGame(GameState gameState);
 extern void keyboardGlobalEvents(GameState gameState);
 extern void keyboardEditorEvents(GameState gameState);
 extern void mouseEditorEvents(GameState gameState);

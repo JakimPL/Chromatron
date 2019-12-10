@@ -233,6 +233,20 @@ unsigned short Game::Level::countObjects(bool inStack)
 	return objectsCount;
 }
 
+bool Game::Level::checkWin()
+{
+	bool win = true;
+	for (size_t dotIndex = 0; dotIndex < objectList[OBJ_DOT].size(); ++dotIndex) {
+		Dot* dot = (Dot*) objectList[OBJ_DOT][dotIndex];
+		if (!dot->state) {
+			win = false;
+			break;
+		}
+	}
+
+	return win;
+}
+
 bool Game::Level::addObject(Object::Position position, ObjectID id)
 {
 	bool onStack = stack.isOnStack(position);
@@ -320,7 +334,7 @@ bool Game::Level::isOutsideBoard(Object::Position position)
 	return (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height);
 }
 
-bool Game::Level::dragObject(Drag &drag, Object::Position position)
+bool Game::Level::dragObject(Drag & drag, Object::Position position)
 {
 	bool success = isPlaceTaken(position) && (objectMap[position]->movable || game->editor.isActive());
 
@@ -334,7 +348,7 @@ bool Game::Level::dragObject(Drag &drag, Object::Position position)
 	return success;
 }
 
-bool Game::Level::dragStackObject(Drag &drag, Object::Position mousePosition)
+bool Game::Level::dragStackObject(Drag & drag, Object::Position mousePosition)
 {
 	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
 	bool success = stack.isPlaceTaken(stackPosition);
@@ -503,10 +517,19 @@ void Game::Level::updateStack()
 
 void Game::loadSet(const std::string &levelSetName)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_LEV_SET_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
 		levelSet.name = levelSetName;
+		readByte(levelFile, levelSet.levels);
+		readByte(levelFile, levelSet.currentLevel);
+
+		for (size_t level = 0; level < levelSet.levels; ++level) {
+			unsigned short levelState;
+			readByte(levelFile, levelState);
+			levelSet.levelStates.push_back(static_cast<LevelState>(levelState));
+		}
+
 		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
@@ -517,5 +540,24 @@ void Game::loadSet(const std::string &levelSetName)
 
 void Game::saveSet(const std::string &levelSetName)
 {
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_LEV_SAV_SUFFIX;
+	std::ofstream levelFile(location, std::ios::binary);
+	if (levelFile.good()) {
+		writeByte(levelFile, levelSet.levels);
+		writeByte(levelFile, levelSet.currentLevel);
 
+		for (size_t level = 0; level < levelSet.levels; ++level) {
+			writeByte(levelFile, levelSet.levelStates[level]);
+		}
+
+		levelFile.close();
+
+	} else {
+		throw std::runtime_error("failed to save " + location + " file");
+	}
+}
+
+void Game::saveSet()
+{
+	saveSet(levelSet.name);
 }

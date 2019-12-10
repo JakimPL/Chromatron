@@ -31,6 +31,7 @@ public:
 
 		bool addObject(Object::Position position, ObjectID id);
 		bool addToStack(Object::Position position);
+		bool checkWin();
 		unsigned short countObjects(bool inStack);
 		bool dragObject(Drag &drag, Object::Position mousePosition);
 		bool dragStackObject(Drag &drag, Object::Position mousePosition);
@@ -88,6 +89,7 @@ public:
 	void resetLevel();
 	void loadSet(const std::string &levelSetName);
 	void saveSet(const std::string &levelSetName);
+	void saveSet();
 	void calculateLasers();
 	void clearDots();
 	void updateDots();

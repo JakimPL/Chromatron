@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 	handleApplicationParameters(gameState, argc, argv);
 	initializeGame(gameState);
 	mainLoop(gameState);
-	deleteGameObjects(gameState);
+	endGame(gameState);
 
 	return 0;
 }

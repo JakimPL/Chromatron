@@ -1,5 +1,7 @@
 #include "auxiliary.h"
 
+#include <iostream>
+
 sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 {
 	sf::RectangleShape rectangle(sf::Vector2f(w, h));
@@ -139,6 +141,12 @@ void mainLoop(GameState gameState)
 			draw(gameState);
 		}
 	}
+}
+
+void endGame(GameState gameState)
+{
+	gameState.game.saveSet(gameState.game.levelSet.name);
+	deleteGameObjects(gameState);
 }
 
 void deleteGameObjects(GameState gameState)
@@ -317,6 +325,14 @@ void gameEvents(GameState gameState)
 
 	if (gameState.game.level.event) {
 		gameState.game.calculateLasers();
+
+
+
+		if (gameState.game.level.checkWin()) {
+			gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel] = LS_PASSED;
+			gameState.game.saveSet();
+		}
+
 		gameState.game.level.event = false;
 	}
 }
