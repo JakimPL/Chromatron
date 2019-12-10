@@ -85,6 +85,7 @@ static std::string PATH_LEV_SUFFIX = ".lev";
 static std::string PATH_IMG_PREFIX = "IMG/";
 static std::string PATH_IMG_SUFFIX = ".png";
 static std::string PATH_LS_SUFFIX = "/levels.set";
+static std::string FIRST_LEVEL_ID = "001";
 static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
 static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 

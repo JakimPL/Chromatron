@@ -2,7 +2,6 @@
 #define AUXILIARY_H
 
 #include <fstream>
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "constants.h"
 #include "game.h"

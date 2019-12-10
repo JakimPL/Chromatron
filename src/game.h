@@ -61,9 +61,7 @@ public:
 		unsigned short levels;
 		unsigned short currentLevel;
 		std::vector<LevelState> levelStates;
-
-		void loadSet(const std::string &name);
-		void saveSet(const std::string &name);
+		Game* game;
 	} levelSet;
 
 	struct Editor {
@@ -88,6 +86,8 @@ public:
 	void loadLevel(const std::string &id);
 	void saveLevel(const std::string &id);
 	void resetLevel();
+	void loadSet(const std::string &levelSetName);
+	void saveSet(const std::string &levelSetName);
 	void calculateLasers();
 	void clearDots();
 	void updateDots();

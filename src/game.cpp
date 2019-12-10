@@ -14,6 +14,9 @@ Game::Game()
 	for (size_t index = 0; index < TIL_COUNT; ++index) {
 		tiles.push_back(loadTexture(IMG_TILE_NAMES[index]));
 	}
+
+	level.game = this;
+	levelSet.game = this;
 }
 
 Game::~Game()
@@ -60,7 +63,6 @@ void Game::clearLevel()
 void Game::loadLevel(const std::string &id)
 {
 	///TODO: error handling
-	level.game = this;
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSet.name + "/" + id + PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
@@ -98,8 +100,6 @@ void Game::loadLevel(const std::string &id)
 void Game::saveLevel(const std::string &id)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSet.name + "/" + id + PATH_LEV_SUFFIX;
-	std::cout << location << "\n";
-
 	std::ofstream levelFile(location, std::ios::binary);
 	if (levelFile.good()) {
 		writeByte(levelFile, level.width);
@@ -501,20 +501,21 @@ void Game::Level::updateStack()
 	}
 }
 
-/* LEVELSET */
-void Game::LevelSet::loadSet(const std::string &name)
+void Game::loadSet(const std::string &levelSetName)
 {
-	/*std::string location = PATH_DATA + PATH_LEV_PREFIX + name + PATH_LS_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
-		this->name = name;
+		levelSet.name = levelSetName;
 		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
-	}*/
+	}
+
+	loadLevel(FIRST_LEVEL_ID);
 }
 
-void Game::LevelSet::saveSet(const std::string &name)
+void Game::saveSet(const std::string &levelSetName)
 {
-	this->name = name;
+
 }

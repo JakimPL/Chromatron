@@ -122,8 +122,7 @@ void handleApplicationParameters(GameState gameState, int argc, char* argv[])
 void initializeGame(GameState gameState)
 {
 	gameState.window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
-	gameState.game.levelSet.loadSet("Levelset");
-	gameState.game.loadLevel(gameState.game.levelId);
+	gameState.game.loadSet("Levelset");
 }
 
 void mainLoop(GameState gameState)
@@ -232,7 +231,6 @@ void drawGameObjects(GameState gameState)
 
 void drawSelector(GameState gameState, Object::Position mousePosition)
 {
-
 	sf::Color fillColor, outlineColor;
 	bool outlineOnly = false;
 	if (gameState.game.editor.isActive()) {
