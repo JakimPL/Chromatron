@@ -130,8 +130,9 @@ void mainLoop(GameState gameState)
 	while (gameState.window.isOpen()) {
 		gameState.update();
 		while (gameState.window.pollEvent(gameState.event)) {
-			if (gameState.event.type == sf::Event::Closed or gameState.event.key.code == sf::Keyboard::Escape) {
+			if (gameState.event.type == sf::Event::Closed or sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				gameState.window.close();
+				break;
 			}
 
 			gameEvents(gameState);
