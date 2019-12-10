@@ -49,7 +49,7 @@ public:
 		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
 		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
 		bool setObstacle(Object::Position position, bool obstacle);
-		void setTile(Object::Position position);
+		void setTile(Object::Position position, bool obstacle);
 		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
 		bool moveToStack(Object::Position dragPosition, Object::Position mousePosition);
 		bool moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition);
@@ -71,10 +71,13 @@ public:
 		void turn(bool editorOn);
 	} editor;
 
+	std::string levelId = "000";
 	Drag drag;
 
+	void clearLevel();
 	void loadLevel(const std::string &id);
 	void saveLevel(const std::string &id);
+	void resetLevel();
 	void calculateLasers();
 	void clearDots();
 	void updateDots();

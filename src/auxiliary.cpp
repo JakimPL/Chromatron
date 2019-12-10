@@ -122,7 +122,7 @@ void handleApplicationParameters(GameState gameState, int argc, char* argv[])
 void initializeGame(GameState gameState)
 {
 	gameState.window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
-	gameState.game.loadLevel("000");
+	gameState.game.loadLevel(gameState.game.levelId);
 }
 
 void mainLoop(GameState gameState)
@@ -326,8 +326,16 @@ void keyboardGlobalEvents(GameState gameState)
 {
 	if (gameState.event.type == sf::Event::KeyPressed) {
 		switch (gameState.event.key.code) {
+		case sf::Keyboard::C: {
+			clearLevel(gameState);
+			break;
+		}
 		case sf::Keyboard::E: {
 			gameState.game.editor.turn(!gameState.game.editor.isActive());
+			break;
+		}
+		case sf::Keyboard::R: {
+			resetLevel(gameState);
 			break;
 		}
 		case sf::Keyboard::S: {
@@ -441,6 +449,20 @@ void mouseGameEvents(GameState gameState)
 
 		gameState.drag.position.setNull();
 	}
+}
+
+void clearLevel(GameState gameState)
+{
+	gameState.drag.position.setNull();
+	gameState.game.clearLevel();
+	gameState.game.level.event = true;
+}
+
+void resetLevel(GameState gameState)
+{
+	gameState.drag.position.setNull();
+	gameState.game.resetLevel();
+	gameState.game.level.event = true;
 }
 
 Object::Position floatToPosition(sf::Vector2f vector)

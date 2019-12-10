@@ -36,6 +36,8 @@ extern void keyboardGlobalEvents(GameState gameState);
 extern void keyboardEditorEvents(GameState gameState);
 extern void mouseEditorEvents(GameState gameState);
 extern void mouseGameEvents(GameState gameState);
+extern void clearLevel(GameState gameState);
+extern void resetLevel(GameState gameState);
 extern Object::Position floatToPosition(sf::Vector2f vector);
 extern Object::Position floatToPosition(float x, float y);
 extern Object::Position shortToPosition(short x, short y);

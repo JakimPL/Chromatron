@@ -51,6 +51,26 @@ unsigned short Game::Level::countObjects(bool inStack)
 	return objectsCount;
 }
 
+void Game::clearLevel()
+{
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		while (!level.objectList[type].empty()) {
+			delete level.objectList[type].back();
+			level.objectList[type].pop_back();
+		}
+	}
+
+	level.objectMap.clear();
+
+	for (short y = 0; y < level.height; ++y) {
+		for (short x = 0; x < level.width; ++x) {
+			Object::Position currentPosition = shortToPosition(x, y);
+			//level.removeObject(currentPosition);
+			level.setTile(currentPosition, false);
+		}
+	}
+}
+
 void Game::loadLevel(const std::string &id)
 {
 	///TODO: error handling
@@ -68,14 +88,12 @@ void Game::loadLevel(const std::string &id)
 
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
-				Object::Position currentPosition;
-				currentPosition.setPosition(x, y);
+				Object::Position currentPosition = shortToPosition(x, y);
 				level.objectMap[currentPosition] = nullptr;
 
 				bool obstacle;
 				levelFile.read((char*)&obstacle, 1);
-				level.obstacles[currentPosition] = obstacle;
-				level.setTile(currentPosition);
+				level.setTile(currentPosition, obstacle);
 			}
 		}
 
@@ -104,8 +122,7 @@ void Game::saveLevel(const std::string &id)
 
 		for (short y = 0; y < level.height; ++y) {
 			for (short x = 0; x < level.width; ++x) {
-				Object::Position currentPosition;
-				currentPosition.setPosition(x, y);
+				Object::Position currentPosition = shortToPosition(x, y);
 				levelFile.write((char*) & (level.obstacles[currentPosition]), 1);
 			}
 		}
@@ -125,6 +142,12 @@ void Game::saveLevel(const std::string &id)
 	} else {
 		throw std::runtime_error("failed to save " + location + " file");
 	}
+}
+
+void Game::resetLevel()
+{
+	clearLevel();
+	loadLevel(levelId);
 }
 
 void Game::calculateLasers()
@@ -370,8 +393,7 @@ bool Game::Level::rotateObject(Object::Position mousePosition)
 bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 {
 	removeObject(position);
-	obstacles[position] = obstacle;
-	setTile(position);
+	setTile(position, obstacle);
 
 	return true;
 }
@@ -408,8 +430,9 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	}
 }
 
-void Game::Level::setTile(Object::Position position)
+void Game::Level::setTile(Object::Position position, bool obstacle)
 {
+	obstacles[position] = obstacle;
 	tileSprites[position].setTexture(*tiles[static_cast<size_t>(obstacles[position])]);
 	tileSprites[position].setPosition(positionToFloat(position));
 }
