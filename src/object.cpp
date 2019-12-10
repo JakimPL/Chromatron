@@ -1,6 +1,6 @@
+#include "object.h"
 #include "auxiliary.h"
 #include "constants.h"
-#include "object.h"
 
 Object::Object(Color col) : color(col)
 {

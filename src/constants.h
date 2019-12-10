@@ -73,11 +73,18 @@ enum Tile : unsigned short {
 	TIL_COUNT
 };
 
+enum LevelState : unsigned short {
+	LS_LOCKED,
+	LS_AVAILABLE,
+	LS_PASSED
+};
+
 static std::string PATH_DATA       = "./data/";
-static std::string PATH_LEV_PREFIX = "LEV/level";
+static std::string PATH_LEV_PREFIX = "LEV/";
 static std::string PATH_LEV_SUFFIX = ".lev";
 static std::string PATH_IMG_PREFIX = "IMG/";
 static std::string PATH_IMG_SUFFIX = ".png";
+static std::string PATH_LS_SUFFIX = "/levels.set";
 static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
 static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 
@@ -97,5 +104,8 @@ static sf::Color    blue(0,   0,   255);
 static sf::Color   dblue(0,   0,   128);
 static sf::Color  yellow(255, 255, 0);
 static sf::Color dyellow(128, 128, 0);
+
+static std::vector<sf::Texture*> textures;
+static std::vector<sf::Texture*> tiles;
 
 #endif

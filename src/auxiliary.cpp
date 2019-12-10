@@ -122,6 +122,7 @@ void handleApplicationParameters(GameState gameState, int argc, char* argv[])
 void initializeGame(GameState gameState)
 {
 	gameState.window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
+	gameState.game.levelSet.loadSet("Levelset");
 	gameState.game.loadLevel(gameState.game.levelId);
 }
 
@@ -340,7 +341,7 @@ void keyboardGlobalEvents(GameState gameState)
 		}
 		case sf::Keyboard::S: {
 			if (gameState.game.editor.isActive()) {
-				gameState.game.saveLevel("001");
+				gameState.game.saveLevel("999");
 			}
 			break;
 		}

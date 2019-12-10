@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -39,18 +38,6 @@ sf::Texture* Game::loadTexture(const std::string &filename)
 	return image;
 }
 
-unsigned short Game::Level::countObjects(bool inStack)
-{
-	unsigned short objectsCount = 0;
-	for (size_t type = 0; type < OBJ_COUNT; ++type) {
-		for (size_t index = 0; index < (inStack ? stack.objectList[type] : objectList[type]).size(); ++index) {
-			objectsCount++;
-		}
-	}
-
-	return objectsCount;
-}
-
 void Game::clearLevel()
 {
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
@@ -65,7 +52,6 @@ void Game::clearLevel()
 	for (short y = 0; y < level.height; ++y) {
 		for (short x = 0; x < level.width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
-			//level.removeObject(currentPosition);
 			level.setTile(currentPosition, false);
 		}
 	}
@@ -75,8 +61,7 @@ void Game::loadLevel(const std::string &id)
 {
 	///TODO: error handling
 	level.game = this;
-
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSet.name + "/" + id + PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
 		readByte(levelFile, level.width);
@@ -112,7 +97,9 @@ void Game::loadLevel(const std::string &id)
 
 void Game::saveLevel(const std::string &id)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + id + PATH_LEV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSet.name + "/" + id + PATH_LEV_SUFFIX;
+	std::cout << location << "\n";
+
 	std::ofstream levelFile(location, std::ios::binary);
 	if (levelFile.good()) {
 		writeByte(levelFile, level.width);
@@ -231,6 +218,19 @@ void Game::updateDots()
 		dot->updateState();
 		dot->setSpriteColor();
 	}
+}
+
+/* LEVEL */
+unsigned short Game::Level::countObjects(bool inStack)
+{
+	unsigned short objectsCount = 0;
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		for (size_t index = 0; index < (inStack ? stack.objectList[type] : objectList[type]).size(); ++index) {
+			objectsCount++;
+		}
+	}
+
+	return objectsCount;
 }
 
 bool Game::Level::addObject(Object::Position position, ObjectID id)
@@ -501,32 +501,20 @@ void Game::Level::updateStack()
 	}
 }
 
-bool Game::Editor::isActive()
+/* LEVELSET */
+void Game::LevelSet::loadSet(const std::string &name)
 {
-	return active;
+	/*std::string location = PATH_DATA + PATH_LEV_PREFIX + name + PATH_LS_SUFFIX;
+	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
+	if (levelFile.good()) {
+		this->name = name;
+		levelFile.close();
+	} else {
+		throw std::runtime_error("failed to load " + location + " file");
+	}*/
 }
 
-void Game::Editor::switchMode()
+void Game::LevelSet::saveSet(const std::string &name)
 {
-	mode = static_cast<EditorMode>((mode + 1) % static_cast<int>(ED_COUNT));
-}
-
-void Game::Editor::turn(bool editorOn)
-{
-	active = editorOn;
-	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
-}
-
-void Game::Editor::setObject(ObjectID id)
-{
-	if (active) {
-		currentObject = id;
-	}
-
-	sprite.setTexture(*textures[id]);
-}
-
-ObjectID Game::Editor::getObject()
-{
-	return currentObject;
+	this->name = name;
 }

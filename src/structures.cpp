@@ -1,5 +1,5 @@
-#include "constants.h"
 #include "structures.h"
+#include "constants.h"
 
 Color::Color(bool r, bool g, bool b) : red(r), green(g), blue(b)
 {

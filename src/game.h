@@ -56,6 +56,16 @@ public:
 		void updateStack();
 	} level;
 
+	struct LevelSet {
+		std::string name = "Levelset";
+		unsigned short levels;
+		unsigned short currentLevel;
+		std::vector<LevelState> levelStates;
+
+		void loadSet(const std::string &name);
+		void saveSet(const std::string &name);
+	} levelSet;
+
 	struct Editor {
 	private:
 		bool active;
@@ -71,7 +81,7 @@ public:
 		void turn(bool editorOn);
 	} editor;
 
-	std::string levelId = "000";
+	std::string levelId = "001";
 	Drag drag;
 
 	void clearLevel();

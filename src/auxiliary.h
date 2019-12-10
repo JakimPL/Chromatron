@@ -2,14 +2,12 @@
 #define AUXILIARY_H
 
 #include <fstream>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "constants.h"
 #include "game.h"
 #include "gamestate.h"
 #include "object.h"
-
-static std::vector<sf::Texture*> textures;
-static std::vector<sf::Texture*> tiles;
 
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);
 extern sf::Texture loadTexture(const std::string &filename);
