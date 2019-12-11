@@ -17,7 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         src/auxiliary.cpp \
-        src/editor.cpp \
         src/game.cpp \
         src/gamestate.cpp \
         src/object.cpp \

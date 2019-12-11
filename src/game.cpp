@@ -179,6 +179,15 @@ void Game::calculateLasers()
 						} else {
 							stop = end = true;
 						}
+					} else if (level.objectMap[now]->id == OBJ_BENDER) {
+						Bender* mirror = (Bender*) level.objectMap[now];
+						int diff = (DIR_COUNT + mirror->direction - dir + 5) % DIR_COUNT - 4;
+						if (-2 <= diff && diff < 2) {
+							stop = true;
+							dir = (DIR_COUNT + dir + (2 * diff + 5)) % DIR_COUNT;
+						} else {
+							stop = end = true;
+						}
 					}
 				}
 
@@ -391,14 +400,14 @@ bool Game::Level::removeObject(Object::Position position)
 	return success;
 }
 
-bool Game::Level::rotateObject(Object::Position mousePosition)
+bool Game::Level::rotateObject(Object::Position mousePosition, bool clockwise)
 {
 	bool onStack = stack.isOnStack(mousePosition);
 	Object* object = getObject(mousePosition);
 	bool success = isPlaceTaken(mousePosition, onStack);
 
 	if (success) {
-		object->rotate(true, game->editor.isActive());
+		object->rotate(clockwise, game->editor.isActive());
 	}
 
 	return success;
@@ -560,4 +569,34 @@ void Game::saveSet(const std::string &levelSetName)
 void Game::saveSet()
 {
 	saveSet(levelSet.name);
+}
+
+bool Game::Editor::isActive()
+{
+	return active;
+}
+
+void Game::Editor::switchMode()
+{
+	mode = static_cast<EditorMode>((mode + 1) % static_cast<int>(ED_COUNT));
+}
+
+void Game::Editor::turn(bool editorOn)
+{
+	active = editorOn;
+	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
+}
+
+void Game::Editor::setObject(ObjectID id)
+{
+	if (active) {
+		currentObject = id;
+	}
+
+	sprite.setTexture(*textures[id]);
+}
+
+ObjectID Game::Editor::getObject()
+{
+	return currentObject;
 }

@@ -46,7 +46,7 @@ public:
 		bool moveObject(Object::Position start, Object::Position end);
 		void newObject(Object::Position position, ObjectID id, bool inStack);
 		bool removeObject(Object::Position position);
-		bool rotateObject(Object::Position mousePosition);
+		bool rotateObject(Object::Position mousePosition, bool clockwise = true);
 		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
 		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
 		bool setObstacle(Object::Position position, bool obstacle);

@@ -326,11 +326,8 @@ void gameEvents(GameState gameState)
 	if (gameState.game.level.event) {
 		gameState.game.calculateLasers();
 
-
-
 		if (gameState.game.level.checkWin()) {
 			gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel] = LS_PASSED;
-			gameState.game.saveSet();
 		}
 
 		gameState.game.level.event = false;
@@ -453,7 +450,7 @@ void mouseGameEvents(GameState gameState)
 				}
 
 				if (gameState.drag.position == gameState.mousePosition) {
-					gameState.game.level.event = gameState.game.level.rotateObject(gameState.mousePosition);
+					gameState.game.level.event = gameState.game.level.rotateObject(gameState.mousePosition, true);
 				}
 			} else {
 				if (!gameState.drag.position.isNull()) {
