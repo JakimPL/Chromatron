@@ -8,10 +8,10 @@ int main(int argc, char* argv[])
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chromatron");
 	GameState gameState(game, window, drag, event);
 
-	handleApplicationParameters(gameState, argc, argv);
-	initializeGame(gameState);
-	mainLoop(gameState);
-	endGame(gameState);
+	gameState.handleApplicationParameters(argc, argv);
+	gameState.initializeGame();
+	gameState.mainLoop();
+	gameState.endGame();
 
 	return 0;
 }

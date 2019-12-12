@@ -12,6 +12,29 @@ struct GameState {
 	sf::Event &event;
 
 	Object::Position mousePosition;
+
+	void handleApplicationParameters(int argc, char* argv[]);
+	void deleteGameObjects();
+	void draw();
+	void drawBoard();
+	void drawLasers(bool blackLasers);
+	void drawLasers();
+	void drawGameObjects();
+	void drawSelector(Object::Position mousePosition);
+	void drawSelectorSquare(Object::Position position, sf::Color fillColor, sf::Color outlineColor, bool outlineOnly);
+	void drawStack();
+	void drawTile(Object::Position position, bool inStack = false);
+	void gameEvents();
+	void initializeGame();
+	void mainLoop();
+	void nextLevel();
+	void endGame();
+	void keyboardGlobalEvents();
+	void keyboardEditorEvents();
+	void mouseEditorEvents();
+	void mouseGameEvents();
+	void clearLevel();
+	void resetLevel();
 	void update();
 };
 
