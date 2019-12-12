@@ -6,40 +6,14 @@
 
 Game::Game()
 {
-	for (size_t index = 0; index < OBJ_COUNT; ++index) {
-		textures.push_back(loadTexture(IMG_OBJECT_NAMES[index]));
-	}
-
-	textures.push_back(loadTexture(IMG_OBJECT_NAMES[OBJ_COUNT]));
-
-	for (size_t index = 0; index < TIL_COUNT; ++index) {
-		tiles.push_back(loadTexture(IMG_TILE_NAMES[index]));
-	}
-
+	graphics.loadTextures();
 	level.game = this;
 	levelSet.game = this;
 }
 
 Game::~Game()
 {
-	for (size_t index = 0; index < textures.size(); ++index) {
-		delete textures[index];
-	}
 
-	for (size_t index = 0; index < tiles.size(); ++index) {
-		delete tiles[index];
-	}
-}
-
-sf::Texture* Game::loadTexture(const std::string &filename)
-{
-	std::string location = PATH_DATA + PATH_IMG_PREFIX + filename + PATH_IMG_SUFFIX;
-	sf::Texture* image = new sf::Texture();
-	if (!image->loadFromFile(location)) {
-		throw std::runtime_error("failed to load " + location + " image file");
-	}
-
-	return image;
 }
 
 void Game::clearLevel()
@@ -444,7 +418,7 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 
 	object->sprite.setOrigin(ORIGIN);
 	object->sprite.setPosition(inStack ? object->position + stack.offset : object->position);
-	object->textures.push_back(textures[id]);
+	object->textures.push_back(game->graphics.textures[id]);
 	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
 
@@ -458,14 +432,14 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	}
 
 	if (id == OBJ_DOT) {
-		object->textures.push_back(textures[OBJ_COUNT]);
+		object->textures.push_back(game->graphics.textures[OBJ_COUNT]);
 	}
 }
 
 void Game::Level::setTile(Object::Position position, bool obstacle)
 {
 	obstacles[position] = obstacle;
-	tileSprites[position].setTexture(*tiles[static_cast<size_t>(obstacles[position])]);
+	tileSprites[position].setTexture(*game->graphics.tiles[static_cast<size_t>(obstacles[position])]);
 	tileSprites[position].setPosition(positionToFloat(position));
 }
 
@@ -527,7 +501,7 @@ void Game::Level::updateStack()
 	for (size_t row = 0; row < height; ++row) {
 		for (size_t column = 0; column < width; ++column) {
 			Object::Position currentPosition = shortToPosition(row, column);
-			stack.sprites[currentPosition].setTexture(*tiles[TIL_EMPTY]);
+			stack.sprites[currentPosition].setTexture(*game->graphics.tiles[TIL_EMPTY]);
 			stack.sprites[currentPosition].setPosition(positionToFloat(currentPosition + offset));
 		}
 	}
@@ -555,7 +529,7 @@ void Game::Editor::setObject(ObjectID id)
 		currentObject = id;
 	}
 
-	sprite.setTexture(*textures[id]);
+	sprite.setTexture(*game->graphics.textures[id]);
 }
 
 ObjectID Game::Editor::getObject()

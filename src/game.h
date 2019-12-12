@@ -8,12 +8,12 @@
 #include <SFML/Graphics.hpp>
 #include "constants.h"
 #include "drag.h"
+#include "graphics.h"
 #include "object.h"
 #include "stack.h"
 
 class Game
 {
-	sf::Texture* loadTexture(const std::string &filename);
 public:
 	Game();
 	~Game();
@@ -78,6 +78,7 @@ public:
 	public:
 		EditorMode mode;
 		sf::Sprite sprite;
+		Game* game;
 
 		bool isActive();
 		ObjectID getObject();
@@ -87,6 +88,7 @@ public:
 	} editor;
 
 	std::string levelId = "001";
+	Graphics graphics;
 	Drag drag;
 
 	void clearLevel();

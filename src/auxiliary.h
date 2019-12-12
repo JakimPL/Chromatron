@@ -9,7 +9,6 @@
 #include "object.h"
 
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);
-extern sf::Texture loadTexture(const std::string &filename);
 extern unsigned short countDigit(unsigned short n);
 extern void loadSprites();
 extern void readByte(std::ifstream &file, unsigned short &var);

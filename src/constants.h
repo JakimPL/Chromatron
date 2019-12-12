@@ -108,7 +108,4 @@ static sf::Color   dblue(0,   0,   128);
 static sf::Color  yellow(255, 255, 0);
 static sf::Color dyellow(128, 128, 0);
 
-static std::vector<sf::Texture*> textures;
-static std::vector<sf::Texture*> tiles;
-
 #endif

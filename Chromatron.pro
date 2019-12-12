@@ -19,6 +19,7 @@ SOURCES += \
         src/auxiliary.cpp \
         src/game.cpp \
         src/gamestate.cpp \
+        src/graphics.cpp \
         src/levelset.cpp \
         src/object.cpp \
         src/stack.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
 	src/drag.h \
 	src/game.h \
 	src/gamestate.h \
+	src/graphics.h \
 	src/object.h \
 	src/stack.h \
 	src/structures.h
