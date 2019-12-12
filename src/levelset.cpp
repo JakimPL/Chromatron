@@ -5,7 +5,7 @@
 
 void Game::LevelSet::loadSet(const std::string &levelSetName)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (checkSetSave(levelSetName) ? PATH_LEV_SAV_SUFFIX : PATH_LEV_SET_SUFFIX);
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (checkSetSave(levelSetName) ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
 	std::ifstream levelSetFile(location);
 	if (levelSetFile.good()) {
 		name = levelSetName;
@@ -29,15 +29,14 @@ void Game::LevelSet::loadSet(const std::string &levelSetName)
 
 bool Game::LevelSet::checkSetSave(const std::string &levelSetName)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_LEV_SAV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SAV_SUFFIX;
 	std::ifstream levelSetSaveFile(location);
 	return levelSetSaveFile.good();
 }
 
-
 void Game::LevelSet::saveSet(const std::string &levelSetName)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_LEV_SAV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SAV_SUFFIX;
 	std::ofstream levelSetFile(location, std::ios::binary);
 	if (levelSetFile.good()) {
 		writeByte(levelSetFile, levels);
@@ -48,7 +47,31 @@ void Game::LevelSet::saveSet(const std::string &levelSetName)
 		}
 
 		levelSetFile.close();
+	} else {
+		throw std::runtime_error("failed to save " + location + " file");
+	}
 
+	saveCurrentLevel();
+}
+
+void Game::LevelSet::saveCurrentLevel()
+{
+	saveCurrentLevel(name);
+}
+
+void Game::LevelSet::saveCurrentLevel(const std::string &levelSetName)
+{
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + "/" + numberToString(currentLevel) + PATH_SAV_SUFFIX;
+	std::ofstream levelSetFile(location, std::ios::binary);
+	if (levelSetFile.good()) {
+		unsigned short stackObjectsCount = game->level.stackObjectList.size();
+		writeByte(levelSetFile, stackObjectsCount);
+
+		for (size_t index = 0; index < stackObjectsCount; ++index) {
+			writeObject(levelSetFile, game->level.stackObjectList[index]);
+		}
+
+		levelSetFile.close();
 	} else {
 		throw std::runtime_error("failed to save " + location + " file");
 	}

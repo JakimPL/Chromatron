@@ -13,7 +13,7 @@ extern unsigned short countDigit(unsigned short n);
 extern std::string numberToString(unsigned short number);
 extern void loadSprites();
 extern void readByte(std::ifstream &file, unsigned short &var);
-extern void readObject(std::ifstream &file, Game::Level &level);
+extern void readObject(std::ifstream &file, Game::Level &level, bool stackObject = false);
 extern void writeByte(std::ofstream &file, unsigned short var);
 extern void writeObject(std::ofstream &file, Object* object);
 extern Object::Position floatToPosition(sf::Vector2f vector);

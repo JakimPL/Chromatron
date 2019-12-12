@@ -79,15 +79,15 @@ enum LevelState : unsigned short {
 	LS_PASSED
 };
 
-static std::string PATH_DATA           = "./data/";
-static std::string PATH_LEV_PREFIX     = "LEV/";
-static std::string PATH_LEV_SUFFIX     = ".lev";
-static std::string PATH_IMG_PREFIX     = "IMG/";
-static std::string PATH_IMG_SUFFIX     = ".png";
-static std::string PATH_LS_SUFFIX      = "/levels";
-static std::string FIRST_LEVEL_ID      = "001";
-static std::string PATH_LEV_SAV_SUFFIX = ".sav";
-static std::string PATH_LEV_SET_SUFFIX = ".set";
+static std::string PATH_DATA       = "./data/";
+static std::string PATH_LEV_PREFIX = "LEV/";
+static std::string PATH_LEV_SUFFIX = ".lev";
+static std::string PATH_IMG_PREFIX = "IMG/";
+static std::string PATH_IMG_SUFFIX = ".png";
+static std::string PATH_LS_SUFFIX  = "/levels";
+static std::string FIRST_LEVEL_ID  = "001";
+static std::string PATH_SAV_SUFFIX = ".sav";
+static std::string PATH_SET_SUFFIX = ".set";
 static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
 static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 

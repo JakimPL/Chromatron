@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -9,11 +8,19 @@ Game::Game()
 	graphics.loadTextures();
 	level.game = this;
 	levelSet.game = this;
+	editor.game = this;
 }
 
 Game::~Game()
 {
 
+}
+
+bool Game::Level::checkLevelSave(const std::string &id)
+{
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
+	std::ifstream levelSetSaveFile(location);
+	return levelSetSaveFile.good();
 }
 
 void Game::Level::clearLevel()
@@ -26,6 +33,7 @@ void Game::Level::clearLevel()
 	}
 
 	objectMap.clear();
+	stackObjectList.clear();
 
 	for (short y = 0; y < height; ++y) {
 		for (short x = 0; x < width; ++x) {
@@ -71,6 +79,20 @@ void Game::Level::loadLevel(const std::string &id)
 			readObject(levelFile, game->level);
 		}
 
+		bool saveFileExists = checkLevelSave(id);
+		if (saveFileExists) {
+			levelFile.close();
+			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
+			levelFile.open(location, std::ios::binary | std::ios::in);
+		}
+
+		unsigned short stackObjectsCount;
+		readByte(levelFile, stackObjectsCount);
+
+		for (unsigned short obj = 0; obj < stackObjectsCount; ++obj) {
+			readObject(levelFile, game->level, true);
+		}
+
 		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
@@ -99,8 +121,22 @@ void Game::Level::saveLevel(const std::string &id)
 
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < objectList[type].size(); ++index) {
-				Object* object = objectList[type][index];
-				writeObject(levelFile, object);
+				if (!objectList[type][index]->inStack) {
+					Object* object = objectList[type][index];
+					writeObject(levelFile, object);
+				}
+			}
+		}
+
+		unsigned short stackObjectsCount = countObjects(true);
+		writeByte(levelFile, stackObjectsCount);
+
+		for (size_t type = 0; type < OBJ_COUNT; ++type) {
+			for (size_t index = 0; index < objectList[type].size(); ++index) {
+				if (objectList[type][index]->inStack) {
+					Object* object = objectList[type][index];
+					writeObject(levelFile, object);
+				}
 			}
 		}
 
@@ -209,12 +245,28 @@ void Game::Level::updateDots()
 	}
 }
 
+unsigned short Game::Level::countObjects()
+{
+	unsigned short objectsCount = 0;
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		for (size_t index = 0; index < objectList[type].size(); ++index) {
+			objectsCount++;
+		}
+	}
+
+	return objectsCount;
+}
+
 unsigned short Game::Level::countObjects(bool inStack)
 {
 	unsigned short objectsCount = 0;
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
 		for (size_t index = 0; index < (inStack ? stack.objectList[type] : objectList[type]).size(); ++index) {
-			objectsCount++;
+			if (inStack) {
+				objectsCount++;
+			} else if (!objectList[type][index]->inStack) {
+				objectsCount++;
+			}
 		}
 	}
 
@@ -400,12 +452,12 @@ bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 	return true;
 }
 
-void Game::Level::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction, bool inStack)
+void Game::Level::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
 {
-	setObject(object, shortToPosition(x, y), id, direction, inStack);
+	setObject(object, shortToPosition(x, y), id, direction, inStack, stackObject);
 }
 
-void Game::Level::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction, bool inStack)
+void Game::Level::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
 {
 	object->id = id;
 	object->position.setPosition(position);
@@ -425,6 +477,10 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	} else {
 		game->level.stack.objectMap[object->position] = object;
 		game->level.stack.objectList[id].push_back(object);
+	}
+
+	if (stackObject) {
+		game->level.stackObjectList.push_back(object);
 	}
 
 	if (id == OBJ_DOT) {

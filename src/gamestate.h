@@ -36,6 +36,7 @@ struct GameState {
 	void nextLevel();
 	void previousLevel();
 	void resetLevel();
+	void saveLevel();
 	void update();
 };
 

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "gamestate.h"
 #include "auxiliary.h"
 
@@ -252,9 +254,7 @@ void GameState::keyboardGlobalEvents()
 			break;
 		}
 		case sf::Keyboard::S: {
-			if (game.editor.isActive()) {
-				game.level.saveLevel("999");
-			}
+			saveLevel();
 			break;
 		}
 		case sf::Keyboard::Space: {
@@ -388,6 +388,7 @@ void GameState::loadLevel()
 void GameState::nextLevel()
 {
 	if (!game.levelSet.isLevelLast()) {
+		game.levelSet.saveCurrentLevel();
 		if (game.levelSet.levelStates[game.levelSet.currentLevel] != LS_LOCKED) {
 			game.levelSet.currentLevel++;
 			loadLevel();
@@ -398,6 +399,7 @@ void GameState::nextLevel()
 void GameState::previousLevel()
 {
 	if (!game.levelSet.isLevelFirst()) {
+		game.levelSet.saveCurrentLevel();
 		game.levelSet.currentLevel--;
 		loadLevel();
 	}
@@ -408,4 +410,13 @@ void GameState::resetLevel()
 	drag.position.setNull();
 	game.level.resetLevel();
 	game.level.event = true;
+}
+
+void GameState::saveLevel()
+{
+	if (game.editor.isActive()) {
+		drag.position.setNull();
+		game.level.saveLevel("999");
+		game.level.event = true;
+	}
 }

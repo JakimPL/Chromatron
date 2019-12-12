@@ -23,6 +23,7 @@ public:
 		unsigned short width;
 		unsigned short height;
 		std::vector<Object*> objectList[OBJ_COUNT];
+		std::vector<Object*> stackObjectList;
 		std::map<Object::Position, Object*> objectMap;
 		std::map<Object::Position, bool> obstacles;
 		std::map<Object::Position, sf::Sprite> tileSprites;
@@ -45,27 +46,28 @@ public:
 		void newObject(Object::Position position, ObjectID id, bool inStack);
 		bool removeObject(Object::Position position);
 		bool rotateObject(Object::Position mousePosition, bool clockwise = true);
-		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
-		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false);
+		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
+		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
 		bool setObstacle(Object::Position position, bool obstacle);
 		void setTile(Object::Position position, bool obstacle);
 		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
 		bool moveToStack(Object::Position dragPosition, Object::Position mousePosition);
 		bool moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition);
-		void updateStack();
 
-
+		bool checkLevelSave(const std::string &id);
 		void clearLevel();
 		void resetLevel();
 		void loadLevel(const unsigned short level);
 		void loadLevel(const std::string &id);
 		void saveLevel(const std::string &id);
 
+		unsigned short countObjects();
 		unsigned short countObjects(bool inStack);
 		bool checkWin();
 		void calculateLasers();
 		void clearDots();
 		void updateDots();
+		void updateStack();
 	} level;
 
 	struct LevelSet {
@@ -77,7 +79,9 @@ public:
 
 		bool checkSetSave(const std::string &levelSetName);
 		void loadSet(const std::string &levelSetName);
+		void saveCurrentLevel(const std::string &levelSetName);
 		void saveSet(const std::string &levelSetName);
+		void saveCurrentLevel();
 		void saveSet();
 
 		bool isLevelFirst();
