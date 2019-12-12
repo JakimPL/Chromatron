@@ -71,7 +71,7 @@ public:
 	} level;
 
 	struct LevelSet {
-		std::string name = "Levelset";
+		std::string name;
 		unsigned short levels;
 		unsigned short currentLevel;
 		std::vector<LevelState> levelStates;

@@ -197,7 +197,7 @@ void Game::Level::calculateLasers()
 						}
 					} else if (objectMap[now]->id == OBJ_BENDER) {
 						Bender* mirror = (Bender*) objectMap[now];
-						int diff = (DIR_COUNT + mirror->direction - dir + 5) % DIR_COUNT - 4;
+						int diff = (DIR_COUNT + mirror->direction - dir + 7) % DIR_COUNT - 4;
 						if (-2 <= diff && diff < 2) {
 							stop = true;
 							dir = (DIR_COUNT + dir + (2 * diff + 5)) % DIR_COUNT;

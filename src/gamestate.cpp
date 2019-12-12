@@ -26,7 +26,7 @@ void GameState::handleApplicationParameters(int argc, char* argv[])
 void GameState::initializeGame()
 {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
-	game.levelSet.loadSet("Levelset");
+	game.levelSet.loadSet("Chromatron");
 }
 
 void GameState::mainLoop()
