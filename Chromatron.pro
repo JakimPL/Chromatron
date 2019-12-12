@@ -17,10 +17,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         src/auxiliary.cpp \
+        src/editor.cpp \
         src/game.cpp \
         src/gamestate.cpp \
         src/graphics.cpp \
-        src/level.cpp \
         src/levelset.cpp \
         src/object.cpp \
         src/stack.cpp \
