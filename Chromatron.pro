@@ -17,14 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         src/auxiliary.cpp \
+        src/color.cpp \
         src/editor.cpp \
         src/game.cpp \
         src/gamestate.cpp \
         src/graphics.cpp \
         src/levelset.cpp \
         src/object.cpp \
-        src/stack.cpp \
-        src/structures.cpp
+        src/stack.cpp
 
 LIBS += -L/usr/lib -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 OBJECTS_DIR = obj
