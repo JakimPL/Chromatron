@@ -10,6 +10,7 @@
 
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);
 extern sf::Texture loadTexture(const std::string &filename);
+extern unsigned short countDigit(unsigned short n);
 extern void loadSprites();
 extern void readByte(std::ifstream &file, unsigned short &var);
 extern void readObject(std::ifstream &file, Game::Level &level);
@@ -29,6 +30,7 @@ extern void drawTile(GameState gameState, Object::Position position, bool inStac
 extern void gameEvents(GameState gameState);
 extern void initializeGame(GameState gameState);
 extern void mainLoop(GameState gameState);
+extern void nextLevel(GameState gameState);
 extern void endGame(GameState gameState);
 extern void keyboardGlobalEvents(GameState gameState);
 extern void keyboardEditorEvents(GameState gameState);

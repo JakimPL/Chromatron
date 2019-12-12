@@ -19,6 +19,7 @@ SOURCES += \
         src/auxiliary.cpp \
         src/game.cpp \
         src/gamestate.cpp \
+        src/levelset.cpp \
         src/object.cpp \
         src/stack.cpp \
         src/structures.cpp

@@ -63,6 +63,12 @@ public:
 		unsigned short currentLevel;
 		std::vector<LevelState> levelStates;
 		Game* game;
+
+		bool isLevelLast();
+		bool checkSetSave(const std::string &levelSetName);
+		void loadSet(const std::string &levelSetName);
+		void saveSet(const std::string &levelSetName);
+		void saveSet();
 	} levelSet;
 
 	struct Editor {
@@ -84,12 +90,10 @@ public:
 	Drag drag;
 
 	void clearLevel();
+	void loadLevel(const unsigned short level);
 	void loadLevel(const std::string &id);
 	void saveLevel(const std::string &id);
 	void resetLevel();
-	void loadSet(const std::string &levelSetName);
-	void saveSet(const std::string &levelSetName);
-	void saveSet();
 	void calculateLasers();
 	void clearDots();
 	void updateDots();

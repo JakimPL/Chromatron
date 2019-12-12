@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -58,6 +59,14 @@ void Game::clearLevel()
 			level.setTile(currentPosition, false);
 		}
 	}
+}
+
+void Game::loadLevel(const unsigned short level)
+{
+	///TODO: Error handling
+	std::string id = std::to_string(level);
+	id = std::string(3 - countDigit(level), '0').append(id);
+	loadLevel(id);
 }
 
 void Game::loadLevel(const std::string &id)
@@ -522,53 +531,6 @@ void Game::Level::updateStack()
 			stack.sprites[currentPosition].setPosition(positionToFloat(currentPosition + offset));
 		}
 	}
-}
-
-void Game::loadSet(const std::string &levelSetName)
-{
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_LEV_SET_SUFFIX;
-	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
-	if (levelFile.good()) {
-		levelSet.name = levelSetName;
-		readByte(levelFile, levelSet.levels);
-		readByte(levelFile, levelSet.currentLevel);
-
-		for (size_t level = 0; level < levelSet.levels; ++level) {
-			unsigned short levelState;
-			readByte(levelFile, levelState);
-			levelSet.levelStates.push_back(static_cast<LevelState>(levelState));
-		}
-
-		levelFile.close();
-	} else {
-		throw std::runtime_error("failed to load " + location + " file");
-	}
-
-	loadLevel(FIRST_LEVEL_ID);
-}
-
-void Game::saveSet(const std::string &levelSetName)
-{
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_LEV_SAV_SUFFIX;
-	std::ofstream levelFile(location, std::ios::binary);
-	if (levelFile.good()) {
-		writeByte(levelFile, levelSet.levels);
-		writeByte(levelFile, levelSet.currentLevel);
-
-		for (size_t level = 0; level < levelSet.levels; ++level) {
-			writeByte(levelFile, levelSet.levelStates[level]);
-		}
-
-		levelFile.close();
-
-	} else {
-		throw std::runtime_error("failed to save " + location + " file");
-	}
-}
-
-void Game::saveSet()
-{
-	saveSet(levelSet.name);
 }
 
 bool Game::Editor::isActive()

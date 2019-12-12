@@ -10,6 +10,16 @@ sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 	return rectangle;
 }
 
+unsigned short countDigit(unsigned short n)
+{
+	unsigned short count = 0;
+	while (n != 0) {
+		n = n / 10;
+		count++;
+	}
+	return count;
+}
+
 void readByte(std::ifstream &file, unsigned short &var)
 {
 	char buffer;
@@ -124,7 +134,7 @@ void handleApplicationParameters(GameState gameState, int argc, char* argv[])
 void initializeGame(GameState gameState)
 {
 	gameState.window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
-	gameState.game.loadSet("Levelset");
+	gameState.game.levelSet.loadSet("Levelset");
 }
 
 void mainLoop(GameState gameState)
@@ -145,7 +155,7 @@ void mainLoop(GameState gameState)
 
 void endGame(GameState gameState)
 {
-	gameState.game.saveSet(gameState.game.levelSet.name);
+	gameState.game.levelSet.saveSet(gameState.game.levelSet.name);
 	deleteGameObjects(gameState);
 }
 
@@ -327,7 +337,7 @@ void gameEvents(GameState gameState)
 		gameState.game.calculateLasers();
 
 		if (gameState.game.level.checkWin()) {
-			gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel] = LS_PASSED;
+			gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel - 1] = LS_PASSED;
 		}
 
 		gameState.game.level.event = false;
@@ -354,6 +364,10 @@ void keyboardGlobalEvents(GameState gameState)
 			if (gameState.game.editor.isActive()) {
 				gameState.game.saveLevel("999");
 			}
+			break;
+		}
+		case sf::Keyboard::Space: {
+			nextLevel(gameState);
 			break;
 		}
 		default:
@@ -468,6 +482,17 @@ void clearLevel(GameState gameState)
 	gameState.drag.position.setNull();
 	gameState.game.clearLevel();
 	gameState.game.level.event = true;
+}
+
+void nextLevel(GameState gameState)
+{
+	if (!gameState.game.levelSet.isLevelLast()) {
+		if (gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel] != LS_LOCKED) {
+			clearLevel(gameState);
+			gameState.game.levelSet.currentLevel++;
+			gameState.game.loadLevel(gameState.game.levelSet.currentLevel);
+		}
+	}
 }
 
 void resetLevel(GameState gameState)
