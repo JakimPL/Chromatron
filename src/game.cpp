@@ -16,26 +16,26 @@ Game::~Game()
 
 }
 
-void Game::clearLevel()
+void Game::Level::clearLevel()
 {
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
-		while (!level.objectList[type].empty()) {
-			delete level.objectList[type].back();
-			level.objectList[type].pop_back();
+		while (!objectList[type].empty()) {
+			delete objectList[type].back();
+			objectList[type].pop_back();
 		}
 	}
 
-	level.objectMap.clear();
+	objectMap.clear();
 
-	for (short y = 0; y < level.height; ++y) {
-		for (short x = 0; x < level.width; ++x) {
+	for (short y = 0; y < height; ++y) {
+		for (short x = 0; x < width; ++x) {
 			Object::Position currentPosition = shortToPosition(x, y);
-			level.setTile(currentPosition, false);
+			setTile(currentPosition, false);
 		}
 	}
 }
 
-void Game::loadLevel(const unsigned short level)
+void Game::Level::loadLevel(const unsigned short level)
 {
 	///TODO: Error handling
 	std::string id = std::to_string(level);
@@ -43,27 +43,27 @@ void Game::loadLevel(const unsigned short level)
 	loadLevel(id);
 }
 
-void Game::loadLevel(const std::string &id)
+void Game::Level::loadLevel(const std::string &id)
 {
 	///TODO: error handling
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSet.name + "/" + id + PATH_LEV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
-		readByte(levelFile, level.width);
-		readByte(levelFile, level.height);
-		readByte(levelFile, level.stack.width);
-		readByte(levelFile, level.stack.height);
+		readByte(levelFile, width);
+		readByte(levelFile, height);
+		readByte(levelFile, stack.width);
+		readByte(levelFile, stack.height);
 
-		level.updateStack();
+		updateStack();
 
-		for (short y = 0; y < level.height; ++y) {
-			for (short x = 0; x < level.width; ++x) {
+		for (short y = 0; y < height; ++y) {
+			for (short x = 0; x < width; ++x) {
 				Object::Position currentPosition = shortToPosition(x, y);
-				level.objectMap[currentPosition] = nullptr;
+				objectMap[currentPosition] = nullptr;
 
 				bool obstacle;
 				levelFile.read((char*)&obstacle, 1);
-				level.setTile(currentPosition, obstacle);
+				setTile(currentPosition, obstacle);
 			}
 		}
 
@@ -71,7 +71,7 @@ void Game::loadLevel(const std::string &id)
 		readByte(levelFile, objectsCount);
 
 		for (unsigned short obj = 0; obj < objectsCount; ++obj) {
-			readObject(levelFile, level);
+			readObject(levelFile, game->level);
 		}
 
 		levelFile.close();
@@ -80,29 +80,29 @@ void Game::loadLevel(const std::string &id)
 	}
 }
 
-void Game::saveLevel(const std::string &id)
+void Game::Level::saveLevel(const std::string &id)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSet.name + "/" + id + PATH_LEV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_LEV_SUFFIX;
 	std::ofstream levelFile(location, std::ios::binary);
 	if (levelFile.good()) {
-		writeByte(levelFile, level.width);
-		writeByte(levelFile, level.height);
-		writeByte(levelFile, level.stack.width);
-		writeByte(levelFile, level.stack.height);
+		writeByte(levelFile, width);
+		writeByte(levelFile, height);
+		writeByte(levelFile, stack.width);
+		writeByte(levelFile, stack.height);
 
-		for (short y = 0; y < level.height; ++y) {
-			for (short x = 0; x < level.width; ++x) {
+		for (short y = 0; y < height; ++y) {
+			for (short x = 0; x < width; ++x) {
 				Object::Position currentPosition = shortToPosition(x, y);
-				levelFile.write((char*) & (level.obstacles[currentPosition]), 1);
+				levelFile.write((char*) & (obstacles[currentPosition]), 1);
 			}
 		}
 
-		unsigned short objectsCount = level.countObjects(false);
+		unsigned short objectsCount = countObjects(false);
 		writeByte(levelFile, objectsCount);
 
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
-			for (size_t index = 0; index < level.objectList[type].size(); ++index) {
-				Object* object = level.objectList[type][index];
+			for (size_t index = 0; index < objectList[type].size(); ++index) {
+				Object* object = objectList[type][index];
 				writeObject(levelFile, object);
 			}
 		}
@@ -114,18 +114,18 @@ void Game::saveLevel(const std::string &id)
 	}
 }
 
-void Game::resetLevel()
+void Game::Level::resetLevel()
 {
 	clearLevel();
-	loadLevel(levelId);
+	loadLevel(game->levelId);
 }
 
-void Game::calculateLasers()
+void Game::Level::calculateLasers()
 {
 	clearDots();
 
-	for (size_t beamerIndex = 0; beamerIndex < level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
-		Beamer* beamer = (Beamer*) level.objectList[OBJ_BEAMER][beamerIndex];
+	for (size_t beamerIndex = 0; beamerIndex < objectList[OBJ_BEAMER].size(); ++beamerIndex) {
+		Beamer* beamer = (Beamer*) objectList[OBJ_BEAMER][beamerIndex];
 		beamer->laser.clear();
 
 		unsigned short dir = beamer->direction;
@@ -147,14 +147,14 @@ void Game::calculateLasers()
 				now.moveInDirection(dir, 1);
 				delta = sf::Vector2f(now) - delta;
 
-				if (level.isPlaceTaken(now)) {
-					if (level.objectMap[now]->id == OBJ_BEAMER) {
+				if (isPlaceTaken(now)) {
+					if (objectMap[now]->id == OBJ_BEAMER) {
 						stop = end = true;
-					} else if (level.objectMap[now]->id == OBJ_DOT) {
-						Dot* dot = (Dot*) level.objectMap[now];
+					} else if (objectMap[now]->id == OBJ_DOT) {
+						Dot* dot = (Dot*) objectMap[now];
 						dot->actualColor = dot->actualColor + color;
-					} else if (level.objectMap[now]->id == OBJ_MIRROR) {
-						Mirror* mirror = (Mirror*) level.objectMap[now];
+					} else if (objectMap[now]->id == OBJ_MIRROR) {
+						Mirror* mirror = (Mirror*) objectMap[now];
 						int diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
 						if (std::abs(diff) <= 1) {
 							stop = true;
@@ -162,8 +162,8 @@ void Game::calculateLasers()
 						} else {
 							stop = end = true;
 						}
-					} else if (level.objectMap[now]->id == OBJ_BENDER) {
-						Bender* mirror = (Bender*) level.objectMap[now];
+					} else if (objectMap[now]->id == OBJ_BENDER) {
+						Bender* mirror = (Bender*) objectMap[now];
 						int diff = (DIR_COUNT + mirror->direction - dir + 5) % DIR_COUNT - 4;
 						if (-2 <= diff && diff < 2) {
 							stop = true;
@@ -174,7 +174,7 @@ void Game::calculateLasers()
 					}
 				}
 
-				if (level.isOutsideBoard(now) || level.obstacles[now]) {
+				if (isOutsideBoard(now) || obstacles[now]) {
 					stop = end = true;
 					endAtMiddle = false;
 				}
@@ -195,24 +195,23 @@ void Game::calculateLasers()
 	updateDots();
 }
 
-void Game::clearDots()
+void Game::Level::clearDots()
 {
-	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
-		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+	for (size_t dotIndex = 0; dotIndex < objectList[OBJ_DOT].size(); ++dotIndex) {
+		Dot* dot = (Dot*) objectList[OBJ_DOT][dotIndex];
 		dot->actualColor = COL_BLACK_TUPLE;
 	}
 }
 
-void Game::updateDots()
+void Game::Level::updateDots()
 {
-	for (size_t dotIndex = 0; dotIndex < level.objectList[OBJ_DOT].size(); ++dotIndex) {
-		Dot* dot = (Dot*) level.objectList[OBJ_DOT][dotIndex];
+	for (size_t dotIndex = 0; dotIndex < objectList[OBJ_DOT].size(); ++dotIndex) {
+		Dot* dot = (Dot*) objectList[OBJ_DOT][dotIndex];
 		dot->updateState();
 		dot->setSpriteColor();
 	}
 }
 
-/* LEVEL */
 unsigned short Game::Level::countObjects(bool inStack)
 {
 	unsigned short objectsCount = 0;

@@ -31,8 +31,6 @@ public:
 
 		bool addObject(Object::Position position, ObjectID id);
 		bool addToStack(Object::Position position);
-		bool checkWin();
-		unsigned short countObjects(bool inStack);
 		bool dragObject(Drag &drag, Object::Position mousePosition);
 		bool dragStackObject(Drag &drag, Object::Position mousePosition);
 		bool changeObjectColor(Object::Position mousePosition);
@@ -55,6 +53,19 @@ public:
 		bool moveToStack(Object::Position dragPosition, Object::Position mousePosition);
 		bool moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition);
 		void updateStack();
+
+
+		void clearLevel();
+		void resetLevel();
+		void loadLevel(const unsigned short level);
+		void loadLevel(const std::string &id);
+		void saveLevel(const std::string &id);
+
+		unsigned short countObjects(bool inStack);
+		bool checkWin();
+		void calculateLasers();
+		void clearDots();
+		void updateDots();
 	} level;
 
 	struct LevelSet {
@@ -90,15 +101,6 @@ public:
 	std::string levelId = "001";
 	Graphics graphics;
 	Drag drag;
-
-	void clearLevel();
-	void loadLevel(const unsigned short level);
-	void loadLevel(const std::string &id);
-	void saveLevel(const std::string &id);
-	void resetLevel();
-	void calculateLasers();
-	void clearDots();
-	void updateDots();
 };
 
 #endif

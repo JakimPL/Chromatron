@@ -334,7 +334,7 @@ void gameEvents(GameState gameState)
 	}
 
 	if (gameState.game.level.event) {
-		gameState.game.calculateLasers();
+		gameState.game.level.calculateLasers();
 
 		if (gameState.game.level.checkWin()) {
 			gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel - 1] = LS_PASSED;
@@ -362,7 +362,7 @@ void keyboardGlobalEvents(GameState gameState)
 		}
 		case sf::Keyboard::S: {
 			if (gameState.game.editor.isActive()) {
-				gameState.game.saveLevel("999");
+				gameState.game.level.saveLevel("999");
 			}
 			break;
 		}
@@ -480,7 +480,7 @@ void mouseGameEvents(GameState gameState)
 void clearLevel(GameState gameState)
 {
 	gameState.drag.position.setNull();
-	gameState.game.clearLevel();
+	gameState.game.level.clearLevel();
 	gameState.game.level.event = true;
 }
 
@@ -490,7 +490,7 @@ void nextLevel(GameState gameState)
 		if (gameState.game.levelSet.levelStates[gameState.game.levelSet.currentLevel] != LS_LOCKED) {
 			clearLevel(gameState);
 			gameState.game.levelSet.currentLevel++;
-			gameState.game.loadLevel(gameState.game.levelSet.currentLevel);
+			gameState.game.level.loadLevel(gameState.game.levelSet.currentLevel);
 		}
 	}
 }
@@ -498,7 +498,7 @@ void nextLevel(GameState gameState)
 void resetLevel(GameState gameState)
 {
 	gameState.drag.position.setNull();
-	gameState.game.resetLevel();
+	gameState.game.level.resetLevel();
 	gameState.game.level.event = true;
 }
 

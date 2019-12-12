@@ -23,7 +23,7 @@ void Game::LevelSet::loadSet(const std::string &levelSetName)
 		throw std::runtime_error("failed to load " + location + " file");
 	}
 
-	game->loadLevel(currentLevel);
+	game->level.loadLevel(currentLevel);
 }
 
 bool Game::LevelSet::checkSetSave(const std::string &levelSetName)
