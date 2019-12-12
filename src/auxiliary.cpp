@@ -20,6 +20,14 @@ unsigned short countDigit(unsigned short n)
 	return count;
 }
 
+std::string numberToString(unsigned short number)
+{
+	///TODO: Error handling
+	std::string id = std::to_string(number);
+	id = std::string(3 - countDigit(number), '0').append(id);
+	return id;
+}
+
 void readByte(std::ifstream &file, unsigned short &var)
 {
 	char buffer;

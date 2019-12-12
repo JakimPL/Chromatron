@@ -228,6 +228,7 @@ void GameState::gameEvents()
 
 		if (game.level.checkWin()) {
 			game.levelSet.levelStates[game.levelSet.currentLevel - 1] = LS_PASSED;
+			game.levelSet.unlockNextLevel();
 		}
 
 		game.level.event = false;
@@ -258,6 +259,10 @@ void GameState::keyboardGlobalEvents()
 		}
 		case sf::Keyboard::Space: {
 			nextLevel();
+			break;
+		}
+		case sf::Keyboard::BackSpace: {
+			previousLevel();
 			break;
 		}
 		default:
@@ -374,14 +379,27 @@ void GameState::clearLevel()
 	game.level.event = true;
 }
 
+void GameState::loadLevel()
+{
+	clearLevel();
+	game.level.loadLevel(game.levelSet.currentLevel);
+}
+
 void GameState::nextLevel()
 {
 	if (!game.levelSet.isLevelLast()) {
 		if (game.levelSet.levelStates[game.levelSet.currentLevel] != LS_LOCKED) {
-			clearLevel();
 			game.levelSet.currentLevel++;
-			game.level.loadLevel(game.levelSet.currentLevel);
+			loadLevel();
 		}
+	}
+}
+
+void GameState::previousLevel()
+{
+	if (!game.levelSet.isLevelFirst()) {
+		game.levelSet.currentLevel--;
+		loadLevel();
 	}
 }
 

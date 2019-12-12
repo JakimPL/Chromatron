@@ -75,11 +75,14 @@ public:
 		std::vector<LevelState> levelStates;
 		Game* game;
 
-		bool isLevelLast();
 		bool checkSetSave(const std::string &levelSetName);
 		void loadSet(const std::string &levelSetName);
 		void saveSet(const std::string &levelSetName);
 		void saveSet();
+
+		bool isLevelFirst();
+		bool isLevelLast();
+		void unlockNextLevel();
 	} levelSet;
 
 	struct Editor {
@@ -98,7 +101,7 @@ public:
 		void turn(bool editorOn);
 	} editor;
 
-	std::string levelId = "001";
+	std::string levelId;
 	Graphics graphics;
 	Drag drag;
 };

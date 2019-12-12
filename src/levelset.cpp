@@ -23,6 +23,7 @@ void Game::LevelSet::loadSet(const std::string &levelSetName)
 		throw std::runtime_error("failed to load " + location + " file");
 	}
 
+	game->levelId = numberToString(currentLevel);
 	game->level.loadLevel(currentLevel);
 }
 
@@ -53,9 +54,24 @@ void Game::LevelSet::saveSet(const std::string &levelSetName)
 	}
 }
 
+bool Game::LevelSet::isLevelFirst()
+{
+	return currentLevel == 1;
+}
+
 bool Game::LevelSet::isLevelLast()
 {
 	return currentLevel == levels;
+}
+
+void Game::LevelSet::unlockNextLevel()
+{
+	for (size_t level = 0; level < levels; ++level) {
+		if (levelStates[level] == LS_LOCKED) {
+			levelStates[level] = LS_AVAILABLE;
+			break;
+		}
+	}
 }
 
 void Game::LevelSet::saveSet()

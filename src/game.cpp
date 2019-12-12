@@ -37,10 +37,7 @@ void Game::Level::clearLevel()
 
 void Game::Level::loadLevel(const unsigned short level)
 {
-	///TODO: Error handling
-	std::string id = std::to_string(level);
-	id = std::string(3 - countDigit(level), '0').append(id);
-	loadLevel(id);
+	loadLevel(numberToString(level));
 }
 
 void Game::Level::loadLevel(const std::string &id)
