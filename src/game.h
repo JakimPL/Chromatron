@@ -56,9 +56,9 @@ public:
 
 		bool checkLevelSave(const std::string &id);
 		void clearLevel();
-		void resetLevel();
-		void loadLevel(const unsigned short level);
-		void loadLevel(const std::string &id);
+		void resetLevel(bool ignoreSave = false);
+		void loadLevel(const unsigned short level, bool ignoreSave = false);
+		void loadLevel(const std::string &id, bool ignoreSave = false);
 		void saveLevel(const std::string &id);
 
 		unsigned short countObjects();

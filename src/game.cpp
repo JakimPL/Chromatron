@@ -43,12 +43,12 @@ void Game::Level::clearLevel()
 	}
 }
 
-void Game::Level::loadLevel(const unsigned short level)
+void Game::Level::loadLevel(const unsigned short level, bool ignoreSave)
 {
-	loadLevel(numberToString(level));
+	loadLevel(numberToString(level), ignoreSave);
 }
 
-void Game::Level::loadLevel(const std::string &id)
+void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 {
 	///TODO: error handling
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_LEV_SUFFIX;
@@ -79,8 +79,7 @@ void Game::Level::loadLevel(const std::string &id)
 			readObject(levelFile, game->level);
 		}
 
-		bool saveFileExists = checkLevelSave(id);
-		if (saveFileExists) {
+		if (checkLevelSave(id) && !ignoreSave) {
 			levelFile.close();
 			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
 			levelFile.open(location, std::ios::binary | std::ios::in);
@@ -147,10 +146,10 @@ void Game::Level::saveLevel(const std::string &id)
 	}
 }
 
-void Game::Level::resetLevel()
+void Game::Level::resetLevel(bool ignoreSave)
 {
 	clearLevel();
-	loadLevel(game->levelId);
+	loadLevel(game->levelId, ignoreSave);
 }
 
 void Game::Level::calculateLasers()

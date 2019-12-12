@@ -388,8 +388,8 @@ void GameState::loadLevel()
 void GameState::nextLevel()
 {
 	if (!game.levelSet.isLevelLast()) {
-		game.levelSet.saveCurrentLevel();
 		if (game.levelSet.levelStates[game.levelSet.currentLevel] != LS_LOCKED) {
+			saveCurrentLevel();
 			game.levelSet.currentLevel++;
 			loadLevel();
 		}
@@ -399,7 +399,7 @@ void GameState::nextLevel()
 void GameState::previousLevel()
 {
 	if (!game.levelSet.isLevelFirst()) {
-		game.levelSet.saveCurrentLevel();
+		saveCurrentLevel();
 		game.levelSet.currentLevel--;
 		loadLevel();
 	}
@@ -408,8 +408,15 @@ void GameState::previousLevel()
 void GameState::resetLevel()
 {
 	drag.position.setNull();
-	game.level.resetLevel();
+	game.level.resetLevel(true);
 	game.level.event = true;
+}
+
+void GameState::saveCurrentLevel()
+{
+	if (!game.editor.isActive()) {
+		game.levelSet.saveCurrentLevel();
+	}
 }
 
 void GameState::saveLevel()
