@@ -17,6 +17,7 @@ public:
 
 	// Add two colors (additive), compare two colors
 	Color operator+(const Color &color);
+	Color operator*(const Color &color);
 	bool operator==(const Color &color);
 
 	// Color's components

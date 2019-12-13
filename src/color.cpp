@@ -1,4 +1,4 @@
-#include "structures.h"
+#include "color.h"
 #include "constants.h"
 
 Color::Color(bool r, bool g, bool b) : red(r), green(g), blue(b)
@@ -14,6 +14,12 @@ Color::Color(Colors colId)
 Color Color::operator+(const Color& color)
 {
 	Color newColor(this->red || color.red, this->green || color.green, this->blue || color.blue);
+	return newColor;
+}
+
+Color Color::operator*(const Color& color)
+{
+	Color newColor(this->red && color.red, this->green && color.green, this->blue && color.blue);
 	return newColor;
 }
 

@@ -214,6 +214,18 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 						unsigned short newDirection = (DIR_COUNT + direction + 2 * diff) % DIR_COUNT;
 						createRay(beamer, newDirection, now, col);
 					}
+				} else if (objectMap[now]->id == OBJ_CONDUIT) {
+					Conduit* conduit = static_cast<Conduit*>(objectMap[now]);
+					short diff = (DIR_COUNT + conduit->direction - dir) % (DIR_COUNT / 2) - 2;
+					if (diff != 0) {
+						stop = end = true;
+					}
+				} else if (objectMap[now]->id == OBJ_FILTER) {
+					Conduit* filter = static_cast<Conduit*>(objectMap[now]);
+					short diff = (DIR_COUNT + filter->direction - dir) % (DIR_COUNT / 2) - 2;
+					if (diff != 0) {
+						stop = end = true;
+					}
 				}
 			}
 

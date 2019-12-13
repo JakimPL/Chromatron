@@ -37,11 +37,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
 	main.h \
 	src/auxiliary.h \
+	src/color.h \
 	src/constants.h \
 	src/drag.h \
 	src/game.h \
 	src/gamestate.h \
 	src/graphics.h \
 	src/object.h \
-	src/stack.h \
-	src/structures.h
+	src/stack.h

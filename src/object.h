@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "constants.h"
-#include "structures.h"
+#include "color.h"
 
 class Object
 {
