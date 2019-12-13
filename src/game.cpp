@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "game.h"
 #include "auxiliary.h"
@@ -211,7 +212,7 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 					if (diff == 0) {
 						stop = end = true;
 					} else if (std::abs(diff) == 1) {
-						unsigned short newDirection = (DIR_COUNT + direction + 2 * diff) % DIR_COUNT;
+						unsigned short newDirection = (DIR_COUNT + dir + 2 * diff) % DIR_COUNT;
 						createRay(beamer, newDirection, now, col);
 					}
 				} else if (objectMap[now]->id == OBJ_CONDUIT) {
