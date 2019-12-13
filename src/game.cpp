@@ -140,7 +140,7 @@ void Game::Level::saveLevel(const std::string &id)
 		}
 
 		levelFile.close();
-
+		game->levelId = id;
 	} else {
 		throw std::runtime_error("failed to save " + location + " file");
 	}

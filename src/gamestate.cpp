@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "gamestate.h"
 #include "auxiliary.h"
 
@@ -228,9 +226,11 @@ void GameState::gameEvents()
 	if (game.level.event) {
 		game.level.calculateLasers();
 
-		if (game.level.checkWin()) {
-			game.levelSet.levelStates[game.levelSet.currentLevel - 1] = LS_PASSED;
-			game.levelSet.unlockNextLevel();
+		if (game.levelSet.levelStates[game.levelSet.currentLevel - 1] != LS_PASSED) {
+			if (game.level.checkWin()) {
+				game.levelSet.levelStates[game.levelSet.currentLevel - 1] = LS_PASSED;
+				game.levelSet.unlockNextLevel();
+			}
 		}
 
 		game.level.event = false;
@@ -242,7 +242,9 @@ void GameState::keyboardGlobalEvents()
 	if (event.type == sf::Event::KeyPressed) {
 		switch (event.key.code) {
 		case sf::Keyboard::C: {
-			clearLevel();
+			if (game.editor.isActive()) {
+				clearLevel();
+			}
 			break;
 		}
 		case sf::Keyboard::E: {
