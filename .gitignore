@@ -3,6 +3,6 @@
 *.sav
 
 Makefile
-Chromatron
+/Chromatron
 
 obj/
