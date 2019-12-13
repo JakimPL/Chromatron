@@ -64,10 +64,12 @@ public:
 		unsigned short countObjects();
 		unsigned short countObjects(bool inStack);
 		bool checkWin();
-		void calculateLasers();
 		void clearDots();
 		void updateDots();
 		void updateStack();
+
+		void createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col);
+		void calculateLasers();
 	} level;
 
 	struct LevelSet {

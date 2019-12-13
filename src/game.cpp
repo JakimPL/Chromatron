@@ -92,6 +92,7 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 			readObject(levelFile, game->level, true);
 		}
 
+		game->levelId = id;
 		levelFile.close();
 	} else {
 		throw std::runtime_error("failed to load " + location + " file");
@@ -140,16 +141,9 @@ void Game::Level::saveLevel(const std::string &id)
 		}
 
 		levelFile.close();
-		game->levelId = id;
 	} else {
 		throw std::runtime_error("failed to save " + location + " file");
 	}
-}
-
-void Game::Level::resetLevel(bool ignoreSave)
-{
-	clearLevel();
-	loadLevel(game->levelId, ignoreSave);
 }
 
 void Game::Level::calculateLasers()
@@ -159,80 +153,92 @@ void Game::Level::calculateLasers()
 	for (size_t beamerIndex = 0; beamerIndex < objectList[OBJ_BEAMER].size(); ++beamerIndex) {
 		Beamer* beamer = static_cast<Beamer*>(objectList[OBJ_BEAMER][beamerIndex]);
 		beamer->laser.clear();
-
-		unsigned short dir = beamer->direction;
-		Object::Position now = beamer->position;
-		Color color = beamer->color;
-		sf::Color sfColor = color.convertToColor();
-
-		sf::Vector2f delta;
-
-		Ray ray;
-		ray.push_back(sf::Vertex(beamer->position, sfColor));
-
-		bool end = beamer->inStack;
-		while (!end) {
-			bool stop = false;
-			bool endAtMiddle = true;
-			while (!stop) {
-				delta = now;
-				now.moveInDirection(dir, 1);
-				delta = sf::Vector2f(now) - delta;
-
-				if (isPlaceTaken(now)) {
-					if (objectMap[now]->id == OBJ_BEAMER) {
-						stop = end = true;
-					} else if (objectMap[now]->id == OBJ_DOT) {
-						Dot* dot = static_cast<Dot*>(objectMap[now]);
-						dot->actualColor = dot->actualColor + color;
-					} else if (objectMap[now]->id == OBJ_MIRROR) {
-						Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
-						int diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
-						if (std::abs(diff) <= 1) {
-							stop = true;
-							dir = (DIR_COUNT + dir - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
-						} else {
-							stop = end = true;
-						}
-					} else if (objectMap[now]->id == OBJ_BENDER) {
-						Bender* mirror = static_cast<Bender*>(objectMap[now]);
-						int diff = (DIR_COUNT + mirror->direction - dir + 7) % DIR_COUNT - 4;
-						if (-2 <= diff && diff < 2) {
-							stop = true;
-							dir = (DIR_COUNT + dir + (2 * diff + 5)) % DIR_COUNT;
-						} else {
-							stop = end = true;
-						}
-					} else if (objectMap[now]->id == OBJ_SPLITTER) {
-						Splitter* splitter = static_cast<Splitter*>(objectMap[now]);
-						int diff = (DIR_COUNT + splitter->direction - dir) % (DIR_COUNT / 2) - 2;
-						if (diff == 0) {
-							stop = end = true;
-						} else if (std::abs(diff) == 1) {
-							stop = end = true;
-						}
-					}
-				}
-
-				if (isOutsideBoard(now) || obstacles[now]) {
-					stop = end = true;
-					endAtMiddle = false;
-				}
-			}
-
-			sf::Vertex node(now, sfColor);
-			if (!endAtMiddle) {
-				node.position.x -= delta.x * 0.5f;
-				node.position.y -= delta.y * 0.5f;
-			}
-
-			ray.push_back(node);
+		if (!beamer->inStack) {
+			createRay(beamer, beamer->direction, beamer->position, beamer->color);
 		}
-
-		beamer->laser.push_back(ray);
 	}
 
 	updateDots();
+}
+
+void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col)
+{
+	unsigned short dir = direction;
+	Object::Position now = position;
+	Color color = col;
+	sf::Color sfColor = color.convertToColor();
+	sf::Vector2f delta;
+
+	Ray ray;
+	ray.push_back(sf::Vertex(position, sfColor));
+
+	bool end = false;
+	while (!end) {
+		bool stop = false;
+		bool endAtMiddle = true;
+		while (!stop) {
+			delta = now;
+			now.moveInDirection(dir, 1);
+			delta = sf::Vector2f(now) - delta;
+
+			if (isPlaceTaken(now)) {
+				if (objectMap[now]->id == OBJ_BEAMER) {
+					stop = end = true;
+				} else if (objectMap[now]->id == OBJ_DOT) {
+					Dot* dot = static_cast<Dot*>(objectMap[now]);
+					dot->actualColor = dot->actualColor + color;
+				} else if (objectMap[now]->id == OBJ_MIRROR) {
+					Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
+					short diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
+					if (std::abs(diff) <= 1) {
+						stop = true;
+						dir = (DIR_COUNT + dir - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
+					} else {
+						stop = end = true;
+					}
+				} else if (objectMap[now]->id == OBJ_BENDER) {
+					Bender* mirror = static_cast<Bender*>(objectMap[now]);
+					short diff = (DIR_COUNT + mirror->direction - dir + 7) % DIR_COUNT - 4;
+					if (-2 <= diff && diff < 2) {
+						stop = true;
+						dir = (DIR_COUNT + dir + (2 * diff + 5)) % DIR_COUNT;
+					} else {
+						stop = end = true;
+					}
+				} else if (objectMap[now]->id == OBJ_SPLITTER) {
+					Splitter* splitter = static_cast<Splitter*>(objectMap[now]);
+					short diff = (DIR_COUNT + splitter->direction - dir) % (DIR_COUNT / 2) - 2;
+					if (diff == 0) {
+						stop = end = true;
+					} else if (std::abs(diff) == 1) {
+						unsigned short newDirection = (DIR_COUNT + direction + 2 * diff) % DIR_COUNT;
+						createRay(beamer, newDirection, now, col);
+					}
+				}
+			}
+
+			if (isOutsideBoard(now) || obstacles[now]) {
+				stop = end = true;
+				endAtMiddle = false;
+			}
+		}
+
+		sf::Vertex node(now, sfColor);
+		if (!endAtMiddle) {
+			node.position.x -= delta.x * 0.5f;
+			node.position.y -= delta.y * 0.5f;
+		}
+
+		ray.push_back(node);
+	}
+
+	beamer->laser.push_back(ray);
+}
+
+void Game::Level::resetLevel(bool ignoreSave)
+{
+	clearLevel();
+	loadLevel(game->levelId, ignoreSave);
 }
 
 void Game::Level::clearDots()
