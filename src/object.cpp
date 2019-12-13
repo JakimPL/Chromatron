@@ -38,6 +38,28 @@ Bender::Bender()
 	colorable = false;
 }
 
+Splitter::Splitter()
+{
+	rotatable = true;
+	movable = true;
+	colorable = false;
+}
+
+Conduit::Conduit()
+{
+	rotatable = false;
+	movable = false;
+	colorable = false;
+}
+
+Filter::Filter(Color col)
+{
+	rotatable = false;
+	movable = false;
+	colorable = false;
+	color = col;
+}
+
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {

@@ -72,7 +72,7 @@ void GameState::draw()
 
 void GameState::drawBoard()
 {
-	window.draw(rectangleCreate(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, lgray));
+	window.draw(rectangleCreate(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (game.editor.isActive() ? lred : lgray)));
 
 	for (short y = 0; y < game.level.height; ++y) {
 		for (short x = 0; x < game.level.width; ++x) {
@@ -295,6 +295,18 @@ void GameState::keyboardEditorEvents()
 		}
 		case sf::Keyboard::Num4: {
 			game.editor.setObject(OBJ_BENDER);
+			break;
+		}
+		case sf::Keyboard::Num5: {
+			game.editor.setObject(OBJ_SPLITTER);
+			break;
+		}
+		case sf::Keyboard::Num6: {
+			game.editor.setObject(OBJ_CONDUIT);
+			break;
+		}
+		case sf::Keyboard::Num7: {
+			game.editor.setObject(OBJ_FILTER);
 			break;
 		}
 		default:

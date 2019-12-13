@@ -312,6 +312,15 @@ void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack
 	} else if (id == OBJ_BENDER) {
 		Bender* bender = new Bender();
 		setObject(bender, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_SPLITTER) {
+		Splitter* splitter = new Splitter();
+		setObject(splitter, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_CONDUIT) {
+		Conduit* conduit = new Conduit();
+		setObject(conduit, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_BENDER) {
+		Filter* filter = new Filter();
+		setObject(filter, position, id, DIR_NORTH, inStack);
 	}
 }
 

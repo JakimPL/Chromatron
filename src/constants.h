@@ -57,7 +57,10 @@ enum ObjectID : unsigned short {
 	OBJ_DOT,
 	OBJ_MIRROR,
 	OBJ_BENDER,
-	OBJ_COUNT,
+	OBJ_SPLITTER,
+	OBJ_CONDUIT,
+	OBJ_FILTER,
+	OBJ_COUNT
 };
 
 enum EditorMode : unsigned short {
@@ -88,7 +91,7 @@ static std::string PATH_LS_SUFFIX  = "/levels";
 static std::string FIRST_LEVEL_ID  = "001";
 static std::string PATH_SAV_SUFFIX = ".sav";
 static std::string PATH_SET_SUFFIX = ".set";
-static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "dotF"};
+static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamer", "dotB", "mirror", "bender", "splitter", "conduit", "filter", "dotF"};
 static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 
 static sf::Color   black(0,   0,   0);

@@ -79,4 +79,22 @@ public:
 	Bender();
 };
 
+class Splitter : public Object
+{
+public:
+	Splitter();
+};
+
+class Conduit : public Object
+{
+public:
+	Conduit();
+};
+
+class Filter : public Object
+{
+public:
+	Filter(Color col = COL_BLACK_TUPLE);
+};
+
 #endif

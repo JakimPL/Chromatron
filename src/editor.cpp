@@ -13,7 +13,7 @@ void Game::Editor::switchMode()
 void Game::Editor::turn(bool editorOn)
 {
 	active = editorOn;
-	sprite.setOrigin(TILE_SIZE / 2, TILE_SIZE / 2);
+	sprite.setOrigin(ORIGIN);
 }
 
 void Game::Editor::setObject(ObjectID id)

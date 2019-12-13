@@ -83,6 +83,31 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 
 		Bender* bender = new Bender();
 		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_SPLITTER) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Splitter* splitter = new Splitter();
+		level.setObject(splitter, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_CONDUIT) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Conduit* conduit = new Conduit();
+		level.setObject(conduit, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_FILTER) {
+		unsigned short red, green, blue;
+		unsigned short direction;
+
+		readByte(file, red);
+		readByte(file, green);
+		readByte(file, blue);
+		readByte(file, direction);
+
+		Filter* filter = new Filter();
+		level.setObject(filter, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	}
 }
 
@@ -115,6 +140,21 @@ void writeObject(std::ofstream &file, Object* object)
 			Bender* bender = (Bender*) object;
 
 			writeByte(file, bender->direction);
+		} else if (object->id == OBJ_SPLITTER) {
+			Splitter* splitter = (Splitter*) object;
+
+			writeByte(file, splitter->direction);
+		} else if (object->id == OBJ_CONDUIT) {
+			Conduit* conduit = (Conduit*) object;
+
+			writeByte(file, conduit->direction);
+		} else if (object->id == OBJ_FILTER) {
+			Filter* filter = (Filter*) object;
+
+			writeByte(file, filter->direction);
+			writeByte(file, filter->color.red);
+			writeByte(file, filter->color.green);
+			writeByte(file, filter->color.blue);
 		}
 	} else {
 		writeByte(file, OBJ_EMPTY);
