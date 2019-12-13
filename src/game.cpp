@@ -157,7 +157,7 @@ void Game::Level::calculateLasers()
 	clearDots();
 
 	for (size_t beamerIndex = 0; beamerIndex < objectList[OBJ_BEAMER].size(); ++beamerIndex) {
-		Beamer* beamer = (Beamer*) objectList[OBJ_BEAMER][beamerIndex];
+		Beamer* beamer = static_cast<Beamer*>(objectList[OBJ_BEAMER][beamerIndex]);
 		beamer->laser.clear();
 
 		unsigned short dir = beamer->direction;
@@ -183,10 +183,10 @@ void Game::Level::calculateLasers()
 					if (objectMap[now]->id == OBJ_BEAMER) {
 						stop = end = true;
 					} else if (objectMap[now]->id == OBJ_DOT) {
-						Dot* dot = (Dot*) objectMap[now];
+						Dot* dot = static_cast<Dot*>(objectMap[now]);
 						dot->actualColor = dot->actualColor + color;
 					} else if (objectMap[now]->id == OBJ_MIRROR) {
-						Mirror* mirror = (Mirror*) objectMap[now];
+						Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
 						int diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
 						if (std::abs(diff) <= 1) {
 							stop = true;
@@ -195,12 +195,20 @@ void Game::Level::calculateLasers()
 							stop = end = true;
 						}
 					} else if (objectMap[now]->id == OBJ_BENDER) {
-						Bender* mirror = (Bender*) objectMap[now];
+						Bender* mirror = static_cast<Bender*>(objectMap[now]);
 						int diff = (DIR_COUNT + mirror->direction - dir + 7) % DIR_COUNT - 4;
 						if (-2 <= diff && diff < 2) {
 							stop = true;
 							dir = (DIR_COUNT + dir + (2 * diff + 5)) % DIR_COUNT;
 						} else {
+							stop = end = true;
+						}
+					} else if (objectMap[now]->id == OBJ_SPLITTER) {
+						Splitter* splitter = static_cast<Splitter*>(objectMap[now]);
+						int diff = (DIR_COUNT + splitter->direction - dir) % (DIR_COUNT / 2) - 2;
+						if (diff == 0) {
+							stop = end = true;
+						} else if (std::abs(diff) == 1) {
 							stop = end = true;
 						}
 					}

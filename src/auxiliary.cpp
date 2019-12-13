@@ -120,36 +120,36 @@ void writeObject(std::ofstream &file, Object* object)
 		writeByte(file, object->position.getY());
 
 		if (object->id == OBJ_BEAMER) {
-			Beamer* beamer = (Beamer*) object;
+			Beamer* beamer = static_cast<Beamer*>(object);
 
 			writeByte(file, beamer->color.red);
 			writeByte(file, beamer->color.green);
 			writeByte(file, beamer->color.blue);
 			writeByte(file, beamer->direction);
 		} else if (object->id == OBJ_DOT) {
-			Dot* dot = (Dot*) object;
+			Dot* dot = static_cast<Dot*>(object);
 
 			writeByte(file, dot->color.red);
 			writeByte(file, dot->color.green);
 			writeByte(file, dot->color.blue);
 		} else if (object->id == OBJ_MIRROR) {
-			Mirror* mirror = (Mirror*) object;
+			Mirror* mirror = static_cast<Mirror*>(object);
 
 			writeByte(file, mirror->direction);
 		} else if (object->id == OBJ_BENDER) {
-			Bender* bender = (Bender*) object;
+			Bender* bender = static_cast<Bender*>(object);
 
 			writeByte(file, bender->direction);
 		} else if (object->id == OBJ_SPLITTER) {
-			Splitter* splitter = (Splitter*) object;
+			Splitter* splitter = static_cast<Splitter*>(object);
 
 			writeByte(file, splitter->direction);
 		} else if (object->id == OBJ_CONDUIT) {
-			Conduit* conduit = (Conduit*) object;
+			Conduit* conduit = static_cast<Conduit*>(object);
 
 			writeByte(file, conduit->direction);
 		} else if (object->id == OBJ_FILTER) {
-			Filter* filter = (Filter*) object;
+			Filter* filter = static_cast<Filter*>(object);
 
 			writeByte(file, filter->direction);
 			writeByte(file, filter->color.red);
