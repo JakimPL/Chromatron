@@ -1,5 +1,9 @@
+#include <iostream>
+
 #include "gamestate.h"
 #include "auxiliary.h"
+#include "constants.h"
+#include "log.h"
 
 GameState::GameState(Game &gam, sf::RenderWindow &win, Drag &drg, sf::Event &ev) : game(gam), window(win), drag(drg), event(ev)
 {
@@ -14,8 +18,20 @@ void GameState::GameState::update()
 void GameState::handleApplicationParameters(int argc, char* argv[])
 {
 	bool editorOn = false;
+	game.levelSet.name = "Chromatron";
+	///TODO: error handling
 	for (int arg = 0; arg < argc; ++arg) {
-		editorOn = std::string(argv[arg]) == "--editor";
+		if (std::string(argv[arg]) == "--editor") {
+			editorOn = std::string(argv[arg]) == "--editor";
+		} else if (std::string(argv[arg]) == "--levelset") {
+			arg++;
+			if (arg >= argc) {
+				LogError("No levelset name given");
+			} else {
+				std::string name = argv[arg];
+				game.levelSet.name = name;
+			}
+		}
 	}
 
 	game.editor.turn(editorOn);
@@ -24,7 +40,7 @@ void GameState::handleApplicationParameters(int argc, char* argv[])
 void GameState::initializeGame()
 {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
-	game.levelSet.loadSet("Chromatron");
+	game.levelSet.loadSet(game.levelSet.name);
 }
 
 void GameState::mainLoop()

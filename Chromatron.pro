@@ -8,6 +8,7 @@ CONFIG -= app_bundle
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+QMAKE_CFLAGS_WARN_ON += -W4
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -23,6 +24,7 @@ SOURCES += \
         src/gamestate.cpp \
         src/graphics.cpp \
         src/levelset.cpp \
+        src/log.cpp \
         src/object.cpp \
         src/stack.cpp
 
@@ -43,5 +45,6 @@ HEADERS += \
 	src/game.h \
 	src/gamestate.h \
 	src/graphics.h \
+	src/log.h \
 	src/object.h \
 	src/stack.h

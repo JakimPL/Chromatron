@@ -1,6 +1,7 @@
 .qmake.stash
 *.user
 *.sav
+*.log
 
 Makefile
 /Chromatron

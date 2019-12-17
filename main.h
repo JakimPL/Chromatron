@@ -9,6 +9,7 @@
 #include "src/game.h"
 #include "src/gamestate.h"
 #include "src/graphics.h"
+#include "src/log.h"
 #include "src/stack.h"
 #include "src/object.h"
 
