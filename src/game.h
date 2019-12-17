@@ -82,6 +82,7 @@ public:
 		bool checkSetSave(const std::string &levelSetName);
 		void loadSet(const std::string &levelSetName);
 		void saveCurrentLevel(const std::string &levelSetName);
+		bool checkSet(const std::string &levelSetName);
 		void saveSet(const std::string &levelSetName);
 		void saveCurrentLevel();
 		void saveSet();

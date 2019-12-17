@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "auxiliary.h"
+#include "log.h"
 
 Game::Game()
 {
@@ -82,6 +83,7 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 
 		if (checkLevelSave(id) && !ignoreSave) {
 			levelFile.close();
+			LogInfo("File " + location + " loaded successfully");
 			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
 			levelFile.open(location, std::ios::binary | std::ios::in);
 		}
@@ -95,7 +97,10 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 
 		game->levelId = id;
 		levelFile.close();
+
+		LogInfo("File " + location + " loaded successfully");
 	} else {
+		LogError("Failed to load " + location + " file");
 		throw std::runtime_error("failed to load " + location + " file");
 	}
 }
@@ -142,7 +147,9 @@ void Game::Level::saveLevel(const std::string &id)
 		}
 
 		levelFile.close();
+		LogInfo("File " + location + " saved successfully");
 	} else {
+		LogError("Failed to save " + location + " file");
 		throw std::runtime_error("failed to save " + location + " file");
 	}
 }

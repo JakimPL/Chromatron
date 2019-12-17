@@ -2,6 +2,7 @@
 
 #include "game.h"
 #include "auxiliary.h"
+#include "log.h"
 
 void Game::LevelSet::loadSet(const std::string &levelSetName)
 {
@@ -19,12 +20,21 @@ void Game::LevelSet::loadSet(const std::string &levelSetName)
 		}
 
 		levelSetFile.close();
+		LogInfo("File " + location + " loaded successfully");
 	} else {
+		LogError("Failed to save " + location + " file");
 		throw std::runtime_error("failed to load " + location + " file");
 	}
 
 	game->levelId = numberToString(currentLevel);
 	game->level.loadLevel(currentLevel);
+}
+
+bool Game::LevelSet::checkSet(const std::string &levelSetName)
+{
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (checkSetSave(levelSetName) ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
+	std::ifstream levelSetFile(location);
+	return (levelSetFile.good());
 }
 
 bool Game::LevelSet::checkSetSave(const std::string &levelSetName)
@@ -47,7 +57,9 @@ void Game::LevelSet::saveSet(const std::string &levelSetName)
 		}
 
 		levelSetFile.close();
+		LogInfo("File " + location + " saved successfully");
 	} else {
+		LogError("Failed to save " + location + " file");
 		throw std::runtime_error("failed to save " + location + " file");
 	}
 
@@ -72,7 +84,9 @@ void Game::LevelSet::saveCurrentLevel(const std::string &levelSetName)
 		}
 
 		levelSetFile.close();
+		LogInfo("File " + location + " saved successfully");
 	} else {
+		LogError("Failed to save " + location + " file");
 		throw std::runtime_error("failed to save " + location + " file");
 	}
 }

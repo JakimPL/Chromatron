@@ -19,17 +19,20 @@ void GameState::handleApplicationParameters(int argc, char* argv[])
 {
 	bool editorOn = false;
 	game.levelSet.name = "Chromatron";
-	///TODO: error handling
 	for (int arg = 0; arg < argc; ++arg) {
 		if (std::string(argv[arg]) == "--editor") {
 			editorOn = std::string(argv[arg]) == "--editor";
 		} else if (std::string(argv[arg]) == "--levelset") {
 			arg++;
 			if (arg >= argc) {
-				LogError("No levelset name given");
+				LogError("No levelset name given; loading " + game.levelSet.name + " levelset");
 			} else {
 				std::string name = argv[arg];
-				game.levelSet.name = name;
+				if (game.levelSet.checkSet(name)) {
+					game.levelSet.name = name;
+				} else {
+					LogError("Levelset " + name + " does not exist");
+				}
 			}
 		}
 	}
@@ -41,6 +44,7 @@ void GameState::initializeGame()
 {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	game.levelSet.loadSet(game.levelSet.name);
+	LogNone("Game starts");
 }
 
 void GameState::mainLoop()
@@ -63,6 +67,7 @@ void GameState::endGame()
 {
 	game.levelSet.saveSet(game.levelSet.name);
 	deleteGameObjects();
+	LogNone("Game ends");
 }
 
 void GameState::deleteGameObjects()
