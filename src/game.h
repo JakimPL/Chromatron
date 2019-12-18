@@ -73,9 +73,11 @@ public:
 	} level;
 
 	struct LevelSet {
+	private:
+		unsigned short currentLevel;
+	public:
 		std::string name;
 		unsigned short levels;
-		unsigned short currentLevel;
 		std::vector<LevelState> levelStates;
 		Game* game;
 
@@ -86,6 +88,10 @@ public:
 		void saveSet(const std::string &levelSetName, bool save = true);
 		void saveCurrentLevel();
 		void saveSet(bool save = true);
+
+		unsigned short getCurrentLevel();
+		void nextLevel();
+		void previousLevel();
 
 		bool isLevelFirst();
 		bool isLevelLast();

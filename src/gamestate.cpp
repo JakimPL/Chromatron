@@ -247,10 +247,12 @@ void GameState::gameEvents()
 	if (game.level.event) {
 		game.level.calculateLasers();
 
-		if (game.levelSet.levelStates[game.levelSet.currentLevel - 1] != LS_PASSED) {
-			if (game.level.checkWin()) {
-				game.levelSet.levelStates[game.levelSet.currentLevel - 1] = LS_PASSED;
-				game.levelSet.unlockNextLevel();
+		if (!game.editor.isActive()) {
+			if (game.levelSet.levelStates[game.levelSet.getCurrentLevel() - 1] != LS_PASSED) {
+				if (game.level.checkWin()) {
+					game.levelSet.levelStates[game.levelSet.getCurrentLevel() - 1] = LS_PASSED;
+					game.levelSet.unlockNextLevel();
+				}
 			}
 		}
 
@@ -417,7 +419,7 @@ void GameState::clearLevel()
 void GameState::loadLevel()
 {
 	clearLevel();
-	game.level.loadLevel(game.levelSet.currentLevel);
+	game.level.loadLevel(game.levelSet.getCurrentLevel());
 }
 
 void GameState::nextLevel()
@@ -425,16 +427,16 @@ void GameState::nextLevel()
 	if (game.editor.isActive()) {
 		if (game.levelSet.isLevelLast()) {
 			game.levelSet.levels++;
-			game.levelSet.currentLevel++;
+			game.levelSet.nextLevel();
 			game.levelSet.saveSet(false);
 			clearLevel();
 			LogInfo("Added a new level the levelset");
 		}
 	} else {
 		if (!game.levelSet.isLevelLast()) {
-			if (game.levelSet.levelStates[game.levelSet.currentLevel] != LS_LOCKED) {
+			if (game.levelSet.levelStates[game.levelSet.getCurrentLevel()] != LS_LOCKED) {
 				saveCurrentLevel();
-				game.levelSet.currentLevel++;
+				game.levelSet.nextLevel();
 				loadLevel();
 			}
 		}
@@ -445,7 +447,7 @@ void GameState::previousLevel()
 {
 	if (!game.levelSet.isLevelFirst()) {
 		saveCurrentLevel();
-		game.levelSet.currentLevel--;
+		game.levelSet.previousLevel();
 		loadLevel();
 	}
 }
@@ -470,5 +472,7 @@ void GameState::saveLevel()
 		drag.position.setNull();
 		game.level.saveLevel(game.levelId);
 		game.level.event = true;
+	} else {
+		game.levelSet.saveSet(game.levelSet.name);
 	}
 }

@@ -136,3 +136,26 @@ void Game::LevelSet::unlockNextLevel()
 		}
 	}
 }
+
+unsigned short Game::LevelSet::getCurrentLevel()
+{
+	return currentLevel;
+}
+
+void Game::LevelSet::nextLevel()
+{
+	if (!isLevelLast()) {
+		currentLevel++;
+	}
+
+	game->levelId = numberToString(currentLevel);
+}
+
+void Game::LevelSet::previousLevel()
+{
+	if (!isLevelFirst()) {
+		currentLevel--;
+	}
+
+	game->levelId = numberToString(currentLevel);
+}
