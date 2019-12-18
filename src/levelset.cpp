@@ -6,24 +6,44 @@
 
 void Game::LevelSet::loadSet(const std::string &levelSetName)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (checkSetSave(levelSetName) ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SET_SUFFIX;
 	std::ifstream levelSetFile(location);
 	if (levelSetFile.good()) {
 		name = levelSetName;
 		readByte(levelSetFile, levels);
-		readByte(levelSetFile, currentLevel);
 
-		for (size_t level = 0; level < levels; ++level) {
-			unsigned short levelState;
-			readByte(levelSetFile, levelState);
-			levelStates.push_back(static_cast<LevelState>(levelState));
+		if (checkSetSave(levelSetName)) {
+			levelSetFile.close();
+			LogInfo("File " + location + " loaded successfully");
+			location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SAV_SUFFIX;
+			levelSetFile.open(location, std::ios::binary | std::ios::in);
+
+			readByte(levelSetFile, currentLevel);
+
+			for (size_t level = 0; level < levels; ++level) {
+				unsigned short levelState;
+				readByte(levelSetFile, levelState);
+				levelStates.push_back(static_cast<LevelState>(levelState));
+			}
+		} else {
+			for (size_t level = 0; level < levels; ++level) {
+				unsigned short levelState;
+				readByte(levelSetFile, levelState);
+				levelStates.push_back(static_cast<LevelState>(LS_LOCKED));
+			}
+
+			if (levels > 0) {
+				currentLevel = 1;
+				levelStates[0] = LS_AVAILABLE;
+			} else {
+				LogError("No levels in a levelset");
+			}
 		}
 
 		levelSetFile.close();
 		LogInfo("File " + location + " loaded successfully");
 	} else {
 		LogError("Failed to save " + location + " file");
-		throw std::runtime_error("failed to load " + location + " file");
 	}
 
 	game->levelId = numberToString(currentLevel);
@@ -44,23 +64,30 @@ bool Game::LevelSet::checkSetSave(const std::string &levelSetName)
 	return levelSetSaveFile.good();
 }
 
-void Game::LevelSet::saveSet(const std::string &levelSetName)
+void Game::LevelSet::saveSet(bool save)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SAV_SUFFIX;
+	saveSet(name, save);
+}
+
+void Game::LevelSet::saveSet(const std::string &levelSetName, bool save)
+{
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (save ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
 	std::ofstream levelSetFile(location, std::ios::binary);
 	if (levelSetFile.good()) {
-		writeByte(levelSetFile, levels);
-		writeByte(levelSetFile, currentLevel);
+		if (!save) {
+			writeByte(levelSetFile, levels);
+		} else {
+			writeByte(levelSetFile, currentLevel);
 
-		for (size_t level = 0; level < levels; ++level) {
-			writeByte(levelSetFile, levelStates[level]);
+			for (size_t level = 0; level < levels; ++level) {
+				writeByte(levelSetFile, levelStates[level]);
+			}
 		}
 
 		levelSetFile.close();
 		LogInfo("File " + location + " saved successfully");
 	} else {
 		LogError("Failed to save " + location + " file");
-		throw std::runtime_error("failed to save " + location + " file");
 	}
 
 	saveCurrentLevel();
@@ -87,7 +114,6 @@ void Game::LevelSet::saveCurrentLevel(const std::string &levelSetName)
 		LogInfo("File " + location + " saved successfully");
 	} else {
 		LogError("Failed to save " + location + " file");
-		throw std::runtime_error("failed to save " + location + " file");
 	}
 }
 
@@ -109,9 +135,4 @@ void Game::LevelSet::unlockNextLevel()
 			break;
 		}
 	}
-}
-
-void Game::LevelSet::saveSet()
-{
-	saveSet(name);
 }

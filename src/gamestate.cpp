@@ -42,9 +42,9 @@ void GameState::handleApplicationParameters(int argc, char* argv[])
 
 void GameState::initializeGame()
 {
+	LogNone("Game starts");
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	game.levelSet.loadSet(game.levelSet.name);
-	LogNone("Game starts");
 }
 
 void GameState::mainLoop()
@@ -422,11 +422,21 @@ void GameState::loadLevel()
 
 void GameState::nextLevel()
 {
-	if (!game.levelSet.isLevelLast()) {
-		if (game.levelSet.levelStates[game.levelSet.currentLevel] != LS_LOCKED) {
-			saveCurrentLevel();
+	if (game.editor.isActive()) {
+		if (game.levelSet.isLevelLast()) {
+			game.levelSet.levels++;
 			game.levelSet.currentLevel++;
-			loadLevel();
+			game.levelSet.saveSet(false);
+			clearLevel();
+			LogInfo("Added a new level the levelset");
+		}
+	} else {
+		if (!game.levelSet.isLevelLast()) {
+			if (game.levelSet.levelStates[game.levelSet.currentLevel] != LS_LOCKED) {
+				saveCurrentLevel();
+				game.levelSet.currentLevel++;
+				loadLevel();
+			}
 		}
 	}
 }
@@ -458,7 +468,7 @@ void GameState::saveLevel()
 {
 	if (game.editor.isActive()) {
 		drag.position.setNull();
-		game.level.saveLevel("999");
+		game.level.saveLevel(game.levelId);
 		game.level.event = true;
 	}
 }

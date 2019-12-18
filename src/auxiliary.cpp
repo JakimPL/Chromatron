@@ -1,4 +1,5 @@
 #include "auxiliary.h"
+#include "log.h"
 
 sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 {
@@ -20,10 +21,14 @@ unsigned short countDigit(unsigned short n)
 
 std::string numberToString(unsigned short number)
 {
-	///TODO: Error handling
-	std::string id = std::to_string(number);
-	id = std::string(3 - countDigit(number), '0').append(id);
-	return id;
+	if (number > 0 && number < 1000) {
+		std::string id = std::to_string(number);
+		id = std::string(3 - countDigit(number), '0').append(id);
+		return id;
+	} else {
+		LogError("Wrong level number");
+		return "";
+	}
 }
 
 void readByte(std::ifstream &file, unsigned short &var)

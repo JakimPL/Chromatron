@@ -101,7 +101,6 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 		LogInfo("File " + location + " loaded successfully");
 	} else {
 		LogError("Failed to load " + location + " file");
-		throw std::runtime_error("failed to load " + location + " file");
 	}
 }
 
@@ -150,7 +149,6 @@ void Game::Level::saveLevel(const std::string &id)
 		LogInfo("File " + location + " saved successfully");
 	} else {
 		LogError("Failed to save " + location + " file");
-		throw std::runtime_error("failed to save " + location + " file");
 	}
 }
 
@@ -315,6 +313,10 @@ bool Game::Level::checkWin()
 			win = false;
 			break;
 		}
+	}
+
+	if (win) {
+		LogInfo("Level cleared!");
 	}
 
 	return win;

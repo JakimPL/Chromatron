@@ -83,9 +83,9 @@ public:
 		void loadSet(const std::string &levelSetName);
 		void saveCurrentLevel(const std::string &levelSetName);
 		bool checkSet(const std::string &levelSetName);
-		void saveSet(const std::string &levelSetName);
+		void saveSet(const std::string &levelSetName, bool save = true);
 		void saveCurrentLevel();
-		void saveSet();
+		void saveSet(bool save = true);
 
 		bool isLevelFirst();
 		bool isLevelLast();
