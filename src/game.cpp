@@ -228,10 +228,14 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 					}
 				} else if (objectMap[now]->id == OBJ_FILTER) {
 					Conduit* filter = static_cast<Conduit*>(objectMap[now]);
-					short diff = (DIR_COUNT + filter->direction - dir) % (DIR_COUNT / 2) - 2;
-					if (diff != 0) {
-						stop = end = true;
+					short diff = (DIR_COUNT + filter->direction - dir + 2) % (DIR_COUNT / 2) - 2;
+					if (diff == 0) {
+						Color newColor = (filter->color * col);
+						if (!newColor.isBlack()) {
+							createRay(beamer, dir, now, newColor);
+						}
 					}
+					stop = end = true;
 				}
 			}
 
@@ -272,7 +276,6 @@ void Game::Level::updateDots()
 	for (size_t dotIndex = 0; dotIndex < objectList[OBJ_DOT].size(); ++dotIndex) {
 		Dot* dot = (Dot*) objectList[OBJ_DOT][dotIndex];
 		dot->updateState();
-		dot->setSpriteColor();
 	}
 }
 
@@ -354,7 +357,7 @@ void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack
 	} else if (id == OBJ_CONDUIT) {
 		Conduit* conduit = new Conduit();
 		setObject(conduit, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_BENDER) {
+	} else if (id == OBJ_FILTER) {
 		Filter* filter = new Filter();
 		setObject(filter, position, id, DIR_NORTH, inStack);
 	}
@@ -368,6 +371,9 @@ bool Game::Level::changeObjectColor(Object::Position mousePosition)
 
 	if (success) {
 		object->color.nextColor();
+		if (object->colorable) {
+			object->setSpriteColor();
+		}
 	}
 
 	return success;
@@ -513,6 +519,10 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	object->textures.push_back(game->graphics.textures[id]);
 	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
+
+	if (object->colorable) {
+		object->setSpriteColor();
+	}
 
 	game->level.objectList[id].push_back(object);
 

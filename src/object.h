@@ -43,6 +43,7 @@ public:
 	std::vector<sf::Texture*> textures;
 
 	void rotate(bool clockwise, bool force = false);
+	void setSpriteColor();
 	void updateSprite();
 };
 
@@ -63,7 +64,6 @@ public:
 	bool state = false;
 
 	void updateState();
-	void setSpriteColor();
 };
 
 class Mirror : public Object

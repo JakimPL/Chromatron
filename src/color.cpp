@@ -54,3 +54,8 @@ void Color::setColorFromId(Colors colId)
 	green = color.green;
 	blue = color.blue;
 }
+
+bool Color::isBlack()
+{
+	return (red == false && green == false && blue == false);
+}

@@ -54,9 +54,9 @@ Conduit::Conduit()
 
 Filter::Filter(Color col)
 {
-	rotatable = false;
-	movable = false;
-	colorable = false;
+	rotatable = true;
+	movable = true;
+	colorable = true;
 	color = col;
 }
 
@@ -73,7 +73,7 @@ void Object::updateSprite()
 	sprite.setPosition(position);
 }
 
-void Dot::setSpriteColor()
+void Object::setSpriteColor()
 {
 	sprite.setColor(color.convertToColor());
 }

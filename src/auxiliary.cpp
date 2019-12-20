@@ -156,10 +156,10 @@ void writeObject(std::ofstream &file, Object* object)
 		} else if (object->id == OBJ_FILTER) {
 			Filter* filter = static_cast<Filter*>(object);
 
-			writeByte(file, filter->direction);
 			writeByte(file, filter->color.red);
 			writeByte(file, filter->color.green);
 			writeByte(file, filter->color.blue);
+			writeByte(file, filter->direction);
 		}
 	} else {
 		writeByte(file, OBJ_EMPTY);

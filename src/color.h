@@ -32,6 +32,7 @@ public:
 	void nextColor();
 	void getColorId();
 	void setColorFromId(Colors colId);
+	bool isBlack();
 };
 
 static Color colors[COL_COUNT] = {
