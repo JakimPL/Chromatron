@@ -1,9 +1,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "game.h"
-#include "auxiliary.h"
-#include "log.h"
+#include "game.hpp"
+#include "auxiliary.hpp"
+#include "log.hpp"
 
 Game::Game()
 {

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
-#include "constants.h"
+#include "constants.hpp"
 
 class Color
 {

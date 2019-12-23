@@ -1,5 +1,5 @@
-#include "auxiliary.h"
-#include "log.h"
+#include "auxiliary.hpp"
+#include "log.hpp"
 
 sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 {

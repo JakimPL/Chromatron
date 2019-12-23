@@ -6,11 +6,11 @@
 #include <string>
 
 #include <SFML/Graphics.hpp>
-#include "constants.h"
-#include "drag.h"
-#include "graphics.h"
-#include "object.h"
-#include "stack.h"
+#include "constants.hpp"
+#include "drag.hpp"
+#include "graphics.hpp"
+#include "object.hpp"
+#include "stack.hpp"
 
 class Game
 {

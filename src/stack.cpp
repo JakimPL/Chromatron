@@ -1,5 +1,5 @@
-#include "stack.h"
-#include "auxiliary.h"
+#include "stack.hpp"
+#include "auxiliary.hpp"
 
 Object::Position Stack::getRelativePosition(Object::Position mousePosition)
 {

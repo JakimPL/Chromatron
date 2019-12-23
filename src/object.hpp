@@ -2,8 +2,8 @@
 #define OBJECT_H
 
 #include <SFML/Graphics.hpp>
-#include "constants.h"
-#include "color.h"
+#include "constants.hpp"
+#include "color.hpp"
 
 class Object
 {

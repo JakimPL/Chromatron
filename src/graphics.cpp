@@ -1,7 +1,7 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
-#include "graphics.h"
-#include "constants.h"
+#include "graphics.hpp"
+#include "constants.hpp"
 
 sf::Texture* Graphics::loadTexture(const std::string &filename)
 {

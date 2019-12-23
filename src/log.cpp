@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "log.h"
-#include "constants.h"
+#include "log.hpp"
+#include "constants.hpp"
 
 std::string Log::getCurrentDateTime()
 {

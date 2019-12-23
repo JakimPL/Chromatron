@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "gamestate.h"
-#include "auxiliary.h"
-#include "constants.h"
-#include "log.h"
+#include "gamestate.hpp"
+#include "auxiliary.hpp"
+#include "constants.hpp"
+#include "log.hpp"
 
 GameState::GameState(Game &gam, sf::RenderWindow &win, Drag &drg, sf::Event &ev) : game(gam), window(win), drag(drg), event(ev)
 {

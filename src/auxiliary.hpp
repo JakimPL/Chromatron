@@ -3,10 +3,10 @@
 
 #include <fstream>
 #include <SFML/Graphics.hpp>
-#include "constants.h"
-#include "game.h"
-#include "gamestate.h"
-#include "object.h"
+#include "constants.hpp"
+#include "game.hpp"
+#include "gamestate.hpp"
+#include "object.hpp"
 
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);
 extern unsigned short countDigit(unsigned short n);

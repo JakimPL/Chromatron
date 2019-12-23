@@ -37,14 +37,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-	main.h \
-	src/auxiliary.h \
-	src/color.h \
-	src/constants.h \
-	src/drag.h \
-	src/game.h \
-	src/gamestate.h \
-	src/graphics.h \
-	src/log.h \
-	src/object.h \
-	src/stack.h
+	main.hpp \
+	src/auxiliary.hpp \
+	src/color.hpp \
+	src/constants.hpp \
+	src/drag.hpp \
+	src/game.hpp \
+	src/gamestate.hpp \
+	src/graphics.hpp \
+	src/log.hpp \
+	src/object.hpp \
+	src/stack.hpp

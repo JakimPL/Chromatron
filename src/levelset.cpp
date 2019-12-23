@@ -1,8 +1,8 @@
 #include <fstream>
 
-#include "game.h"
-#include "auxiliary.h"
-#include "log.h"
+#include "game.hpp"
+#include "auxiliary.hpp"
+#include "log.hpp"
 
 void Game::LevelSet::loadSet(const std::string &levelSetName)
 {

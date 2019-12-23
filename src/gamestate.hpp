@@ -2,7 +2,7 @@
 #define GAMESTATE_H
 
 #include <SFML/Graphics.hpp>
-#include "game.h"
+#include "game.hpp"
 
 struct GameState {
 	GameState(Game &gam, sf::RenderWindow &win, Drag &drg, sf::Event &ev);
