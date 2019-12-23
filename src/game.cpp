@@ -514,17 +514,15 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	object->direction = direction;
 	object->inStack = inStack;
 
+	object->textures.push_back(game->graphics.textures[id]);
 	object->sprite.setOrigin(ORIGIN);
 	object->sprite.setPosition(inStack ? object->position + stack.offset : object->position);
-	object->textures.push_back(game->graphics.textures[id]);
 	object->sprite.setTexture(*(object->textures)[0]);
 	object->sprite.setRotation(direction * 45);
 
 	if (object->colorable) {
 		object->setSpriteColor();
 	}
-
-	game->level.objectList[id].push_back(object);
 
 	if (!inStack) {
 		game->level.objectMap[object->position] = object;
@@ -551,6 +549,8 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	default:
 		break;
 	}
+
+	game->level.objectList[id].push_back(object);
 }
 
 void Game::Level::setTile(Object::Position position, bool obstacle)

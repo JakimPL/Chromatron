@@ -22,7 +22,11 @@ void Game::Editor::setObject(ObjectID id)
 		currentObject = id;
 	}
 
-	sprite.setTexture(*game->graphics.textures[id]);
+	if (id == OBJ_BEAMER) {
+		sprite.setTexture(*game->graphics.textures[OBJ_COUNT]);
+	} else {
+		sprite.setTexture(*game->graphics.textures[id]);
+	}
 }
 
 ObjectID Game::Editor::getObject()

@@ -64,6 +64,7 @@ void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {
 		direction = static_cast<DirectionID>((static_cast<unsigned short>(direction) + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT);
+		baseSprite.setRotation(direction * 45);
 		sprite.setRotation(direction * 45);
 	}
 }
@@ -125,7 +126,7 @@ bool Object::Position::operator!=(const Position &pos) const
 
 Object::Position::operator sf::Vector2f()
 {
-	sf::Vector2f vector(TILE_SIZE * (x + OFFSET_X + 0.5f), TILE_SIZE * (y + OFFSET_Y + 0.5f));
+	sf::Vector2f vector(1 + TILE_SIZE * (x + OFFSET_X + 0.5f), 1 + TILE_SIZE * (y + OFFSET_Y + 0.5f));
 	return vector;
 }
 
