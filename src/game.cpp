@@ -28,6 +28,7 @@ bool Game::Level::checkLevelSave(const std::string &id)
 void Game::Level::clearLevel()
 {
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		stack.objectList[type].clear();
 		while (!objectList[type].empty()) {
 			delete objectList[type].back();
 			objectList[type].pop_back();
@@ -35,6 +36,7 @@ void Game::Level::clearLevel()
 	}
 
 	objectMap.clear();
+	stack.objectMap.clear();
 	stackObjectList.clear();
 
 	for (short y = 0; y < height; ++y) {
@@ -43,6 +45,8 @@ void Game::Level::clearLevel()
 			setTile(currentPosition, false);
 		}
 	}
+
+	LogInfo("Level cleared");
 }
 
 void Game::Level::loadLevel(const unsigned short level, bool ignoreSave)
@@ -74,22 +78,28 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 			}
 		}
 
-		unsigned short objectsCount;
+		unsigned short objectsCount, stackObjectsCount, stackObjectsCountSave;
 		readByte(levelFile, objectsCount);
 
 		for (unsigned short obj = 0; obj < objectsCount; ++obj) {
 			readObject(levelFile, game->level);
 		}
 
+		readByte(levelFile, stackObjectsCount);
+
 		if (checkLevelSave(id) && !ignoreSave) {
 			levelFile.close();
 			LogInfo("File " + location + " loaded successfully");
 			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
 			levelFile.open(location, std::ios::binary | std::ios::in);
+			readByte(levelFile, stackObjectsCountSave);
+			if (stackObjectsCount != stackObjectsCountSave) {
+				LogError("Corrupted save file!");
+				levelFile.close();
+				clearLevel();
+				loadLevel(id, true);
+			}
 		}
-
-		unsigned short stackObjectsCount;
-		readByte(levelFile, stackObjectsCount);
 
 		for (unsigned short obj = 0; obj < stackObjectsCount; ++obj) {
 			readObject(levelFile, game->level, true);
@@ -97,7 +107,6 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 
 		game->levelId = id;
 		levelFile.close();
-
 		LogInfo("File " + location + " loaded successfully");
 	} else {
 		LogError("Failed to load " + location + " file");
@@ -310,9 +319,7 @@ unsigned short Game::Level::countObjects()
 {
 	unsigned short objectsCount = 0;
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
-		for (size_t index = 0; index < objectList[type].size(); ++index) {
-			objectsCount++;
-		}
+		objectsCount += objectList[type].size();
 	}
 
 	return objectsCount;
@@ -346,7 +353,7 @@ bool Game::Level::checkWin()
 	}
 
 	if (win) {
-		LogInfo("Level cleared!");
+		LogInfo("Level completed!");
 	}
 
 	return win;
@@ -367,11 +374,19 @@ bool Game::Level::addObject(Object::Position position, ObjectID id)
 void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack)
 {
 	if (id == OBJ_BEAMER) {
-		Beamer* beamer = new Beamer();
-		setObject(beamer, position, id, DIR_NORTH, inStack);
+		if (!inStack) {
+			Beamer* beamer = new Beamer();
+			setObject(beamer, position, id, DIR_NORTH, inStack);
+		} else {
+			LogWarning("Can't place a beamer into the stack!");
+		}
 	} else if (id == OBJ_DOT) {
-		Dot* dot = new Dot();
-		setObject(dot, position, id, DIR_NORTH, inStack);
+		if (!inStack) {
+			Dot* dot = new Dot();
+			setObject(dot, position, id, DIR_NORTH, inStack);
+		} else {
+			LogWarning("Can't place a dot into the stack!");
+		}
 	} else if (id == OBJ_MIRROR) {
 		Mirror* mirror = new Mirror();
 		setObject(mirror, position, id, DIR_NORTH, inStack);
