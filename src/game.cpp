@@ -537,8 +537,15 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 		game->level.stackObjectList.push_back(object);
 	}
 
-	if (id == OBJ_DOT) {
+	switch (id) {
+	case OBJ_BEAMER:
 		object->textures.push_back(game->graphics.textures[OBJ_COUNT]);
+		break;
+	case OBJ_DOT:
+		object->textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
+		break;
+	default:
+		break;
 	}
 }
 

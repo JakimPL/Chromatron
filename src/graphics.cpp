@@ -16,11 +16,9 @@ sf::Texture* Graphics::loadTexture(const std::string &filename)
 
 void Graphics::loadTextures()
 {
-	for (size_t index = 0; index < OBJ_COUNT; ++index) {
+	for (size_t index = 0; index < OBJ_COUNT + 2; ++index) {
 		textures.push_back(loadTexture(IMG_OBJECT_NAMES[index]));
 	}
-
-	textures.push_back(loadTexture(IMG_OBJECT_NAMES[OBJ_COUNT]));
 
 	for (size_t index = 0; index < TIL_COUNT; ++index) {
 		tiles.push_back(loadTexture(IMG_TILE_NAMES[index]));

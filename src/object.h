@@ -15,6 +15,9 @@ public:
 	bool colorable = false;
 	ObjectID id;
 	DirectionID direction = DIR_NORTH;
+
+	std::vector<sf::Texture*> textures;
+	sf::Sprite baseSprite;
 	sf::Sprite sprite;
 	Color color;
 
@@ -39,8 +42,6 @@ public:
 		void setPosition(short xx, short yy);
 		void setPosition(Position position);
 	} position;
-
-	std::vector<sf::Texture*> textures;
 
 	void rotate(bool clockwise, bool force = false);
 	void setSpriteColor();

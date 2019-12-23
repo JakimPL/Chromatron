@@ -141,6 +141,9 @@ void GameState::drawGameObjects()
 		for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
 			if (drag.fromStack != game.level.objectList[type][index]->inStack || drag.position != game.level.objectList[type][index]->position) {
 				window.draw(game.level.objectList[type][index]->sprite);
+				if (game.level.objectList[type][index]->id == OBJ_BEAMER) {
+					window.draw(game.level.objectList[type][index]->baseSprite);
+				}
 			}
 		}
 	}

@@ -111,7 +111,9 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 		readByte(file, blue);
 		readByte(file, direction);
 
-		Filter* filter = new Filter();
+		Color color(red > 0, green > 0, blue > 0);
+
+		Filter* filter = new Filter(color);
 		level.setObject(filter, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	}
 }
