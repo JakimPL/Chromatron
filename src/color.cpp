@@ -33,6 +33,15 @@ sf::Color Color::convertToColor()
 	return sf::Color(MAX_COLOR * static_cast<sf::Uint8>(red), MAX_COLOR * static_cast<sf::Uint8>(green), MAX_COLOR * static_cast<sf::Uint8>(blue));
 }
 
+Color Color::shiftColor(bool orientation)
+{
+	if (orientation) {
+		return Color(green, blue, red);
+	} else {
+		return Color(blue, red, green);
+	}
+}
+
 void Color::nextColor()
 {
 	colorId = static_cast<Colors>((colorId + 1) % COL_COUNT);

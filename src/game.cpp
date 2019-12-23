@@ -255,6 +255,14 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 						}
 					}
 					stop = end = true;
+				} else if (objectMap[now]->id == OBJ_DOPPLER) {
+					Doppler* doppler = static_cast<Doppler*>(objectMap[now]);
+					short diff = (DIR_COUNT + doppler->direction - dir) % DIR_COUNT - 4;
+					if ((diff + 2) % 4 == 0) {
+						Color newColor = col.shiftColor(static_cast<bool>((diff + 2) / 4));
+						createRay(beamer, dir, now, newColor);
+					}
+					stop = end = true;
 				}
 			}
 

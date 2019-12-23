@@ -25,10 +25,9 @@ public:
 	bool green;
 	bool blue;
 
-	// Converts to sf::Color object
 	sf::Color convertToColor();
+	Color shiftColor(bool orientation);
 
-	// Get colorID
 	void nextColor();
 	void getColorId();
 	void setColorFromId(Colors colId);
