@@ -84,6 +84,9 @@ enum ObjectID : unsigned short {
 	OBJ_SPLITTER,
 	OBJ_CONDUIT,
 	OBJ_FILTER,
+	OBJ_PRISM,
+	OBJ_DOPPLER,
+	OBJ_TANGLER,
 	OBJ_COUNT
 };
 
@@ -116,7 +119,7 @@ static std::string FIRST_LEVEL_ID  = "001";
 static std::string PATH_SAV_SUFFIX = ".sav";
 static std::string PATH_SET_SUFFIX = ".set";
 static std::string PATH_LOG_FILE   = "Chromatron.log";
-static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamerDot", "dotEmpty", "mirror", "bender", "splitter", "conduit", "filter", "beamer", "dotFull"};
+static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamerDot", "dotEmpty", "mirror", "bender", "splitter", "conduit", "filter", "prism", "doppler", "tangler", "beamer", "dotFull"};
 static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
 
 static sf::Color   black(0,   0,   0);

@@ -98,4 +98,22 @@ public:
 	Filter(Color col = COL_BLACK_TUPLE);
 };
 
+class Prism : public Object
+{
+public:
+	Prism();
+};
+
+class Doppler : public Object
+{
+public:
+	Doppler();
+};
+
+class Tangler : public Object
+{
+public:
+	Tangler();
+};
+
 #endif

@@ -360,6 +360,15 @@ void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack
 	} else if (id == OBJ_FILTER) {
 		Filter* filter = new Filter();
 		setObject(filter, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_PRISM) {
+		Prism* prism = new Prism();
+		setObject(prism, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_DOPPLER) {
+		Doppler* doppler = new Doppler();
+		setObject(doppler, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_TANGLER) {
+		Tangler* tangler = new Tangler();
+		setObject(tangler, position, id, DIR_NORTH, inStack);
 	}
 }
 

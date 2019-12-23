@@ -335,6 +335,18 @@ void GameState::keyboardEditorEvents()
 			game.editor.setObject(OBJ_FILTER);
 			break;
 		}
+		case sf::Keyboard::Num8: {
+			game.editor.setObject(OBJ_PRISM);
+			break;
+		}
+		case sf::Keyboard::Num9: {
+			game.editor.setObject(OBJ_DOPPLER);
+			break;
+		}
+		case sf::Keyboard::Num0: {
+			game.editor.setObject(OBJ_TANGLER);
+			break;
+		}
 		default:
 			break;
 		}

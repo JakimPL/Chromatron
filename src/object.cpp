@@ -60,6 +60,27 @@ Filter::Filter(Color col)
 	color = col;
 }
 
+Prism::Prism()
+{
+	rotatable = false;
+	movable = true;
+	colorable = false;
+}
+
+Doppler::Doppler()
+{
+	rotatable = false;
+	movable = true;
+	colorable = false;
+}
+
+Tangler::Tangler()
+{
+	rotatable = false;
+	movable = true;
+	colorable = false;
+}
+
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {

@@ -115,6 +115,27 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 
 		Filter* filter = new Filter(color);
 		level.setObject(filter, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_PRISM) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Prism* prism = new Prism();
+		level.setObject(prism, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_DOPPLER) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Doppler* doppler = new Doppler();
+		level.setObject(doppler, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_TANGLER) {
+		unsigned short direction;
+
+		readByte(file, direction);
+
+		Tangler* tangler = new Tangler();
+		level.setObject(tangler, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	}
 }
 
@@ -162,6 +183,18 @@ void writeObject(std::ofstream &file, Object* object)
 			writeByte(file, filter->color.green);
 			writeByte(file, filter->color.blue);
 			writeByte(file, filter->direction);
+		} else if (object->id == OBJ_PRISM) {
+			Prism* prism = static_cast<Prism*>(object);
+
+			writeByte(file, prism->direction);
+		} else if (object->id == OBJ_DOPPLER) {
+			Doppler* doppler = static_cast<Doppler*>(object);
+
+			writeByte(file, doppler->direction);
+		} else if (object->id == OBJ_TANGLER) {
+			Tangler* tangler = static_cast<Tangler*>(object);
+
+			writeByte(file, tangler->direction);
 		}
 	} else {
 		writeByte(file, OBJ_EMPTY);
