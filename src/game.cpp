@@ -540,6 +540,10 @@ void Game::Level::setObject(Object* object, Object::Position position, ObjectID 
 	switch (id) {
 	case OBJ_BEAMER:
 		object->textures.push_back(game->graphics.textures[OBJ_COUNT]);
+		object->baseSprite.setOrigin(ORIGIN);
+		object->baseSprite.setPosition(inStack ? object->position + stack.offset : object->position);
+		object->baseSprite.setTexture(*(object->textures)[1]);
+		object->baseSprite.setRotation(direction * 45);
 		break;
 	case OBJ_DOT:
 		object->textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
