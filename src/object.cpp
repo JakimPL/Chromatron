@@ -62,21 +62,21 @@ Filter::Filter(Color col)
 
 Prism::Prism()
 {
-	rotatable = false;
+	rotatable = true;
 	movable = true;
 	colorable = false;
 }
 
 Doppler::Doppler()
 {
-	rotatable = false;
+	rotatable = true;
 	movable = true;
 	colorable = false;
 }
 
 Tangler::Tangler()
 {
-	rotatable = false;
+	rotatable = true;
 	movable = true;
 	colorable = false;
 }
@@ -93,6 +93,7 @@ void Object::rotate(bool clockwise, bool force)
 void Object::updateSprite()
 {
 	sprite.setPosition(position);
+	baseSprite.setPosition(position);
 }
 
 void Object::setSpriteColor()

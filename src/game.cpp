@@ -196,7 +196,7 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 				} else if (objectMap[now]->id == OBJ_MIRROR) {
 					Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
 					short diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
-					if (std::abs(diff) <= 1) {
+					if (ABS(diff) <= 1) {
 						stop = true;
 						dir = (DIR_COUNT + dir - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
 					} else {
@@ -216,7 +216,7 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 					short diff = (DIR_COUNT + splitter->direction - dir) % (DIR_COUNT / 2) - 2;
 					if (diff == 0) {
 						stop = end = true;
-					} else if (std::abs(diff) == 1) {
+					} else if (ABS(diff) == 1) {
 						unsigned short newDirection = (DIR_COUNT + dir + 2 * diff) % DIR_COUNT;
 						createRay(beamer, newDirection, now, col);
 					}
@@ -233,6 +233,25 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 						Color newColor = (filter->color * col);
 						if (!newColor.isBlack()) {
 							createRay(beamer, dir, now, newColor);
+						}
+					}
+					stop = end = true;
+				} else if (objectMap[now]->id == OBJ_PRISM) {
+					Prism* prism = static_cast<Prism*>(objectMap[now]);
+					short diff = (DIR_COUNT + prism->direction - dir) % DIR_COUNT;
+					if (col.red) {
+						if ((diff / 2) % 2 != 0) {
+							createRay(beamer, dir, now, colors[COL_RED]);
+						}
+					}
+					if (col.green) {
+						if (diff > 1 && ((diff + 1) % 3 != 1)) {
+							createRay(beamer, (DIR_COUNT + dir - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT, now, colors[COL_GREEN]);
+						}
+					}
+					if (col.blue) {
+						if (diff > 1 && ((diff + 1) % 3 != 1)) {
+							createRay(beamer, (DIR_COUNT + dir - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT, now, colors[COL_BLUE]);
 						}
 					}
 					stop = end = true;
@@ -440,7 +459,7 @@ bool Game::Level::dragObject(Drag & drag, Object::Position position)
 	if (success) {
 		drag.fromStack = false;
 		drag.position = position;
-		drag.sprite = objectMap[position]->sprite;
+		drag.sprite = (objectMap[position]->id == OBJ_BEAMER ? objectMap[position]->baseSprite : objectMap[position]->sprite);
 		objectMap[position]->inStack = false;
 	}
 

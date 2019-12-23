@@ -17,6 +17,7 @@
 
 #define MAX_COLOR 255
 #define ORIGIN TILE_SIZE / 2, TILE_SIZE / 2
+#define ABS(a) std::abs(a)
 
 #define LogInfo(message) Log::log(Log::Type::INFO, message)
 #define LogError(message) Log::log(Log::Type::ERROR, message)
@@ -120,7 +121,7 @@ static std::string PATH_SAV_SUFFIX = ".sav";
 static std::string PATH_SET_SUFFIX = ".set";
 static std::string PATH_LOG_FILE   = "Chromatron.log";
 static std::vector<std::string> IMG_OBJECT_NAMES = {"empty", "beamerDot", "dotEmpty", "mirror", "bender", "splitter", "conduit", "filter", "prism", "doppler", "tangler", "beamer", "dotFull"};
-static std::vector<std::string> IMG_TILE_NAMES = {"tileEmpty", "tileObstacle"};
+static std::vector<std::string> IMG_TILE_NAMES   = {"tileEmpty", "tileObstacle"};
 
 static sf::Color   black(0,   0,   0);
 static sf::Color   dgray(96,  96,  96);
