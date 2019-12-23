@@ -445,7 +445,8 @@ void GameState::nextLevel()
 			game.levelSet.nextLevel();
 			game.levelSet.saveSet(false);
 			clearLevel();
-			LogInfo("Added a new level the levelset");
+			LogInfo("Added a new level to the levelset");
+			game.level.saveLevel(game.levelId);
 		}
 	} else {
 		if (!game.levelSet.isLevelLast()) {

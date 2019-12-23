@@ -55,6 +55,7 @@ public:
 		bool moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition);
 
 		bool checkLevelSave(const std::string &id);
+		void checkLevel();
 		void clearLevel();
 		void resetLevel(bool ignoreSave = false);
 		void loadLevel(const unsigned short level, bool ignoreSave = false);
@@ -63,6 +64,7 @@ public:
 
 		unsigned short countObjects();
 		unsigned short countObjects(bool inStack);
+		unsigned short countObjects(ObjectID id);
 		bool checkWin();
 		void clearDots();
 		void updateDots();

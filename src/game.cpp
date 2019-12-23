@@ -25,6 +25,41 @@ bool Game::Level::checkLevelSave(const std::string &id)
 	return levelSetSaveFile.good();
 }
 
+void Game::Level::checkLevel()
+{
+	bool blackObject = false;
+	for (size_t type = 0; type < OBJ_COUNT; ++type) {
+		for (size_t index = 0; index < objectList[type].size(); ++index) {
+			if (objectList[type][index]->colorable) {
+				if (objectList[type][index]->color.isBlack()) {
+					blackObject = true;
+					break;
+				}
+			}
+		}
+
+		if (blackObject) {
+			break;
+		}
+	}
+
+	if (blackObject) {
+		LogWarning("Some objects are of black color");
+	}
+
+	if (objectList[OBJ_EMPTY].size() > 0) {
+		LogWarning("There are empty objects on a level");
+	}
+
+	if (objectList[OBJ_BEAMER].size() == 0) {
+		LogWarning("Level does not contain any beamer");
+	}
+
+	if (objectList[OBJ_DOT].size() == 0) {
+		LogWarning("Level does not contain any dot");
+	}
+}
+
 void Game::Level::clearLevel()
 {
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
@@ -154,6 +189,7 @@ void Game::Level::saveLevel(const std::string &id)
 			}
 		}
 
+		checkLevel();
 		levelFile.close();
 		LogInfo("File " + location + " saved successfully");
 	} else {
@@ -319,7 +355,7 @@ unsigned short Game::Level::countObjects()
 {
 	unsigned short objectsCount = 0;
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
-		objectsCount += objectList[type].size();
+		objectsCount += countObjects(type);
 	}
 
 	return objectsCount;
@@ -339,6 +375,11 @@ unsigned short Game::Level::countObjects(bool inStack)
 	}
 
 	return objectsCount;
+}
+
+unsigned short Game::Level::countObjects(ObjectID id)
+{
+	return static_cast<unsigned short>(objectList[id].size());
 }
 
 bool Game::Level::checkWin()
