@@ -171,7 +171,7 @@ void Game::Level::saveLevel(const std::string &id)
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < objectList[type].size(); ++index) {
 				if (!objectList[type][index]->inStack) {
-					Object* object = objectList[type][index];
+					Object *object = objectList[type][index];
 					writeObject(levelFile, object);
 				}
 			}
@@ -183,7 +183,7 @@ void Game::Level::saveLevel(const std::string &id)
 		for (size_t type = 0; type < OBJ_COUNT; ++type) {
 			for (size_t index = 0; index < objectList[type].size(); ++index) {
 				if (objectList[type][index]->inStack) {
-					Object* object = objectList[type][index];
+					Object *object = objectList[type][index];
 					writeObject(levelFile, object);
 				}
 			}
@@ -202,7 +202,7 @@ void Game::Level::calculateLasers()
 	clearDots();
 
 	for (size_t beamerIndex = 0; beamerIndex < objectList[OBJ_BEAMER].size(); ++beamerIndex) {
-		Beamer* beamer = static_cast<Beamer*>(objectList[OBJ_BEAMER][beamerIndex]);
+		Beamer *beamer = static_cast<Beamer*>(objectList[OBJ_BEAMER][beamerIndex]);
 		beamer->laser.clear();
 		if (!beamer->inStack) {
 			createRay(beamer, beamer->direction, beamer->position, beamer->color);
@@ -212,116 +212,21 @@ void Game::Level::calculateLasers()
 	updateDots();
 }
 
-void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col, Timeline timeline, unsigned short time)
+void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col)
 {
 	unsigned short dir = direction;
 	Object::Position now = position;
 	Color color = col;
 	sf::Color sfColor = color.convertToColor();
 	sf::Vector2f delta;
+	Ray ray = {sf::Vertex(position, sfColor)};
 
-	Ray ray;
-	ray.push_back(sf::Vertex(position, sfColor));
-
+	bool stop = false;
 	bool end = false;
+	bool endAtMiddle = true;
 	while (!end) {
-		bool stop = false;
-		bool endAtMiddle = true;
 		while (!stop) {
-			delta = now;
-			now.moveInDirection(dir, 1);
-			delta = sf::Vector2f(now) - delta;
-
-			if (isPlaceTaken(now)) {
-				if (objectMap[now]->id == OBJ_BEAMER) {
-					stop = end = true;
-				} else if (objectMap[now]->id == OBJ_DOT) {
-					Dot* dot = static_cast<Dot*>(objectMap[now]);
-					dot->actualColor = dot->actualColor + color;
-				} else if (objectMap[now]->id == OBJ_MIRROR) {
-					Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
-					short diff = (DIR_COUNT + mirror->direction - dir) % DIR_COUNT - 4;
-					if (ABS(diff) <= 1) {
-						stop = true;
-						dir = (DIR_COUNT + dir - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
-					} else {
-						stop = end = true;
-					}
-				} else if (objectMap[now]->id == OBJ_BENDER) {
-					Bender* mirror = static_cast<Bender*>(objectMap[now]);
-					short diff = (DIR_COUNT + mirror->direction - dir + 7) % DIR_COUNT - 4;
-					if (-2 <= diff && diff < 2) {
-						stop = true;
-						dir = (DIR_COUNT + dir + (2 * diff + 5)) % DIR_COUNT;
-					} else {
-						stop = end = true;
-					}
-				} else if (objectMap[now]->id == OBJ_SPLITTER) {
-					Splitter* splitter = static_cast<Splitter*>(objectMap[now]);
-					short diff = (DIR_COUNT + splitter->direction - dir) % (DIR_COUNT / 2) - 2;
-					if (diff == 0) {
-						stop = end = true;
-					} else if (ABS(diff) == 1) {
-						unsigned short newDirection = (DIR_COUNT + dir + 2 * diff) % DIR_COUNT;
-						createRay(beamer, newDirection, now, col);
-					}
-				} else if (objectMap[now]->id == OBJ_CONDUIT) {
-					Conduit* conduit = static_cast<Conduit*>(objectMap[now]);
-					short diff = (DIR_COUNT + conduit->direction - dir) % (DIR_COUNT / 2) - 2;
-					if (diff != 0) {
-						stop = end = true;
-					}
-				} else if (objectMap[now]->id == OBJ_FILTER) {
-					Filter* filter = static_cast<Filter*>(objectMap[now]);
-					short diff = (DIR_COUNT + filter->direction - dir + 2) % (DIR_COUNT / 2) - 2;
-					if (diff == 0) {
-						Color newColor = (filter->color * col);
-						if (!newColor.isBlack()) {
-							createRay(beamer, dir, now, newColor);
-						}
-					}
-					stop = end = true;
-				} else if (objectMap[now]->id == OBJ_PRISM) {
-					Prism* prism = static_cast<Prism*>(objectMap[now]);
-					short diff = (DIR_COUNT + prism->direction - dir) % DIR_COUNT;
-					if (col.red) {
-						if ((diff / 2) % 2 != 0) {
-							createRay(beamer, dir, now, colors[COL_RED]);
-						}
-					}
-					if (col.green) {
-						if (diff > 1 && ((diff + 1) % 3 != 1)) {
-							createRay(beamer, (DIR_COUNT + dir - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT, now, colors[COL_GREEN]);
-						}
-					}
-					if (col.blue) {
-						if (diff > 1 && ((diff + 1) % 3 != 1)) {
-							createRay(beamer, (DIR_COUNT + dir - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT, now, colors[COL_BLUE]);
-						}
-					}
-					stop = end = true;
-				} else if (objectMap[now]->id == OBJ_DOPPLER) {
-					Doppler* doppler = static_cast<Doppler*>(objectMap[now]);
-					short diff = (DIR_COUNT + doppler->direction - dir) % DIR_COUNT - 4;
-					if ((diff + 2) % 4 == 0) {
-						Color newColor = col.shiftColor(static_cast<bool>((diff + 2) / 4));
-						createRay(beamer, dir, now, newColor);
-					}
-					stop = end = true;
-				} else if (objectMap[now]->id == OBJ_TANGLER) {
-					Tangler* tangler = static_cast<Tangler*>(objectMap[now]);
-					short diff = (DIR_COUNT + tangler->direction - dir) % DIR_COUNT - 4;
-					if (diff == 0) {
-						//TODO: ADD TANGLER
-					}
-					stop = end = true;
-				}
-			}
-
-			if (isOutsideBoard(now) || obstacles[now]) {
-				stop = end = true;
-				endAtMiddle = false;
-			}
+			rayStep(beamer, now, color, delta, dir, stop, end, endAtMiddle);
 		}
 
 		sf::Vertex node(now, sfColor);
@@ -334,6 +239,137 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 	}
 
 	beamer->laser.push_back(ray);
+}
+
+void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col)
+{
+	unsigned short dirs[2] = {DIR(direction - 2), DIR(direction + 2)};
+	Object::Position nows[2] = {position, position};
+	Color colors[2] = {col, col};
+	sf::Vector2f deltas[2];
+	Ray rays[2] = {{sf::Vertex(position, col.convertToColor())}, {sf::Vertex(position, col.convertToColor())}};
+
+	bool stops[2] = {true, true};
+	bool ends[2] = {false, false};
+	bool endAtMiddle = true;
+	while (!(ends[0] and ends[1])) {
+		for (unsigned short ray = 0; ray < 2; ++ray) {
+			if (!ends[ray]) {
+				rayStep(beamer, nows[ray], colors[ray], deltas[ray], dirs[ray], stops[ray], ends[ray], endAtMiddle);
+			}
+		}
+
+		for (unsigned short ray = 0; ray < 2; ++ray) {
+			sf::Vertex node(nows[ray], colors[ray].convertToColor());
+			if (!endAtMiddle) {
+				node.position.x -= deltas[ray].x * 0.5f;
+				node.position.y -= deltas[ray].y * 0.5f;
+			}
+
+			rays[ray].push_back(node);
+		}
+	}
+
+	beamer->laser.push_back(rays[0]);
+	beamer->laser.push_back(rays[1]);
+}
+
+void Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
+{
+	delta = now;
+	now.moveInDirection(direction, 1);
+	delta = sf::Vector2f(now) - delta;
+
+	if (isPlaceTaken(now)) {
+		if (objectMap[now]->id == OBJ_BEAMER) {
+			stop = end = true;
+		} else if (objectMap[now]->id == OBJ_DOT) {
+			Dot* dot = static_cast<Dot*>(objectMap[now]);
+			dot->actualColor = dot->actualColor + color;
+		} else if (objectMap[now]->id == OBJ_MIRROR) {
+			Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
+			short diff = (DIR_COUNT + mirror->direction - direction) % DIR_COUNT - 4;
+			if (ABS(diff) <= 1) {
+				stop = true;
+				direction = (DIR_COUNT + direction - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
+			} else {
+				stop = end = true;
+			}
+		} else if (objectMap[now]->id == OBJ_BENDER) {
+			Bender* mirror = static_cast<Bender*>(objectMap[now]);
+			short diff = (DIR_COUNT + mirror->direction - direction + 7) % DIR_COUNT - 4;
+			if (-2 <= diff && diff < 2) {
+				stop = true;
+				direction = (DIR_COUNT + direction + (2 * diff + 5)) % DIR_COUNT;
+			} else {
+				stop = end = true;
+			}
+		} else if (objectMap[now]->id == OBJ_SPLITTER) {
+			Splitter* splitter = static_cast<Splitter*>(objectMap[now]);
+			short diff = (DIR_COUNT + splitter->direction - direction) % (DIR_COUNT / 2) - 2;
+			if (diff == 0) {
+				stop = end = true;
+			} else if (ABS(diff) == 1) {
+				unsigned short newDirection = (DIR_COUNT + direction + 2 * diff) % DIR_COUNT;
+				createRay(beamer, newDirection, now, color);
+			}
+		} else if (objectMap[now]->id == OBJ_CONDUIT) {
+			Conduit* conduit = static_cast<Conduit*>(objectMap[now]);
+			short diff = (DIR_COUNT + conduit->direction - direction) % (DIR_COUNT / 2) - 2;
+			if (diff != 0) {
+				stop = end = true;
+			}
+		} else if (objectMap[now]->id == OBJ_FILTER) {
+			Filter* filter = static_cast<Filter*>(objectMap[now]);
+			short diff = (DIR_COUNT + filter->direction - direction + 2) % (DIR_COUNT / 2) - 2;
+			if (diff == 0) {
+				Color newColor = (filter->color * color);
+				if (!newColor.isBlack()) {
+					createRay(beamer, direction, now, newColor);
+				}
+			}
+			stop = end = true;
+		} else if (objectMap[now]->id == OBJ_PRISM) {
+			Prism* prism = static_cast<Prism*>(objectMap[now]);
+			short diff = (DIR_COUNT + prism->direction - direction) % DIR_COUNT;
+			if (color.red) {
+				if ((diff / 2) % 2 != 0) {
+					createRay(beamer, direction, now, colors[COL_RED]);
+				}
+			}
+			if (color.green) {
+				if (diff > 1 && ((diff + 1) % 3 != 1)) {
+					createRay(beamer, (DIR_COUNT + direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT, now, colors[COL_GREEN]);
+				}
+			}
+			if (color.blue) {
+				if (diff > 1 && ((diff + 1) % 3 != 1)) {
+					createRay(beamer, (DIR_COUNT + direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT, now, colors[COL_BLUE]);
+				}
+			}
+			stop = end = true;
+		} else if (objectMap[now]->id == OBJ_DOPPLER) {
+			Doppler* doppler = static_cast<Doppler*>(objectMap[now]);
+			short diff = (DIR_COUNT + doppler->direction - direction) % DIR_COUNT - 4;
+			if ((diff + 2) % 4 == 0) {
+				Color newColor = color.shiftColor(static_cast<bool>((diff + 2) / 4));
+				createRay(beamer, direction, now, newColor);
+			}
+			stop = end = true;
+		} else if (objectMap[now]->id == OBJ_TANGLER) {
+			Tangler* tangler = static_cast<Tangler*>(objectMap[now]);
+			short diff = (DIR_COUNT + tangler->direction - direction) % DIR_COUNT - 4;
+			if (diff == 0) {
+				createTangledRay(beamer, direction, now, color);
+			}
+			stop = end = true;
+		}
+	}
+
+	if (isOutsideBoard(now) || obstacles[now]) {
+		stop = end = true;
+		endAtMiddle = false;
+	}
 }
 
 void Game::Level::resetLevel(bool ignoreSave)
@@ -423,7 +459,7 @@ void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack
 {
 	if (id == OBJ_BEAMER) {
 		if (!inStack) {
-			Beamer* beamer = new Beamer();
+			Beamer *beamer = new Beamer();
 			setObject(beamer, position, id, DIR_NORTH, inStack);
 		} else {
 			LogWarning("Can't place a beamer into the stack!");
@@ -465,7 +501,7 @@ void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack
 bool Game::Level::changeObjectColor(Object::Position mousePosition)
 {
 	bool onStack = stack.isOnStack(mousePosition);
-	Object* object = getObject(mousePosition);
+	Object *object = getObject(mousePosition);
 	bool success = isPlaceTaken(mousePosition, onStack);
 
 	if (success) {
@@ -478,7 +514,7 @@ bool Game::Level::changeObjectColor(Object::Position mousePosition)
 	return success;
 }
 
-Object* Game::Level::getObject(Object::Position mousePosition)
+Object *Game::Level::getObject(Object::Position mousePosition)
 {
 	bool onStack = stack.isOnStack(mousePosition);
 	Object::Position position = getRelativePosition(mousePosition);
@@ -583,7 +619,7 @@ bool Game::Level::removeObject(Object::Position position)
 bool Game::Level::rotateObject(Object::Position mousePosition, bool clockwise)
 {
 	bool onStack = stack.isOnStack(mousePosition);
-	Object* object = getObject(mousePosition);
+	Object *object = getObject(mousePosition);
 	bool success = isPlaceTaken(mousePosition, onStack);
 
 	if (success) {
@@ -601,12 +637,12 @@ bool Game::Level::setObstacle(Object::Position position, bool obstacle)
 	return true;
 }
 
-void Game::Level::setObject(Object* object, short x, short y, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
+void Game::Level::setObject(Object *object, short x, short y, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
 {
 	setObject(object, shortToPosition(x, y), id, direction, inStack, stackObject);
 }
 
-void Game::Level::setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
+void Game::Level::setObject(Object *object, Object::Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
 {
 	object->id = id;
 	object->position.setPosition(position);

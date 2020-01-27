@@ -35,7 +35,7 @@ public:
 		bool dragObject(Drag &drag, Object::Position mousePosition);
 		bool dragStackObject(Drag &drag, Object::Position mousePosition);
 		bool changeObjectColor(Object::Position mousePosition);
-		Object* getObject(Object::Position mousePosition);
+		Object *getObject(Object::Position mousePosition);
 		Object::Position getRelativePosition(Object::Position mousePosition);
 		bool isPlaceFree(Object::Position position);
 		bool isPlaceFree(Object::Position position, bool onStack);
@@ -46,8 +46,8 @@ public:
 		void newObject(Object::Position position, ObjectID id, bool inStack);
 		bool removeObject(Object::Position position);
 		bool rotateObject(Object::Position mousePosition, bool clockwise = true);
-		void setObject(Object* object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
-		void setObject(Object* object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
+		void setObject(Object *object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
+		void setObject(Object *object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
 		bool setObstacle(Object::Position position, bool obstacle);
 		void setTile(Object::Position position, bool obstacle);
 		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
@@ -70,8 +70,10 @@ public:
 		void updateDots();
 		void updateStack();
 
-		void createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col, Timeline timeline = {}, unsigned short time = 0);
+		void createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col);
+		void createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col);
 		void calculateLasers();
+		void rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle);
 	} level;
 
 	struct LevelSet {

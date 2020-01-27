@@ -18,6 +18,7 @@
 #define MAX_COLOR 255
 #define ORIGIN TILE_SIZE / 2, TILE_SIZE / 2
 #define ABS(a) std::abs(a)
+#define DIR(a) static_cast<unsigned short>((DIR_COUNT + ((a) % DIR_COUNT)) % DIR_COUNT)
 
 #define LogInfo(message) Log::log(Log::Type::INFO, message)
 #define LogError(message) Log::log(Log::Type::ERROR, message)
