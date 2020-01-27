@@ -8,19 +8,19 @@
 
 class Color
 {
-	// Tuple of colors
 	std::vector<bool*> colorTuple = {&red, &green, &blue};
 	Colors colorId = COL_BLACK;
 public:
 	Color(bool r = false, bool g = false, bool b = false);
 	Color(Colors colId = COL_BLACK);
 
-	// Add two colors (additive), compare two colors
 	Color operator+(const Color &color);
 	Color operator*(const Color &color);
 	bool operator==(const Color &color);
+	bool operator==(const Colors colID);
+	bool operator!=(const Color &color);
+	bool operator!=(const Colors colID);
 
-	// Color's components
 	bool red;
 	bool green;
 	bool blue;
@@ -32,7 +32,6 @@ public:
 	void nextColor();
 	void getColorId();
 	void setColorFromId(Colors colId);
-	bool isBlack();
 };
 
 static Color colors[COL_COUNT] = {

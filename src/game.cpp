@@ -31,7 +31,7 @@ void Game::Level::checkLevel()
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
 		for (size_t index = 0; index < objectList[type].size(); ++index) {
 			if (objectList[type][index]->colorable) {
-				if (objectList[type][index]->color.isBlack()) {
+				if (objectList[type][index]->color == COL_BLACK) {
 					blackObject = true;
 					break;
 				}
@@ -212,24 +212,28 @@ void Game::Level::calculateLasers()
 	updateDots();
 }
 
-void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col)
+void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color color)
 {
 	unsigned short dir = direction;
 	Object::Position now = position;
-	Color color = col;
-	sf::Color sfColor = color.convertToColor();
+	Color col = color;
 	sf::Vector2f delta;
-	Ray ray = {sf::Vertex(position, sfColor)};
+	Ray ray = {sf::Vertex(position, col.convertToColor())};
 
 	bool end = false;
 	while (!end) {
 		bool stop = false;
 		bool endAtMiddle = true;
+		Color previousColor = col;
 		while (!stop) {
-			rayStep(beamer, now, color, delta, dir, stop, end, endAtMiddle);
+			rayStep(beamer, now, col, delta, dir, stop, end, endAtMiddle);
 		}
 
-		sf::Vertex node(now, sfColor);
+		if (previousColor != col) {
+			ray.push_back(sf::Vertex(now, previousColor.convertToColor()));
+		}
+
+		sf::Vertex node(now, col.convertToColor());
 		if (!endAtMiddle) {
 			node.position.x -= delta.x * 0.5f;
 			node.position.y -= delta.y * 0.5f;
@@ -241,32 +245,35 @@ void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Po
 	beamer->laser.push_back(ray);
 }
 
-void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col)
+void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color color)
 {
 	unsigned short dirs[2] = {DIR(direction - 2), DIR(direction + 2)};
 	Object::Position nows[2] = {position, position};
-	Color colors[2] = {col, col};
+	Color cols[2] = {color, color};
 	sf::Vector2f deltas[2];
-	Ray rays[2] = {{sf::Vertex(position, col.convertToColor())}, {sf::Vertex(position, col.convertToColor())}};
+	Ray rays[2] = {{sf::Vertex(position, color.convertToColor())}, {sf::Vertex(position, color.convertToColor())}};
 
 	bool stops[2] = {true, true};
 	bool ends[2] = {false, false};
 	bool endAtMiddle = true;
 	while (!(ends[0] and ends[1])) {
+		Color previousColors[2] = {cols[0], cols[1]};
 		ColorShift colorShifts[2] = {CLS_NONE, CLS_NONE};
 		for (unsigned short ray = 0; ray < 2; ++ray) {
 			if (!ends[ray]) {
-				colorShifts[ray] = rayStep(beamer, nows[ray], colors[ray], deltas[ray], dirs[ray], stops[ray], ends[ray], endAtMiddle);
+				colorShifts[ray] = rayStep(beamer, nows[ray], cols[ray], deltas[ray], dirs[ray], stops[ray], ends[ray], endAtMiddle);
 			}
 		}
 
 		for (unsigned short ray = 0; ray < 2; ++ray) {
 			if (colorShifts[1 - ray] != CLS_NONE) {
-				rays[ray].push_back(sf::Vertex(nows[ray], colors[ray].convertToColor()));
-				colors[ray] = colors[ray].shiftColor(CLS_REVERSE(colorShifts[1 - ray]));
+				cols[ray] = cols[ray].shiftColor(CLS_REVERSE(colorShifts[1 - ray]));
+			}
+			if (previousColors[ray] != cols[ray]) {
+				rays[ray].push_back(sf::Vertex(nows[ray], previousColors[ray].convertToColor()));
 			}
 
-			sf::Vertex node(nows[ray], colors[ray].convertToColor());
+			sf::Vertex node(nows[ray], cols[ray].convertToColor());
 			if (!endAtMiddle) {
 				node.position.x -= deltas[ray].x * 0.5f;
 				node.position.y -= deltas[ray].y * 0.5f;
@@ -282,7 +289,13 @@ void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Obj
 
 ColorShift Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
 {
+	if (color == COL_BLACK) {
+		stop = end = true;
+		return CLS_NONE;
+	}
+
 	ColorShift colorShift = CLS_NONE;
+
 	delta = now;
 	now.moveInDirection(direction, 1);
 	delta = sf::Vector2f(now) - delta;
@@ -331,11 +344,17 @@ ColorShift Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &co
 			short diff = (DIR_COUNT + filter->direction - direction + 2) % (DIR_COUNT / 2) - 2;
 			if (diff == 0) {
 				Color newColor = (filter->color * color);
-				if (!newColor.isBlack()) {
-					createRay(beamer, direction, now, newColor);
+				if (newColor != COL_BLACK) {
+					if (color != newColor) {
+						color = newColor;
+						stop = true;
+					}
+				} else {
+					stop = end = true;
 				}
+			} else {
+				stop = end = true;
 			}
-			stop = end = true;
 		} else if (objectMap[now]->id == OBJ_PRISM) {
 			Prism* prism = static_cast<Prism*>(objectMap[now]);
 			short diff = (DIR_COUNT + prism->direction - direction) % DIR_COUNT;
@@ -361,9 +380,13 @@ ColorShift Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &co
 			if ((diff + 2) % 4 == 0) {
 				colorShift = static_cast<ColorShift>(1 + ((diff + 2) / 4));
 				Color newColor = color.shiftColor(colorShift);
-				createRay(beamer, direction, now, newColor);
+				if (newColor != COL_WHITE) {
+					color = newColor;
+					stop = true;
+				}
+			} else {
+				stop = end = true;
 			}
-			stop = end = true;
 		} else if (objectMap[now]->id == OBJ_TANGLER) {
 			Tangler* tangler = static_cast<Tangler*>(objectMap[now]);
 			short diff = (DIR_COUNT + tangler->direction - direction) % DIR_COUNT - 4;

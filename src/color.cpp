@@ -28,6 +28,21 @@ bool Color::operator==(const Color& color)
 	return (this->red == color.red && this->green == color.green && this->blue == color.blue);
 }
 
+bool Color::operator!=(const Color& color)
+{
+	return (this->red != color.red || this->green != color.green || this->blue != color.blue);
+}
+
+bool Color::operator==(const Colors colID)
+{
+	return (*this == colors[colID]);
+}
+
+bool Color::operator!=(const Colors colID)
+{
+	return (*this != colors[colID]);
+}
+
 sf::Color Color::convertToColor()
 {
 	return sf::Color(MAX_COLOR * static_cast<sf::Uint8>(red), MAX_COLOR * static_cast<sf::Uint8>(green), MAX_COLOR * static_cast<sf::Uint8>(blue));
@@ -74,9 +89,4 @@ void Color::setColorFromId(Colors colId)
 	red = color.red;
 	green = color.green;
 	blue = color.blue;
-}
-
-bool Color::isBlack()
-{
-	return (red == false && green == false && blue == false);
 }
