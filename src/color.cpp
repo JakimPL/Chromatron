@@ -42,6 +42,18 @@ Color Color::shiftColor(bool orientation)
 	}
 }
 
+Color Color::shiftColor(ColorShift colorShift)
+{
+	switch (colorShift) {
+	case CLS_LEFT:
+		return shiftColor(true);
+	case CLS_RIGHT:
+		return shiftColor(false);
+	default:
+		return *this;
+	}
+}
+
 void Color::nextColor()
 {
 	colorId = static_cast<Colors>((colorId + 1) % COL_COUNT);

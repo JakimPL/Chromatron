@@ -27,6 +27,7 @@ public:
 
 	sf::Color convertToColor();
 	Color shiftColor(bool orientation);
+	Color shiftColor(ColorShift colorShift);
 
 	void nextColor();
 	void getColorId();

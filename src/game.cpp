@@ -221,10 +221,10 @@ void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Po
 	sf::Vector2f delta;
 	Ray ray = {sf::Vertex(position, sfColor)};
 
-	bool stop = false;
 	bool end = false;
-	bool endAtMiddle = true;
 	while (!end) {
+		bool stop = false;
+		bool endAtMiddle = true;
 		while (!stop) {
 			rayStep(beamer, now, color, delta, dir, stop, end, endAtMiddle);
 		}
@@ -253,13 +253,19 @@ void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Obj
 	bool ends[2] = {false, false};
 	bool endAtMiddle = true;
 	while (!(ends[0] and ends[1])) {
+		ColorShift colorShifts[2] = {CLS_NONE, CLS_NONE};
 		for (unsigned short ray = 0; ray < 2; ++ray) {
 			if (!ends[ray]) {
-				rayStep(beamer, nows[ray], colors[ray], deltas[ray], dirs[ray], stops[ray], ends[ray], endAtMiddle);
+				colorShifts[ray] = rayStep(beamer, nows[ray], colors[ray], deltas[ray], dirs[ray], stops[ray], ends[ray], endAtMiddle);
 			}
 		}
 
 		for (unsigned short ray = 0; ray < 2; ++ray) {
+			if (colorShifts[1 - ray] != CLS_NONE) {
+				rays[ray].push_back(sf::Vertex(nows[ray], colors[ray].convertToColor()));
+				colors[ray] = colors[ray].shiftColor(CLS_REVERSE(colorShifts[1 - ray]));
+			}
+
 			sf::Vertex node(nows[ray], colors[ray].convertToColor());
 			if (!endAtMiddle) {
 				node.position.x -= deltas[ray].x * 0.5f;
@@ -274,8 +280,9 @@ void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Obj
 	beamer->laser.push_back(rays[1]);
 }
 
-void Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
+ColorShift Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
 {
+	ColorShift colorShift = CLS_NONE;
 	delta = now;
 	now.moveInDirection(direction, 1);
 	delta = sf::Vector2f(now) - delta;
@@ -352,7 +359,8 @@ void Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, s
 			Doppler* doppler = static_cast<Doppler*>(objectMap[now]);
 			short diff = (DIR_COUNT + doppler->direction - direction) % DIR_COUNT - 4;
 			if ((diff + 2) % 4 == 0) {
-				Color newColor = color.shiftColor(static_cast<bool>((diff + 2) / 4));
+				colorShift = static_cast<ColorShift>(1 + ((diff + 2) / 4));
+				Color newColor = color.shiftColor(colorShift);
 				createRay(beamer, direction, now, newColor);
 			}
 			stop = end = true;
@@ -370,6 +378,8 @@ void Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, s
 		stop = end = true;
 		endAtMiddle = false;
 	}
+
+	return colorShift;
 }
 
 void Game::Level::resetLevel(bool ignoreSave)

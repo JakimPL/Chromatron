@@ -19,6 +19,7 @@
 #define ORIGIN TILE_SIZE / 2, TILE_SIZE / 2
 #define ABS(a) std::abs(a)
 #define DIR(a) static_cast<unsigned short>((DIR_COUNT + ((a) % DIR_COUNT)) % DIR_COUNT)
+#define CLS_REVERSE(a) static_cast<ColorShift>((3 - ((3 + (a % 3)) % 3)) % 3)
 
 #define LogInfo(message) Log::log(Log::Type::INFO, message)
 #define LogError(message) Log::log(Log::Type::ERROR, message)
@@ -63,6 +64,12 @@ enum Colors : unsigned short {
 	COL_YELLOW,
 	COL_WHITE,
 	COL_COUNT
+};
+
+enum ColorShift : unsigned short {
+	CLS_NONE,
+	CLS_RIGHT,
+	CLS_LEFT
 };
 
 enum DirectionID : unsigned short {

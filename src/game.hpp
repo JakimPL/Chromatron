@@ -73,7 +73,7 @@ public:
 		void createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col);
 		void createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color col);
 		void calculateLasers();
-		void rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle);
+		ColorShift rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle);
 	} level;
 
 	struct LevelSet {
