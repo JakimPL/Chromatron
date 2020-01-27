@@ -3,6 +3,8 @@
 
 #include <string>
 
+//TODO: LOG LEVELES
+
 class Log
 {
 private:

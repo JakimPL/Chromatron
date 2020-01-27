@@ -70,7 +70,7 @@ public:
 		void updateDots();
 		void updateStack();
 
-		void createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col);
+		void createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col, Timeline timeline = {}, unsigned short time = 0);
 		void calculateLasers();
 	} level;
 

@@ -212,7 +212,7 @@ void Game::Level::calculateLasers()
 	updateDots();
 }
 
-void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col)
+void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Position position, Color col, Timeline timeline, unsigned short time)
 {
 	unsigned short dir = direction;
 	Object::Position now = position;
@@ -272,7 +272,7 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 						stop = end = true;
 					}
 				} else if (objectMap[now]->id == OBJ_FILTER) {
-					Conduit* filter = static_cast<Conduit*>(objectMap[now]);
+					Filter* filter = static_cast<Filter*>(objectMap[now]);
 					short diff = (DIR_COUNT + filter->direction - dir + 2) % (DIR_COUNT / 2) - 2;
 					if (diff == 0) {
 						Color newColor = (filter->color * col);
@@ -306,6 +306,13 @@ void Game::Level::createRay(Beamer* beamer, unsigned short direction, Object::Po
 					if ((diff + 2) % 4 == 0) {
 						Color newColor = col.shiftColor(static_cast<bool>((diff + 2) / 4));
 						createRay(beamer, dir, now, newColor);
+					}
+					stop = end = true;
+				} else if (objectMap[now]->id == OBJ_TANGLER) {
+					Tangler* tangler = static_cast<Tangler*>(objectMap[now]);
+					short diff = (DIR_COUNT + tangler->direction - dir) % DIR_COUNT - 4;
+					if (diff == 0) {
+						//TODO: ADD TANGLER
 					}
 					stop = end = true;
 				}

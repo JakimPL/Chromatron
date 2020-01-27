@@ -411,7 +411,7 @@ void GameState::mouseGameEvents()
 				}
 
 				if (drag.position == mousePosition) {
-					game.level.event = game.level.rotateObject(mousePosition, true);
+					game.level.event = game.level.rotateObject(mousePosition, event.mouseButton.button);
 				}
 			} else {
 				if (!drag.position.isNull()) {

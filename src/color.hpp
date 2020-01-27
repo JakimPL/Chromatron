@@ -1,5 +1,5 @@
-#ifndef STRUCTURES_H
-#define STRUCTURES_H
+#ifndef COLOR_H
+#define COLOR_H
 
 #include <vector>
 
@@ -47,5 +47,6 @@ static Color colors[COL_COUNT] = {
 
 typedef std::vector<sf::Vertex> Ray;
 typedef std::vector<Ray> Laser;
+typedef std::vector<std::pair<unsigned short, bool>> Timeline;
 
 #endif
