@@ -36,24 +36,6 @@
 #define COL_CYAN_TUPLE    {false, true,  true}
 #define COL_WHITE_TUPLE   {true,  true,  true}
 
-#define dRED        "\x1b[0;31;40m"
-#define dGREEN      "\x1b[0;32;40m"
-#define dYELLOW     "\x1b[0;33;40m"
-#define dBLUE       "\x1b[0;34;40m"
-#define dMAGENTA    "\x1b[0;35;40m"
-#define dCYAN       "\x1b[0;36;40m"
-#define dWHITE      "\x1b[0;37;40m"
-
-#define lRED		"\033[1;31m"
-#define lGREEN		"\033[1;32m"
-#define lYELLOW		"\033[1;33m"
-#define lBLUE		"\033[1;34m"
-#define lMAGENTA	"\033[1;35m"
-#define lCYAN		"\033[1;36m"
-#define lWHITE		"\033[1;37m"
-
-#define RESET 	    "\x1b[0;7;0m"
-
 enum Colors : unsigned short {
 	COL_BLACK,
 	COL_BLUE,

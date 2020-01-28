@@ -34,31 +34,23 @@ std::string Log::typeText(Log::Type type)
 		text = "";
 		break;
 	case Log::Type::MESSAGE:
-		text = "[";
-		text += lGREEN;
-		text += "MESSAGE";
-		text += RESET;
+        text = "[";
+        text += "MESSAGE";
 		text += "] ";
 		break;
 	case Log::Type::INFO:
-		text = "   [";
-		text += lWHITE;
-		text += "INFO";
-		text += RESET;
+        text = "   [";
+        text += "INFO";
 		text += "] ";
 		break;
 	case Log::Type::WARNING:
-		text = "[";
-		text += lYELLOW;
-		text += "WARNING";
-		text += RESET;
+        text = "[";
+        text += "WARNING";
 		text += "] ";
 		break;
 	case Log::Type::ERROR:
-		text = "  [";
-		text += lRED;
-		text += "ERROR";
-		text += RESET;
+        text = "  [";
+        text += "ERROR";
 		text += "] ";
 		break;
 	}
