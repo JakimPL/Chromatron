@@ -1,7 +1,7 @@
 #include "stack.hpp"
 #include "auxiliary.hpp"
 
-Object::Position Stack::getRelativePosition(Object::Position mousePosition)
+Position Stack::getRelativePosition(Position mousePosition)
 {
 	return mousePosition - offset;
 }
@@ -19,20 +19,20 @@ bool Stack::isFull()
 	return true;
 }
 
-bool Stack::isOnStack(Object::Position position)
+bool Stack::isOnStack(Position position)
 {
-	Object::Position relativePosition = position - offset;
+	Position relativePosition = position - offset;
 	short x = relativePosition.getX();
 	short y = relativePosition.getY();
 	return (x >= 0 && y >= 0 && x < width && y < height);
 }
 
-bool Stack::isPlaceFree(Object::Position position)
+bool Stack::isPlaceFree(Position position)
 {
 	return objectMap[position] == nullptr;
 }
 
-bool Stack::isPlaceTaken(Object::Position position)
+bool Stack::isPlaceTaken(Position position)
 {
 	return objectMap[position] != nullptr && objectMap[position]->inStack;
 }

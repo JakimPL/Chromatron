@@ -24,35 +24,35 @@ public:
 		unsigned short height;
 		std::vector<Object*> objectList[OBJ_COUNT];
 		std::vector<Object*> stackObjectList;
-		std::map<Object::Position, Object*> objectMap;
-		std::map<Object::Position, bool> obstacles;
-		std::map<Object::Position, sf::Sprite> tileSprites;
+		std::map<Position, Object*> objectMap;
+		std::map<Position, bool> obstacles;
+		std::map<Position, sf::Sprite> tileSprites;
 		Stack stack;
 		Game* game;
 
-		bool addObject(Object::Position position, ObjectID id);
-		bool addToStack(Object::Position position);
-		bool dragObject(Drag &drag, Object::Position mousePosition);
-		bool dragStackObject(Drag &drag, Object::Position mousePosition);
-		bool changeObjectColor(Object::Position mousePosition);
-		Object *getObject(Object::Position mousePosition);
-		Object::Position getRelativePosition(Object::Position mousePosition);
-		bool isPlaceFree(Object::Position position);
-		bool isPlaceFree(Object::Position position, bool onStack);
-		bool isPlaceTaken(Object::Position position);
-		bool isPlaceTaken(Object::Position position, bool onStack);
-		bool isOutsideBoard(Object::Position position);
-		bool moveObject(Object::Position start, Object::Position end);
-		void newObject(Object::Position position, ObjectID id, bool inStack);
-		bool removeObject(Object::Position position);
-		bool rotateObject(Object::Position mousePosition, bool clockwise = true);
+		bool addObject(Position position, ObjectID id);
+		bool addToStack(Position position);
+		bool dragObject(Drag &drag, Position mousePosition);
+		bool dragStackObject(Drag &drag, Position mousePosition);
+		bool changeObjectColor(Position mousePosition);
+		Object *getObject(Position mousePosition);
+		Position getRelativePosition(Position mousePosition);
+		bool isPlaceFree(Position position);
+		bool isPlaceFree(Position position, bool onStack);
+		bool isPlaceTaken(Position position);
+		bool isPlaceTaken(Position position, bool onStack);
+		bool isOutsideBoard(Position position);
+		bool moveObject(Position start, Position end);
+		void newObject(Position position, ObjectID id, bool inStack);
+		bool removeObject(Position position);
+		bool rotateObject(Position mousePosition, bool clockwise = true);
 		void setObject(Object *object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
-		void setObject(Object *object, Object::Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
-		bool setObstacle(Object::Position position, bool obstacle);
-		void setTile(Object::Position position, bool obstacle);
-		bool moveFromStack(Object::Position stackPosition, Object::Position mousePosition);
-		bool moveToStack(Object::Position dragPosition, Object::Position mousePosition);
-		bool moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition);
+		void setObject(Object *object, Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
+		bool setObstacle(Position position, bool obstacle);
+		void setTile(Position position, bool obstacle);
+		bool moveFromStack(Position stackPosition, Position mousePosition);
+		bool moveToStack(Position dragPosition, Position mousePosition);
+		bool moveFromStackToStack(Position dragPosition, Position mousePosition);
 
 		bool checkLevelSave(const std::string &id);
 		void checkLevel();
@@ -70,10 +70,10 @@ public:
 		void updateDots();
 		void updateStack();
 
-		void createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color color);
-		void createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color color);
+		void createRay(Beamer *beamer, unsigned short direction, Position position, Color color);
+		void createTangledRay(Beamer *beamer, unsigned short direction, Position position, Color color);
 		void calculateLasers();
-		ColorShift rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle);
+		ColorShift rayStep(Beamer *beamer, Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle);
 	} level;
 
 	struct LevelSet {

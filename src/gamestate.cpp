@@ -97,7 +97,7 @@ void GameState::drawBoard()
 
 	for (short y = 0; y < game.level.height; ++y) {
 		for (short x = 0; x < game.level.width; ++x) {
-			Object::Position currentPosition = shortToPosition(x, y);
+			Position currentPosition = shortToPosition(x, y);
 			drawTile(currentPosition);
 		}
 	}
@@ -161,7 +161,7 @@ void GameState::drawGameObjects()
 	}
 }
 
-void GameState::drawSelector(Object::Position mousePosition)
+void GameState::drawSelector(Position mousePosition)
 {
 	sf::Color fillColor, outlineColor;
 	bool outlineOnly = false;
@@ -194,7 +194,7 @@ void GameState::drawStack()
 {
 	for (short y = 0; y < game.level.stack.height; ++y) {
 		for (short x = 0; x < game.level.stack.width; ++x) {
-			Object::Position currentPosition = shortToPosition(x, y);
+			Position currentPosition = shortToPosition(x, y);
 			drawTile(currentPosition, true);
 		}
 	}
@@ -204,13 +204,13 @@ void GameState::drawStack()
 	}
 }
 
-void GameState::drawTile(Object::Position position, bool inStack)
+void GameState::drawTile(Position position, bool inStack)
 {
 	sf::Sprite sprite = (inStack ? game.level.stack.sprites[position] : game.level.tileSprites[position]);
 	window.draw(sprite);
 }
 
-void GameState::drawSelectorSquare(Object::Position position, sf::Color fillColor, sf::Color outlineColor, bool outlineOnly)
+void GameState::drawSelectorSquare(Position position, sf::Color fillColor, sf::Color outlineColor, bool outlineOnly)
 {
 	sf::Vector2f realPosition(position);
 	realPosition.x -= TILE_SIZE / 2;

@@ -8,16 +8,16 @@ struct Stack {
 	unsigned short width = STACK_WIDTH;
 	unsigned short height = STACK_HEIGHT;
 
-	Object::Position offset;
+	Position offset;
 	std::vector<Object*> objectList[OBJ_COUNT];
-	std::map<Object::Position, Object*> objectMap;
-	std::map<Object::Position, sf::Sprite> sprites;
+	std::map<Position, Object*> objectMap;
+	std::map<Position, sf::Sprite> sprites;
 
-	Object::Position getRelativePosition(Object::Position mousePosition);
+	Position getRelativePosition(Position mousePosition);
 	bool isFull();
-	bool isOnStack(Object::Position position);
-	bool isPlaceFree(Object::Position position);
-	bool isPlaceTaken(Object::Position position);
+	bool isOnStack(Position position);
+	bool isPlaceFree(Position position);
+	bool isPlaceTaken(Position position);
 };
 
 #endif

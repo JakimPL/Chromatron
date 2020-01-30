@@ -12,5 +12,6 @@
 #include "src/log.hpp"
 #include "src/stack.hpp"
 #include "src/object.hpp"
+#include "src/position.hpp"
 
 #endif

@@ -76,7 +76,7 @@ void Game::Level::clearLevel()
 
 	for (short y = 0; y < height; ++y) {
 		for (short x = 0; x < width; ++x) {
-			Object::Position currentPosition = shortToPosition(x, y);
+			Position currentPosition = shortToPosition(x, y);
 			setTile(currentPosition, false);
 		}
 	}
@@ -104,7 +104,7 @@ void Game::Level::loadLevel(const std::string &id, bool ignoreSave)
 
 		for (short y = 0; y < height; ++y) {
 			for (short x = 0; x < width; ++x) {
-				Object::Position currentPosition = shortToPosition(x, y);
+				Position currentPosition = shortToPosition(x, y);
 				objectMap[currentPosition] = nullptr;
 
 				bool obstacle;
@@ -160,7 +160,7 @@ void Game::Level::saveLevel(const std::string &id)
 
 		for (short y = 0; y < height; ++y) {
 			for (short x = 0; x < width; ++x) {
-				Object::Position currentPosition = shortToPosition(x, y);
+				Position currentPosition = shortToPosition(x, y);
 				levelFile.write((char*) & (obstacles[currentPosition]), 1);
 			}
 		}
@@ -212,10 +212,10 @@ void Game::Level::calculateLasers()
 	updateDots();
 }
 
-void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Position position, Color color)
+void Game::Level::createRay(Beamer *beamer, unsigned short direction, Position position, Color color)
 {
 	unsigned short dir = direction;
-	Object::Position now = position;
+	Position now = position;
 	Color col = color;
 	sf::Vector2f delta;
 	Ray ray = {sf::Vertex(position, col.convertToColor())};
@@ -245,10 +245,10 @@ void Game::Level::createRay(Beamer *beamer, unsigned short direction, Object::Po
 	beamer->laser.push_back(ray);
 }
 
-void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Object::Position position, Color color)
+void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Position position, Color color)
 {
 	unsigned short dirs[2] = {DIR(direction - 2), DIR(direction + 2)};
-	Object::Position nows[2] = {position, position};
+	Position nows[2] = {position, position};
 	Color cols[2] = {color, color};
 	sf::Vector2f deltas[2];
 	Ray rays[2] = {{sf::Vertex(position, color.convertToColor())}, {sf::Vertex(position, color.convertToColor())}};
@@ -287,7 +287,7 @@ void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Obj
 	beamer->laser.push_back(rays[1]);
 }
 
-ColorShift Game::Level::rayStep(Beamer *beamer, Object::Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
+ColorShift Game::Level::rayStep(Beamer *beamer, Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
 {
 	if (color == COL_BLACK) {
 		stop = end = true;
@@ -476,7 +476,7 @@ bool Game::Level::checkWin()
 	return win;
 }
 
-bool Game::Level::addObject(Object::Position position, ObjectID id)
+bool Game::Level::addObject(Position position, ObjectID id)
 {
 	bool onStack = stack.isOnStack(position);
 	bool success = isPlaceFree(position, onStack);
@@ -488,7 +488,7 @@ bool Game::Level::addObject(Object::Position position, ObjectID id)
 	return success;
 }
 
-void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack)
+void Game::Level::newObject(Position position, ObjectID id, bool inStack)
 {
 	if (id == OBJ_BEAMER) {
 		if (!inStack) {
@@ -531,7 +531,7 @@ void Game::Level::newObject(Object::Position position, ObjectID id, bool inStack
 	}
 }
 
-bool Game::Level::changeObjectColor(Object::Position mousePosition)
+bool Game::Level::changeObjectColor(Position mousePosition)
 {
 	bool onStack = stack.isOnStack(mousePosition);
 	Object *object = getObject(mousePosition);
@@ -547,24 +547,24 @@ bool Game::Level::changeObjectColor(Object::Position mousePosition)
 	return success;
 }
 
-Object *Game::Level::getObject(Object::Position mousePosition)
+Object *Game::Level::getObject(Position mousePosition)
 {
 	bool onStack = stack.isOnStack(mousePosition);
-	Object::Position position = getRelativePosition(mousePosition);
+	Position position = getRelativePosition(mousePosition);
 	return (onStack ? stack.objectMap[position] : objectMap[position]);
 }
 
-Object::Position Game::Level::getRelativePosition(Object::Position mousePosition)
+Position Game::Level::getRelativePosition(Position mousePosition)
 {
 	return (stack.isOnStack(mousePosition) ? stack.getRelativePosition(mousePosition) : mousePosition);
 }
 
-bool Game::Level::isPlaceFree(Object::Position position)
+bool Game::Level::isPlaceFree(Position position)
 {
 	return (objectMap[position] == nullptr && !obstacles[position] && !isOutsideBoard(position));
 }
 
-bool Game::Level::isPlaceFree(Object::Position position, bool onStack)
+bool Game::Level::isPlaceFree(Position position, bool onStack)
 {
 	if (onStack) {
 		return stack.isPlaceFree(getRelativePosition(position));
@@ -573,12 +573,12 @@ bool Game::Level::isPlaceFree(Object::Position position, bool onStack)
 	}
 }
 
-bool Game::Level::isPlaceTaken(Object::Position position)
+bool Game::Level::isPlaceTaken(Position position)
 {
 	return (objectMap[position] != nullptr && !objectMap[position]->inStack);
 }
 
-bool Game::Level::isPlaceTaken(Object::Position position, bool onStack)
+bool Game::Level::isPlaceTaken(Position position, bool onStack)
 {
 	if (onStack) {
 		return stack.isPlaceTaken(getRelativePosition(position));
@@ -587,12 +587,12 @@ bool Game::Level::isPlaceTaken(Object::Position position, bool onStack)
 	}
 }
 
-bool Game::Level::isOutsideBoard(Object::Position position)
+bool Game::Level::isOutsideBoard(Position position)
 {
 	return (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height);
 }
 
-bool Game::Level::dragObject(Drag & drag, Object::Position position)
+bool Game::Level::dragObject(Drag & drag, Position position)
 {
 	bool success = isPlaceTaken(position) && (objectMap[position]->movable || game->editor.isActive());
 
@@ -606,9 +606,9 @@ bool Game::Level::dragObject(Drag & drag, Object::Position position)
 	return success;
 }
 
-bool Game::Level::dragStackObject(Drag & drag, Object::Position mousePosition)
+bool Game::Level::dragStackObject(Drag & drag, Position mousePosition)
 {
-	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
+	Position stackPosition = stack.getRelativePosition(mousePosition);
 	bool success = stack.isPlaceTaken(stackPosition);
 
 	if (success) {
@@ -621,7 +621,7 @@ bool Game::Level::dragStackObject(Drag & drag, Object::Position mousePosition)
 	return success;
 }
 
-bool Game::Level::moveObject(Object::Position start, Object::Position end)
+bool Game::Level::moveObject(Position start, Position end)
 {
 	bool success = isPlaceFree(end);
 
@@ -635,7 +635,7 @@ bool Game::Level::moveObject(Object::Position start, Object::Position end)
 	return success;
 }
 
-bool Game::Level::removeObject(Object::Position position)
+bool Game::Level::removeObject(Position position)
 {
 	bool success = isPlaceTaken(position);
 
@@ -649,7 +649,7 @@ bool Game::Level::removeObject(Object::Position position)
 	return success;
 }
 
-bool Game::Level::rotateObject(Object::Position mousePosition, bool clockwise)
+bool Game::Level::rotateObject(Position mousePosition, bool clockwise)
 {
 	bool onStack = stack.isOnStack(mousePosition);
 	Object *object = getObject(mousePosition);
@@ -662,7 +662,7 @@ bool Game::Level::rotateObject(Object::Position mousePosition, bool clockwise)
 	return success;
 }
 
-bool Game::Level::setObstacle(Object::Position position, bool obstacle)
+bool Game::Level::setObstacle(Position position, bool obstacle)
 {
 	removeObject(position);
 	setTile(position, obstacle);
@@ -675,7 +675,7 @@ void Game::Level::setObject(Object *object, short x, short y, ObjectID id, Direc
 	setObject(object, shortToPosition(x, y), id, direction, inStack, stackObject);
 }
 
-void Game::Level::setObject(Object *object, Object::Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
+void Game::Level::setObject(Object *object, Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
 {
 	object->id = id;
 	object->position.setPosition(position);
@@ -721,14 +721,14 @@ void Game::Level::setObject(Object *object, Object::Position position, ObjectID 
 	game->level.objectList[id].push_back(object);
 }
 
-void Game::Level::setTile(Object::Position position, bool obstacle)
+void Game::Level::setTile(Position position, bool obstacle)
 {
 	obstacles[position] = obstacle;
 	tileSprites[position].setTexture(*game->graphics.tiles[static_cast<size_t>(obstacles[position])]);
 	tileSprites[position].setPosition(positionToFloat(position));
 }
 
-bool Game::Level::moveFromStack(Object::Position stackPosition, Object::Position mousePosition)
+bool Game::Level::moveFromStack(Position stackPosition, Position mousePosition)
 {
 	bool success = !stack.isPlaceFree(stackPosition) && isPlaceFree(mousePosition);
 
@@ -745,9 +745,9 @@ bool Game::Level::moveFromStack(Object::Position stackPosition, Object::Position
 	return success;
 }
 
-bool Game::Level::moveToStack(Object::Position dragPosition, Object::Position mousePosition)
+bool Game::Level::moveToStack(Position dragPosition, Position mousePosition)
 {
-	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
+	Position stackPosition = stack.getRelativePosition(mousePosition);
 	bool success = stack.isPlaceFree(stackPosition) && isPlaceTaken(dragPosition);
 
 	if (success) {
@@ -762,9 +762,9 @@ bool Game::Level::moveToStack(Object::Position dragPosition, Object::Position mo
 	return success;
 }
 
-bool Game::Level::moveFromStackToStack(Object::Position dragPosition, Object::Position mousePosition)
+bool Game::Level::moveFromStackToStack(Position dragPosition, Position mousePosition)
 {
-	Object::Position stackPosition = stack.getRelativePosition(mousePosition);
+	Position stackPosition = stack.getRelativePosition(mousePosition);
 	bool success = stack.isPlaceTaken(dragPosition) && stack.isPlaceFree(stackPosition);
 
 	if (success) {
@@ -780,12 +780,12 @@ bool Game::Level::moveFromStackToStack(Object::Position dragPosition, Object::Po
 
 void Game::Level::updateStack()
 {
-	Object::Position offset;
+	Position offset;
 	offset.setPosition(width + STACK_OFFSET_X, STACK_OFFSET_Y);
 	stack.offset.setPosition(offset);
 	for (size_t row = 0; row < height; ++row) {
 		for (size_t column = 0; column < width; ++column) {
-			Object::Position currentPosition = shortToPosition(row, column);
+			Position currentPosition = shortToPosition(row, column);
 			stack.sprites[currentPosition].setTexture(*game->graphics.tiles[TIL_EMPTY]);
 			stack.sprites[currentPosition].setPosition(positionToFloat(currentPosition + offset));
 		}

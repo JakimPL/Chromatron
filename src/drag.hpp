@@ -6,7 +6,7 @@
 
 struct Drag {
 	bool fromStack = false;
-	Object::Position position;
+	Position position;
 	sf::Sprite sprite;
 };
 

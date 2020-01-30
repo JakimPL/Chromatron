@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "constants.hpp"
 #include "color.hpp"
+#include "position.hpp"
 
 class Object
 {
@@ -20,28 +21,7 @@ public:
 	sf::Sprite baseSprite;
 	sf::Sprite sprite;
 	Color color;
-
-	struct Position {
-	private:
-		short x = -1;
-		short y = -1;
-	public:
-		Position operator+(const Position &pos);
-		Position operator-(const Position &pos);
-		Position operator-();
-		bool operator<(const Position &pos) const;
-		bool operator==(const Position &pos) const;
-		bool operator!=(const Position &pos) const;
-		operator sf::Vector2f();
-
-		short getX();
-		short getY();
-		bool isNull();
-		void setNull();
-		void moveInDirection(unsigned short dir, int length);
-		void setPosition(short xx, short yy);
-		void setPosition(Position position);
-	} position;
+	Position position;
 
 	void rotate(bool clockwise, bool force = false);
 	void setSpriteColor();

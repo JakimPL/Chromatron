@@ -207,24 +207,24 @@ void writeByte(std::ofstream &file, unsigned short var)
 	file.write(&buffer, 1);
 }
 
-Object::Position floatToPosition(sf::Vector2f vector)
+Position floatToPosition(sf::Vector2f vector)
 {
 	return shortToPosition(static_cast<short>(vector.x / TILE_SIZE - OFFSET_X), static_cast<short>(vector.y / TILE_SIZE - OFFSET_Y));
 }
 
-Object::Position floatToPosition(float x, float y)
+Position floatToPosition(float x, float y)
 {
 	return floatToPosition(sf::Vector2f(x, y));
 }
 
-Object::Position shortToPosition(short x, short y)
+Position shortToPosition(short x, short y)
 {
-	Object::Position position;
+	Position position;
 	position.setPosition(x, y);
 	return position;
 }
 
-sf::Vector2f positionToFloat(Object::Position position)
+sf::Vector2f positionToFloat(Position position)
 {
 	return sf::Vector2f((position.getX() + OFFSET_X) * TILE_SIZE, (position.getY() + OFFSET_Y) * TILE_SIZE);
 }

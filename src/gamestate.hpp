@@ -10,7 +10,7 @@ struct GameState {
 	sf::RenderWindow &window;
 	Drag &drag;
 	sf::Event &event;
-	Object::Position mousePosition;
+	Position mousePosition;
 
 	void handleApplicationParameters(int argc, char* argv[]);
 	void clearLevel();
@@ -20,10 +20,10 @@ struct GameState {
 	void drawLasers(bool blackLasers);
 	void drawLasers();
 	void drawGameObjects();
-	void drawSelector(Object::Position mousePosition);
-	void drawSelectorSquare(Object::Position position, sf::Color fillColor, sf::Color outlineColor, bool outlineOnly);
+	void drawSelector(Position mousePosition);
+	void drawSelectorSquare(Position position, sf::Color fillColor, sf::Color outlineColor, bool outlineOnly);
 	void drawStack();
-	void drawTile(Object::Position position, bool inStack = false);
+	void drawTile(Position position, bool inStack = false);
 	void endGame();
 	void gameEvents();
 	void initializeGame();

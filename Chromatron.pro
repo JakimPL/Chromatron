@@ -24,6 +24,7 @@ SOURCES += \
         src/levelset.cpp \
         src/log.cpp \
         src/object.cpp \
+        src/position.cpp \
         src/stack.cpp
 
 LIBS += -L/usr/lib -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
@@ -45,4 +46,5 @@ HEADERS += \
 	src/graphics.hpp \
 	src/log.hpp \
 	src/object.hpp \
+	src/position.hpp \
 	src/stack.hpp
