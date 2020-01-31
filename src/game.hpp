@@ -72,7 +72,7 @@ public:
 
 		void createRay(Beamer *beamer, RayGen &rayGen, RayType rayType = RT_NORMAL);
 		void createRays(Beamer *beamer, std::vector<RayGenElement> rayGens);
-		RayGen rayStep(Beamer *beamer, RayGen &rayGen);
+		void rayStep(Beamer *beamer, RayGen &rayGen);
 		void calculateLasers();
 	} level;
 

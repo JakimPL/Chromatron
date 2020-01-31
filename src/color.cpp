@@ -73,8 +73,6 @@ Color Color::shiftColor(ColorShift colorShift)
 bool Color::isMono()
 {
 	unsigned short count = red + green + blue;
-
-	std::cout << count << "\n";
 	return count == 1;
 }
 

@@ -229,16 +229,18 @@ void Game::Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 			Color previousColors[2] = {rayGens[0].color, rayGens[1].color};
 			for (unsigned short ray = 0; ray < 2; ++ray) {
 				if (!rayGens[ray].end) {
-					rayGens[ray].colorShift = rayStep(beamer, rayGens[ray]).colorShift;
+					rayStep(beamer, rayGens[ray]);
 				}
 			}
 
 			for (unsigned short ray = 0; ray < 2; ++ray) {
-				if (rayGens[1 - ray].colorShift != CLS_NONE) {
-					rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(rayGens[1 - ray].colorShift));
-				}
-				if (previousColors[ray] != rayGens[ray].color) {
-					rays[ray].push_back(sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
+				if (!isOutsideBoard(rayGens[ray].position)) {
+					if (rayGens[1 - ray].colorShift != CLS_NONE) {
+						rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(rayGens[1 - ray].colorShift));
+					}
+					if (previousColors[ray] != rayGens[ray].color) {
+						rays[ray].push_back(sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
+					}
 				}
 
 				sf::Vertex node(rayGens[ray].position, rayGens[ray].color.convertToColor());
@@ -296,11 +298,11 @@ void Game::Level::createRays(Beamer *beamer, std::vector<RayGenElement> rayGens)
 	}
 }
 
-RayGen Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
+void Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
 {
 	if (rayGen.color == COL_BLACK) {
 		rayGen.stop = rayGen.end = true;
-		return {DIR_NORTH, rayGen.position, COL_BLACK};
+		return;
 	}
 
 	rayGen.colorShift = CLS_NONE;
@@ -315,8 +317,6 @@ RayGen Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
 		rayGen.stop = rayGen.end = true;
 		rayGen.endAtMiddle = false;
 	}
-
-	return rayGen;
 }
 
 void Game::Level::resetLevel(bool ignoreSave)
@@ -600,7 +600,7 @@ void Game::Level::setObject(Object *object, Position position, ObjectID id, Dire
 	object->sprite.setOrigin(ORIGIN);
 	object->sprite.setPosition(inStack ? object->position + stack.offset : object->position);
 	object->sprite.setTexture(*(object->textures)[0]);
-	object->sprite.setRotation(direction * 45);
+	object->sprite.setRotation(direction * HALF_ANGLE);
 
 	if (object->colorable) {
 		object->setSpriteColor();
@@ -623,7 +623,7 @@ void Game::Level::setObject(Object *object, Position position, ObjectID id, Dire
 		object->baseSprite.setOrigin(ORIGIN);
 		object->baseSprite.setPosition(inStack ? object->position + stack.offset : object->position);
 		object->baseSprite.setTexture(*(object->textures)[1]);
-		object->baseSprite.setRotation(direction * 45);
+		object->baseSprite.setRotation(direction * HALF_ANGLE);
 		break;
 	case OBJ_DOT:
 		object->textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
