@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 
 #include "game.hpp"
 #include "auxiliary.hpp"
@@ -205,109 +204,110 @@ void Game::Level::calculateLasers()
 		Beamer *beamer = static_cast<Beamer*>(objectList[OBJ_BEAMER][beamerIndex]);
 		beamer->laser.clear();
 		if (!beamer->inStack) {
-			createRay(beamer, {beamer->direction, beamer->position, beamer->color});
+			RayGen newRayGen = {beamer->direction, beamer->position, beamer->color};
+			createRay(beamer, newRayGen);
 		}
 	}
 
 	updateDots();
 }
 
-void Game::Level::createRay(Beamer *beamer, RayGen rayGen)
+void Game::Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 {
-	sf::Vector2f delta;
-	Ray ray = {sf::Vertex(rayGen.position, rayGen.color.convertToColor())};
+	switch (rayType) {
+	case RT_TANGLED: {
+		RayGen rayGens[2] = {{DIR(rayGen.direction - 2), rayGen.position, rayGen.color}, {DIR(rayGen.direction + 2), rayGen.position, rayGen.color}};
+		Ray rays[2] = {{sf::Vertex(rayGen.position, rayGen.color.convertToColor())}, {sf::Vertex(rayGen.position, rayGen.color.convertToColor())}};
 
-	rayGen.end = false;
-	while (!rayGen.end) {
-		rayGen.stop = false;
-		rayGen.endAtMiddle = true;
-		Color previousColor = rayGen.color;
-		while (!rayGen.stop) {
-			rayStep(beamer, rayGen);
-		}
-
-		if (previousColor != rayGen.color) {
-			ray.push_back(sf::Vertex(rayGen.position, previousColor.convertToColor()));
-		}
-
-		sf::Vertex node(rayGen.position, rayGen.color.convertToColor());
-		if (!rayGen.endAtMiddle) {
-			node.position.x -= delta.x * 0.5f;
-			node.position.y -= delta.y * 0.5f;
-		}
-
-		ray.push_back(node);
-	}
-
-	beamer->laser.push_back(ray);
-}
-
-void Game::Level::createTangledRay(Beamer *beamer, RayGen rayGen)
-{
-	RayGen rayGens[2] = {{DIR(rayGen.direction - 2), rayGen.position, rayGen.color}, {DIR(rayGen.direction + 2), rayGen.position, rayGen.color}};
-	Ray rays[2] = {{sf::Vertex(rayGen.position, rayGen.color.convertToColor())}, {sf::Vertex(rayGen.position, rayGen.color.convertToColor())}};
-
-	for (unsigned short ray = 0; ray < 2; ++ray) {
-		rayGens[ray].stop = true;
-		rayGens[ray].end = false;
-		rayGens[ray].endAtMiddle = true;
-	}
-
-	while (!(rayGens[0].end and rayGens[1].end)) {
-		Color previousColors[2] = {rayGens[0].color, rayGens[1].color};
-		ColorShift colorShifts[2] = {CLS_NONE, CLS_NONE};
 		for (unsigned short ray = 0; ray < 2; ++ray) {
-			if (!rayGens[ray].end) {
-				colorShifts[ray] = rayStep(beamer, rayGens[ray]);
+			rayGens[ray].stop = true;
+			rayGens[ray].end = false;
+			rayGens[ray].endAtMiddle = true;
+		}
+
+		while (!(rayGens[0].end and rayGens[1].end)) {
+			Color previousColors[2] = {rayGens[0].color, rayGens[1].color};
+			for (unsigned short ray = 0; ray < 2; ++ray) {
+				if (!rayGens[ray].end) {
+					rayGens[ray].colorShift = rayStep(beamer, rayGens[ray]).colorShift;
+				}
+			}
+
+			for (unsigned short ray = 0; ray < 2; ++ray) {
+				if (rayGens[1 - ray].colorShift != CLS_NONE) {
+					rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(rayGens[1 - ray].colorShift));
+				}
+				if (previousColors[ray] != rayGens[ray].color) {
+					rays[ray].push_back(sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
+				}
+
+				sf::Vertex node(rayGens[ray].position, rayGens[ray].color.convertToColor());
+				if (!rayGens[ray].endAtMiddle) {
+					node.position.x -= rayGens[ray].delta.x * 0.5f;
+					node.position.y -= rayGens[ray].delta.y * 0.5f;
+				}
+
+				rays[ray].push_back(node);
 			}
 		}
 
 		for (unsigned short ray = 0; ray < 2; ++ray) {
-			if (colorShifts[1 - ray] != CLS_NONE) {
-				rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(colorShifts[1 - ray]));
-			}
-			if (previousColors[ray] != rayGens[ray].color) {
-				rays[ray].push_back(sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
-			}
-
-			sf::Vertex node(rayGens[ray].position, rayGens[ray].color.convertToColor());
-			if (!rayGens[ray].endAtMiddle) {
-				node.position.x -= rayGens[ray].delta.x * 0.5f;
-				node.position.y -= rayGens[ray].delta.y * 0.5f;
-			}
-
-			rays[ray].push_back(node);
+			beamer->laser.push_back(rays[ray]);
 		}
+
+		break;
+	}
+	default: {
+		sf::Vector2f delta;
+		Ray ray = {sf::Vertex(rayGen.position, rayGen.color.convertToColor())};
+
+		rayGen.end = false;
+		while (!rayGen.end) {
+			rayGen.stop = false;
+			rayGen.endAtMiddle = true;
+			Color previousColor = rayGen.color;
+			while (!rayGen.stop) {
+				rayStep(beamer, rayGen);
+			}
+
+			if (previousColor != rayGen.color) {
+				ray.push_back(sf::Vertex(rayGen.position, previousColor.convertToColor()));
+			}
+
+			sf::Vertex node(rayGen.position, rayGen.color.convertToColor());
+			if (!rayGen.endAtMiddle) {
+				node.position.x -= rayGen.delta.x * 0.5f;
+				node.position.y -= rayGen.delta.y * 0.5f;
+			}
+
+			ray.push_back(node);
+		}
+
+		beamer->laser.push_back(ray);
 	}
 
-	beamer->laser.push_back(rays[0]);
-	beamer->laser.push_back(rays[1]);
+	break;
+	}
 }
 
 void Game::Level::createRays(Beamer *beamer, std::vector<RayGenElement> rayGens)
 {
 	for (auto &rayGen : rayGens) {
-		if (rayGen.second) {
-			createTangledRay(beamer, rayGen.first);
-		} else {
-			createRay(beamer, rayGen.first);
-		}
+		createRay(beamer, rayGen.first, rayGen.second);
 	}
 }
 
-ColorShift Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
+RayGen Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
 {
 	if (rayGen.color == COL_BLACK) {
 		rayGen.stop = rayGen.end = true;
-		return CLS_NONE;
+		return {DIR_NORTH, rayGen.position, COL_BLACK};
 	}
 
-	ColorShift colorShift = CLS_NONE;
-
+	rayGen.colorShift = CLS_NONE;
 	rayGen.delta = rayGen.position;
 	rayGen.position.moveInDirection(rayGen.direction, 1);
 	rayGen.delta = sf::Vector2f(rayGen.position) - rayGen.delta;
-
 	if (isPlaceTaken(rayGen.position)) {
 		createRays(beamer, objectMap[rayGen.position]->interaction(rayGen));
 	}
@@ -317,7 +317,7 @@ ColorShift Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
 		rayGen.endAtMiddle = false;
 	}
 
-	return colorShift;
+	return rayGen;
 }
 
 void Game::Level::resetLevel(bool ignoreSave)

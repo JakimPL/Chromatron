@@ -70,10 +70,9 @@ public:
 		void updateDots();
 		void updateStack();
 
-		void createRay(Beamer *beamer, RayGen rayGen);
+		void createRay(Beamer *beamer, RayGen &rayGen, RayType rayType = RT_NORMAL);
 		void createRays(Beamer *beamer, std::vector<RayGenElement> rayGens);
-		void createTangledRay(Beamer *beamer, RayGen rayGen);
-		ColorShift rayStep(Beamer *beamer, RayGen &rayGen);
+		RayGen rayStep(Beamer *beamer, RayGen &rayGen);
 		void calculateLasers();
 	} level;
 

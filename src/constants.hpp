@@ -100,6 +100,11 @@ enum LevelState : unsigned short {
 	LS_PASSED
 };
 
+enum RayType : unsigned short {
+	RT_NORMAL,
+	RT_TANGLED
+};
+
 static std::string PATH_DATA       = "./data/";
 static std::string PATH_LEV_PREFIX = "LEV/";
 static std::string PATH_LEV_SUFFIX = ".lev";

@@ -2,6 +2,7 @@
 #include "auxiliary.hpp"
 #include "constants.hpp"
 #include "log.hpp"
+#include <iostream>
 
 Object::Object(Color col) : color(col)
 {
@@ -133,7 +134,9 @@ std::vector<RayGenElement> Splitter::interaction(RayGen &rayGen)
 		rayGen.stop = rayGen.end = true;
 	} else if (ABS(diff) == 1) {
 		unsigned short newDirection = (DIR_COUNT + rayGen.direction + 2 * diff) % DIR_COUNT;
-		rayGens.push_back({{newDirection, rayGen.position, rayGen.color}, false});
+		RayGen newRayGen = rayGen;
+		newRayGen.direction = newDirection;
+		rayGens.push_back({newRayGen, RT_NORMAL});
 	}
 
 	return rayGens;
@@ -175,17 +178,25 @@ std::vector<RayGenElement> Prism::interaction(RayGen &rayGen)
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT;
 	if (rayGen.color.red) {
 		if ((diff / 2) % 2 != 0) {
-			rayGens.push_back({{rayGen.direction, rayGen.position, colors[COL_RED]}, false});
+			RayGen newRayGen = rayGen;
+			newRayGen.color = colors[COL_RED];
+			rayGens.push_back({newRayGen, RT_NORMAL});
 		}
 	}
 	if (rayGen.color.green) {
 		if (diff > 1 && ((diff + 1) % 3 != 1)) {
-			rayGens.push_back({{static_cast<unsigned short>((DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT), rayGen.position, colors[COL_GREEN]}, false});
+			RayGen newRayGen = rayGen;
+			newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT;
+			newRayGen.color = colors[COL_GREEN];
+			rayGens.push_back({newRayGen, RT_NORMAL});
 		}
 	}
 	if (rayGen.color.blue) {
 		if (diff > 1 && ((diff + 1) % 3 != 1)) {
-			rayGens.push_back({{static_cast<unsigned short>((DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT), rayGen.position, colors[COL_BLUE]}, false});
+			RayGen newRayGen = rayGen;
+			newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT;
+			newRayGen.color = colors[COL_BLUE];
+			rayGens.push_back({newRayGen, RT_NORMAL});
 		}
 	}
 	rayGen.stop = rayGen.end = true;
@@ -215,7 +226,7 @@ std::vector<RayGenElement> Tangler::interaction(RayGen &rayGen)
 	std::vector<RayGenElement> rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if (diff == 0) {
-		rayGens.push_back({rayGen, true});
+		rayGens.push_back({rayGen, RT_TANGLED});
 	}
 	rayGen.stop = rayGen.end = true;
 

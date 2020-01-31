@@ -11,15 +11,15 @@ struct RayGen {
 	Position position;
 	Color color;
 
-	ColorShift colorShift = CLS_NONE;
-	sf::Vector2f delta = sf::Vector2f(0, 0);
-	bool stop = false;
-	bool end = false;
-	bool endAtMiddle = true;
+	ColorShift colorShift;
+	sf::Vector2f delta;
+	bool stop;
+	bool end;
+	bool endAtMiddle;
 };
 
 typedef std::vector<sf::Vertex> Ray;
 typedef std::vector<Ray> Laser;
-typedef std::pair<RayGen, bool> RayGenElement;
+typedef std::pair<RayGen, RayType> RayGenElement;
 
 #endif // RAYGEN_H
