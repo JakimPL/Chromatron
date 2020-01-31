@@ -329,7 +329,7 @@ void Game::Level::clearDots()
 {
 	for (size_t dotIndex = 0; dotIndex < objectList[OBJ_DOT].size(); ++dotIndex) {
 		Dot* dot = (Dot*) objectList[OBJ_DOT][dotIndex];
-		dot->actualColor = COL_BLACK_TUPLE;
+		dot->actualColor = COL_BLACK;
 	}
 }
 
@@ -617,21 +617,7 @@ void Game::Level::setObject(Object *object, Position position, ObjectID id, Dire
 		game->level.stackObjectList.push_back(object);
 	}
 
-	switch (id) {
-	case OBJ_BEAMER:
-		object->textures.push_back(game->graphics.textures[OBJ_COUNT]);
-		object->baseSprite.setOrigin(ORIGIN);
-		object->baseSprite.setPosition(inStack ? object->position + stack.offset : object->position);
-		object->baseSprite.setTexture(*(object->textures)[1]);
-		object->baseSprite.setRotation(direction * HALF_ANGLE);
-		break;
-	case OBJ_DOT:
-		object->textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
-		break;
-	default:
-		break;
-	}
-
+	object->setObject(game);
 	game->level.objectList[id].push_back(object);
 }
 

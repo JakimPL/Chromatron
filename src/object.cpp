@@ -14,7 +14,6 @@ Object::~Object()
 
 }
 
-
 Beamer::Beamer(Color col)
 {
 	rotatable = false;
@@ -89,8 +88,28 @@ Tangler::Tangler()
 	colorable = false;
 }
 
+void Object::setObject(Game *game)
+{
+
+}
+
+void Beamer::setObject(Game *game)
+{
+	textures.push_back(game->graphics.textures[OBJ_COUNT]);
+	baseSprite.setOrigin(ORIGIN);
+	baseSprite.setPosition(inStack ? position + game->level.stack.offset : position);
+	baseSprite.setTexture(*(textures)[1]);
+	baseSprite.setRotation(direction * HALF_ANGLE);
+}
+
+void Dot::setObject(Game *game)
+{
+	textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
+}
+
 std::vector<RayGenElement> Object::interaction(RayGen &rayGen)
 {
+	rayGen.stop = rayGen.end = true;
 	return {};
 }
 

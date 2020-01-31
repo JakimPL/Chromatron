@@ -7,6 +7,8 @@
 #include "position.hpp"
 #include "raygen.hpp"
 
+class Game;
+
 class Object
 {
 protected:
@@ -25,11 +27,12 @@ public:
 	Color color;
 	Position position;
 
+	virtual ~Object();
 	virtual void rotate(bool clockwise, bool force = false);
+	virtual void setObject(Game *game);
 	virtual void setSpriteColor();
 	virtual void updateSprite();
 	virtual std::vector<RayGenElement> interaction(RayGen &rayGen);
-	virtual ~Object();
 };
 
 class Beamer : public Object
@@ -39,6 +42,7 @@ public:
 
 	Laser laser;
 
+	void setObject(Game *game) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -51,7 +55,7 @@ public:
 	bool state = false;
 
 	void updateState();
-
+	void setObject(Game *game) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
