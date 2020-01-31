@@ -9,6 +9,7 @@
 #define OFFSET_Y 1
 #define TILE_SIZE 24
 #define OUTLINE_SIZE 1
+#define HALF_ANGLE 45
 
 #define STACK_WIDTH 6
 #define STACK_HEIGHT 4
@@ -27,6 +28,7 @@
 #define LogWarning(message) Log::log(Log::Type::WARNING, message)
 #define LogNone(message) Log::log(Log::Type::NONE, message)
 
+#define BASIC_COLORS 3
 #define COL_BLACK_TUPLE   {false, false, false}
 #define COL_RED_TUPLE     {true,  false, false}
 #define COL_GREEN_TUPLE   {false, true,  false}

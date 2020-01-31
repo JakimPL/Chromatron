@@ -29,6 +29,7 @@ public:
 	virtual void setSpriteColor();
 	virtual void updateSprite();
 	virtual std::vector<RayGenElement> interaction(RayGen &rayGen);
+	virtual ~Object();
 };
 
 class Beamer : public Object

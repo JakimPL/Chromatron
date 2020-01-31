@@ -9,6 +9,12 @@ Object::Object(Color col) : color(col)
 
 }
 
+Object::~Object()
+{
+
+}
+
+
 Beamer::Beamer(Color col)
 {
 	rotatable = false;
@@ -176,30 +182,54 @@ std::vector<RayGenElement> Prism::interaction(RayGen &rayGen)
 {
 	std::vector<RayGenElement> rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT;
-	if (rayGen.color.red) {
-		if ((diff / 2) % 2 != 0) {
-			RayGen newRayGen = rayGen;
-			newRayGen.color = colors[COL_RED];
-			rayGens.push_back({newRayGen, RT_NORMAL});
+	if (rayGen.color.isMono()) {
+		if (rayGen.color.red) {
+			if ((diff / 2) % 2 != 0) {
+			} else {
+				rayGen.end = true;
+			}
 		}
-	}
-	if (rayGen.color.green) {
-		if (diff > 1 && ((diff + 1) % 3 != 1)) {
-			RayGen newRayGen = rayGen;
-			newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT;
-			newRayGen.color = colors[COL_GREEN];
-			rayGens.push_back({newRayGen, RT_NORMAL});
+		if (rayGen.color.green) {
+			if (diff > 1 && ((diff + 1) % 3 != 1)) {
+				rayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT;
+			} else {
+				rayGen.end = true;
+			}
 		}
-	}
-	if (rayGen.color.blue) {
-		if (diff > 1 && ((diff + 1) % 3 != 1)) {
-			RayGen newRayGen = rayGen;
-			newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT;
-			newRayGen.color = colors[COL_BLUE];
-			rayGens.push_back({newRayGen, RT_NORMAL});
+		if (rayGen.color.blue) {
+			if (diff > 1 && ((diff + 1) % 3 != 1)) {
+				rayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT;
+			} else {
+				rayGen.end = true;
+			}
 		}
+		rayGen.stop = true;
+	} else {
+		if (rayGen.color.red) {
+			if ((diff / 2) % 2 != 0) {
+				RayGen newRayGen = rayGen;
+				newRayGen.color = COL_RED;
+				rayGens.push_back({newRayGen, RT_NORMAL});
+			}
+		}
+		if (rayGen.color.green) {
+			if (diff > 1 && ((diff + 1) % 3 != 1)) {
+				RayGen newRayGen = rayGen;
+				newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT;
+				newRayGen.color = COL_GREEN;
+				rayGens.push_back({newRayGen, RT_NORMAL});
+			}
+		}
+		if (rayGen.color.blue) {
+			if (diff > 1 && ((diff + 1) % 3 != 1)) {
+				RayGen newRayGen = rayGen;
+				newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT;
+				newRayGen.color = COL_BLUE;
+				rayGens.push_back({newRayGen, RT_NORMAL});
+			}
+		}
+		rayGen.stop = rayGen.end = true;
 	}
-	rayGen.stop = rayGen.end = true;
 
 	return rayGens;
 }
@@ -226,7 +256,15 @@ std::vector<RayGenElement> Tangler::interaction(RayGen &rayGen)
 	std::vector<RayGenElement> rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if (diff == 0) {
-		rayGens.push_back({rayGen, RT_TANGLED});
+		if (rayGen.color.red) {
+			rayGens.push_back({{rayGen.direction, rayGen.position, COL_RED}, RT_TANGLED});
+		}
+		if (rayGen.color.green) {
+			rayGens.push_back({{rayGen.direction, rayGen.position, COL_GREEN}, RT_TANGLED});
+		}
+		if (rayGen.color.blue) {
+			rayGens.push_back({{rayGen.direction, rayGen.position, COL_BLUE}, RT_TANGLED});
+		}
 	}
 	rayGen.stop = rayGen.end = true;
 
@@ -237,8 +275,8 @@ void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {
 		direction = static_cast<DirectionID>((static_cast<unsigned short>(direction) + (clockwise ? 1 : DIR_COUNT - 1)) % DIR_COUNT);
-		baseSprite.setRotation(direction * 45);
-		sprite.setRotation(direction * 45);
+		baseSprite.setRotation(direction * HALF_ANGLE);
+		sprite.setRotation(direction * HALF_ANGLE);
 	}
 }
 

@@ -29,6 +29,7 @@ public:
 	Color shiftColor(bool orientation);
 	Color shiftColor(ColorShift colorShift);
 
+	bool isMono();
 	void nextColor();
 	void getColorId();
 	void setColorFromId(Colors colId);

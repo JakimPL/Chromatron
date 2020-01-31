@@ -1,5 +1,6 @@
 #include "color.hpp"
 #include "constants.hpp"
+#include <iostream>
 
 Color::Color(bool r, bool g, bool b) : red(r), green(g), blue(b)
 {
@@ -67,6 +68,14 @@ Color Color::shiftColor(ColorShift colorShift)
 	default:
 		return *this;
 	}
+}
+
+bool Color::isMono()
+{
+	unsigned short count = red + green + blue;
+
+	std::cout << count << "\n";
+	return count == 1;
 }
 
 void Color::nextColor()

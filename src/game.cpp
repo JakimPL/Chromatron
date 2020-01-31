@@ -258,7 +258,6 @@ void Game::Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 		break;
 	}
 	default: {
-		sf::Vector2f delta;
 		Ray ray = {sf::Vertex(rayGen.position, rayGen.color.convertToColor())};
 
 		rayGen.end = false;
