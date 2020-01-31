@@ -5,11 +5,13 @@
 #include "constants.hpp"
 #include "color.hpp"
 #include "position.hpp"
+#include "raygen.hpp"
 
 class Object
 {
-public:
+protected:
 	Object(Color col = COL_BLACK_TUPLE);
+public:
 	bool inStack = false;
 	bool rotatable = false;
 	bool movable = false;
@@ -23,9 +25,10 @@ public:
 	Color color;
 	Position position;
 
-	void rotate(bool clockwise, bool force = false);
-	void setSpriteColor();
-	void updateSprite();
+	virtual void rotate(bool clockwise, bool force = false);
+	virtual void setSpriteColor();
+	virtual void updateSprite();
+	//virtual std::vector<RayGen> interaction(RayGen &rayGen, bool &stop, bool &end);
 };
 
 class Beamer : public Object
@@ -64,6 +67,7 @@ class Splitter : public Object
 {
 public:
 	Splitter();
+	//std::vector<RayGen> interaction(RayGen &rayGen, bool &stop, bool &end) override;
 };
 
 class Conduit : public Object

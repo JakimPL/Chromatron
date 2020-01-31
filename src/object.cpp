@@ -81,6 +81,20 @@ Tangler::Tangler()
 	colorable = false;
 }
 
+/*std::vector<RayGen> Splitter::interaction(RayGen &rayGen, bool &stop, bool &end)
+{
+	std::vector<RayGen> rayGens;
+	short diff = (DIR_COUNT + this->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
+	if (diff == 0) {
+		stop = end = true;
+	} else if (ABS(diff) == 1) {
+		unsigned short newDirection = (DIR_COUNT + rayGen.direction + 2 * diff) % DIR_COUNT;
+		rayGens.push_back({newDirection, rayGen.position, rayGen.color});
+	}
+
+	return rayGens;
+}*/
+
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {

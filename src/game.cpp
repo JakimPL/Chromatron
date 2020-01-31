@@ -205,36 +205,33 @@ void Game::Level::calculateLasers()
 		Beamer *beamer = static_cast<Beamer*>(objectList[OBJ_BEAMER][beamerIndex]);
 		beamer->laser.clear();
 		if (!beamer->inStack) {
-			createRay(beamer, beamer->direction, beamer->position, beamer->color);
+			createRay(beamer, {beamer->direction, beamer->position, beamer->color});
 		}
 	}
 
 	updateDots();
 }
 
-void Game::Level::createRay(Beamer *beamer, unsigned short direction, Position position, Color color)
+void Game::Level::createRay(Beamer *beamer, RayGen rayGen)
 {
-	unsigned short dir = direction;
-	Position now = position;
-	Color col = color;
 	sf::Vector2f delta;
-	Ray ray = {sf::Vertex(position, col.convertToColor())};
+	Ray ray = {sf::Vertex(rayGen.position, rayGen.color.convertToColor())};
 
-	bool end = false;
-	while (!end) {
-		bool stop = false;
-		bool endAtMiddle = true;
-		Color previousColor = col;
-		while (!stop) {
-			rayStep(beamer, now, col, delta, dir, stop, end, endAtMiddle);
+	rayGen.end = false;
+	while (!rayGen.end) {
+		rayGen.stop = false;
+		rayGen.endAtMiddle = true;
+		Color previousColor = rayGen.color;
+		while (!rayGen.stop) {
+			rayStep(beamer, rayGen);
 		}
 
-		if (previousColor != col) {
-			ray.push_back(sf::Vertex(now, previousColor.convertToColor()));
+		if (previousColor != rayGen.color) {
+			ray.push_back(sf::Vertex(rayGen.position, previousColor.convertToColor()));
 		}
 
-		sf::Vertex node(now, col.convertToColor());
-		if (!endAtMiddle) {
+		sf::Vertex node(rayGen.position, rayGen.color.convertToColor());
+		if (!rayGen.endAtMiddle) {
 			node.position.x -= delta.x * 0.5f;
 			node.position.y -= delta.y * 0.5f;
 		}
@@ -245,38 +242,38 @@ void Game::Level::createRay(Beamer *beamer, unsigned short direction, Position p
 	beamer->laser.push_back(ray);
 }
 
-void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Position position, Color color)
+void Game::Level::createTangledRay(Beamer *beamer, RayGen rayGen)
 {
-	unsigned short dirs[2] = {DIR(direction - 2), DIR(direction + 2)};
-	Position nows[2] = {position, position};
-	Color cols[2] = {color, color};
-	sf::Vector2f deltas[2];
-	Ray rays[2] = {{sf::Vertex(position, color.convertToColor())}, {sf::Vertex(position, color.convertToColor())}};
+	RayGen rayGens[2] = {{DIR(rayGen.direction - 2), rayGen.position, rayGen.color}, {DIR(rayGen.direction + 2), rayGen.position, rayGen.color}};
+	Ray rays[2] = {{sf::Vertex(rayGen.position, rayGen.color.convertToColor())}, {sf::Vertex(rayGen.position, rayGen.color.convertToColor())}};
 
-	bool stops[2] = {true, true};
-	bool ends[2] = {false, false};
-	bool endAtMiddle = true;
-	while (!(ends[0] and ends[1])) {
-		Color previousColors[2] = {cols[0], cols[1]};
+	for (unsigned short ray = 0; ray < 2; ++ray) {
+		rayGens[ray].stop = true;
+		rayGens[ray].end = false;
+		rayGens[ray].endAtMiddle = true;
+	}
+
+	while (!(rayGens[0].end and rayGens[1].end)) {
+		Color previousColors[2] = {rayGens[0].color, rayGens[1].color};
 		ColorShift colorShifts[2] = {CLS_NONE, CLS_NONE};
 		for (unsigned short ray = 0; ray < 2; ++ray) {
-			if (!ends[ray]) {
-				colorShifts[ray] = rayStep(beamer, nows[ray], cols[ray], deltas[ray], dirs[ray], stops[ray], ends[ray], endAtMiddle);
+			if (!rayGens[ray].end) {
+				colorShifts[ray] = rayStep(beamer, rayGens[ray]);
 			}
 		}
 
 		for (unsigned short ray = 0; ray < 2; ++ray) {
 			if (colorShifts[1 - ray] != CLS_NONE) {
-				cols[ray] = cols[ray].shiftColor(CLS_REVERSE(colorShifts[1 - ray]));
+				rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(colorShifts[1 - ray]));
 			}
-			if (previousColors[ray] != cols[ray]) {
-				rays[ray].push_back(sf::Vertex(nows[ray], previousColors[ray].convertToColor()));
+			if (previousColors[ray] != rayGens[ray].color) {
+				rays[ray].push_back(sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
 			}
 
-			sf::Vertex node(nows[ray], cols[ray].convertToColor());
-			if (!endAtMiddle) {
-				node.position.x -= deltas[ray].x * 0.5f;
-				node.position.y -= deltas[ray].y * 0.5f;
+			sf::Vertex node(rayGens[ray].position, rayGens[ray].color.convertToColor());
+			if (!rayGens[ray].endAtMiddle) {
+				node.position.x -= rayGens[ray].delta.x * 0.5f;
+				node.position.y -= rayGens[ray].delta.y * 0.5f;
 			}
 
 			rays[ray].push_back(node);
@@ -287,119 +284,119 @@ void Game::Level::createTangledRay(Beamer *beamer, unsigned short direction, Pos
 	beamer->laser.push_back(rays[1]);
 }
 
-ColorShift Game::Level::rayStep(Beamer *beamer, Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle)
+ColorShift Game::Level::rayStep(Beamer *beamer, RayGen &rayGen)
 {
-	if (color == COL_BLACK) {
-		stop = end = true;
+	if (rayGen.color == COL_BLACK) {
+		rayGen.stop = rayGen.end = true;
 		return CLS_NONE;
 	}
 
 	ColorShift colorShift = CLS_NONE;
 
-	delta = now;
-	now.moveInDirection(direction, 1);
-	delta = sf::Vector2f(now) - delta;
+	rayGen.delta = rayGen.position;
+	rayGen.position.moveInDirection(rayGen.direction, 1);
+	rayGen.delta = sf::Vector2f(rayGen.position) - rayGen.delta;
 
-	if (isPlaceTaken(now)) {
-		if (objectMap[now]->id == OBJ_BEAMER) {
-			stop = end = true;
-		} else if (objectMap[now]->id == OBJ_DOT) {
-			Dot* dot = static_cast<Dot*>(objectMap[now]);
-			dot->actualColor = dot->actualColor + color;
-		} else if (objectMap[now]->id == OBJ_MIRROR) {
-			Mirror* mirror = static_cast<Mirror*>(objectMap[now]);
-			short diff = (DIR_COUNT + mirror->direction - direction) % DIR_COUNT - 4;
+	if (isPlaceTaken(rayGen.position)) {
+		if (objectMap[rayGen.position]->id == OBJ_BEAMER) {
+			rayGen.stop = rayGen.end = true;
+		} else if (objectMap[rayGen.position]->id == OBJ_DOT) {
+			Dot* dot = static_cast<Dot*>(objectMap[rayGen.position]);
+			dot->actualColor = dot->actualColor + rayGen.color;
+		} else if (objectMap[rayGen.position]->id == OBJ_MIRROR) {
+			Mirror* mirror = static_cast<Mirror*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + mirror->direction - rayGen.direction) % DIR_COUNT - 4;
 			if (ABS(diff) <= 1) {
-				stop = true;
-				direction = (DIR_COUNT + direction - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
+				rayGen.stop = true;
+				rayGen.direction = (DIR_COUNT + rayGen.direction - (diff == 0 ? 4 : 2 * diff)) % DIR_COUNT;
 			} else {
-				stop = end = true;
+				rayGen.stop = rayGen.end = true;
 			}
-		} else if (objectMap[now]->id == OBJ_BENDER) {
-			Bender* mirror = static_cast<Bender*>(objectMap[now]);
-			short diff = (DIR_COUNT + mirror->direction - direction + 7) % DIR_COUNT - 4;
+		} else if (objectMap[rayGen.position]->id == OBJ_BENDER) {
+			Bender* mirror = static_cast<Bender*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + mirror->direction - rayGen.direction + 7) % DIR_COUNT - 4;
 			if (-2 <= diff && diff < 2) {
-				stop = true;
-				direction = (DIR_COUNT + direction + (2 * diff + 5)) % DIR_COUNT;
+				rayGen.stop = true;
+				rayGen.direction = (DIR_COUNT + rayGen.direction + (2 * diff + 5)) % DIR_COUNT;
 			} else {
-				stop = end = true;
+				rayGen.stop = rayGen.end = true;
 			}
-		} else if (objectMap[now]->id == OBJ_SPLITTER) {
-			Splitter* splitter = static_cast<Splitter*>(objectMap[now]);
-			short diff = (DIR_COUNT + splitter->direction - direction) % (DIR_COUNT / 2) - 2;
+		} else if (objectMap[rayGen.position]->id == OBJ_SPLITTER) {
+			Splitter* splitter = static_cast<Splitter*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + splitter->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
 			if (diff == 0) {
-				stop = end = true;
+				rayGen.stop = rayGen.end = true;
 			} else if (ABS(diff) == 1) {
-				unsigned short newDirection = (DIR_COUNT + direction + 2 * diff) % DIR_COUNT;
-				createRay(beamer, newDirection, now, color);
+				unsigned short newDirection = (DIR_COUNT + rayGen.direction + 2 * diff) % DIR_COUNT;
+				createRay(beamer, {newDirection, rayGen.position, rayGen.color});
 			}
-		} else if (objectMap[now]->id == OBJ_CONDUIT) {
-			Conduit* conduit = static_cast<Conduit*>(objectMap[now]);
-			short diff = (DIR_COUNT + conduit->direction - direction) % (DIR_COUNT / 2) - 2;
+		} else if (objectMap[rayGen.position]->id == OBJ_CONDUIT) {
+			Conduit* conduit = static_cast<Conduit*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + conduit->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
 			if (diff != 0) {
-				stop = end = true;
+				rayGen.stop = rayGen.end = true;
 			}
-		} else if (objectMap[now]->id == OBJ_FILTER) {
-			Filter* filter = static_cast<Filter*>(objectMap[now]);
-			short diff = (DIR_COUNT + filter->direction - direction + 2) % (DIR_COUNT / 2) - 2;
+		} else if (objectMap[rayGen.position]->id == OBJ_FILTER) {
+			Filter* filter = static_cast<Filter*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + filter->direction - rayGen.direction + 2) % (DIR_COUNT / 2) - 2;
 			if (diff == 0) {
-				Color newColor = (filter->color * color);
+				Color newColor = (filter->color * rayGen.color);
 				if (newColor != COL_BLACK) {
-					if (color != newColor) {
-						color = newColor;
-						stop = true;
+					if (rayGen.color != newColor) {
+						rayGen.color = newColor;
+						rayGen.stop = true;
 					}
 				} else {
-					stop = end = true;
+					rayGen.stop = rayGen.end = true;
 				}
 			} else {
-				stop = end = true;
+				rayGen.stop = rayGen.end = true;
 			}
-		} else if (objectMap[now]->id == OBJ_PRISM) {
-			Prism* prism = static_cast<Prism*>(objectMap[now]);
-			short diff = (DIR_COUNT + prism->direction - direction) % DIR_COUNT;
-			if (color.red) {
+		} else if (objectMap[rayGen.position]->id == OBJ_PRISM) {
+			Prism* prism = static_cast<Prism*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + prism->direction - rayGen.direction) % DIR_COUNT;
+			if (rayGen.color.red) {
 				if ((diff / 2) % 2 != 0) {
-					createRay(beamer, direction, now, colors[COL_RED]);
+					createRay(beamer, {rayGen.direction, rayGen.position, colors[COL_RED]});
 				}
 			}
-			if (color.green) {
+			if (rayGen.color.green) {
 				if (diff > 1 && ((diff + 1) % 3 != 1)) {
-					createRay(beamer, (DIR_COUNT + direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT, now, colors[COL_GREEN]);
+					createRay(beamer, {static_cast<unsigned short>((DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT), rayGen.position, colors[COL_GREEN]});
 				}
 			}
-			if (color.blue) {
+			if (rayGen.color.blue) {
 				if (diff > 1 && ((diff + 1) % 3 != 1)) {
-					createRay(beamer, (DIR_COUNT + direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT, now, colors[COL_BLUE]);
+					createRay(beamer, {static_cast<unsigned short>((DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT), rayGen.position, colors[COL_BLUE]});
 				}
 			}
-			stop = end = true;
-		} else if (objectMap[now]->id == OBJ_DOPPLER) {
-			Doppler* doppler = static_cast<Doppler*>(objectMap[now]);
-			short diff = (DIR_COUNT + doppler->direction - direction) % DIR_COUNT - 4;
+			rayGen.stop = rayGen.end = true;
+		} else if (objectMap[rayGen.position]->id == OBJ_DOPPLER) {
+			Doppler* doppler = static_cast<Doppler*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + doppler->direction - rayGen.direction) % DIR_COUNT - 4;
 			if ((diff + 2) % 4 == 0) {
 				colorShift = static_cast<ColorShift>(1 + ((diff + 2) / 4));
-				Color newColor = color.shiftColor(colorShift);
+				Color newColor = rayGen.color.shiftColor(colorShift);
 				if (newColor != COL_WHITE) {
-					color = newColor;
-					stop = true;
+					rayGen.color = newColor;
+					rayGen.stop = true;
 				}
 			} else {
-				stop = end = true;
+				rayGen.stop = rayGen.end = true;
 			}
-		} else if (objectMap[now]->id == OBJ_TANGLER) {
-			Tangler* tangler = static_cast<Tangler*>(objectMap[now]);
-			short diff = (DIR_COUNT + tangler->direction - direction) % DIR_COUNT - 4;
+		} else if (objectMap[rayGen.position]->id == OBJ_TANGLER) {
+			Tangler* tangler = static_cast<Tangler*>(objectMap[rayGen.position]);
+			short diff = (DIR_COUNT + tangler->direction - rayGen.direction) % DIR_COUNT - 4;
 			if (diff == 0) {
-				createTangledRay(beamer, direction, now, color);
+				createTangledRay(beamer, {rayGen.direction, rayGen.position, rayGen.color});
 			}
-			stop = end = true;
+			rayGen.stop = rayGen.end = true;
 		}
 	}
 
-	if (isOutsideBoard(now) || obstacles[now]) {
-		stop = end = true;
-		endAtMiddle = false;
+	if (isOutsideBoard(rayGen.position) || obstacles[rayGen.position]) {
+		rayGen.stop = rayGen.end = true;
+		rayGen.endAtMiddle = false;
 	}
 
 	return colorShift;

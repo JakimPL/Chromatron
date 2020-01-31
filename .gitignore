@@ -1,4 +1,5 @@
 .qmake.stash
+*.autosave
 *.user
 *.sav
 *.log

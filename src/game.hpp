@@ -70,10 +70,10 @@ public:
 		void updateDots();
 		void updateStack();
 
-		void createRay(Beamer *beamer, unsigned short direction, Position position, Color color);
-		void createTangledRay(Beamer *beamer, unsigned short direction, Position position, Color color);
+		void createRay(Beamer *beamer, RayGen rayGen);
+		void createTangledRay(Beamer *beamer, RayGen rayGen);
+		ColorShift rayStep(Beamer *beamer, RayGen &rayGen);
 		void calculateLasers();
-		ColorShift rayStep(Beamer *beamer, Position &now, Color &color, sf::Vector2f &delta, unsigned short &direction, bool &stop, bool &end, bool &endAtMiddle);
 	} level;
 
 	struct LevelSet {

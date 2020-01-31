@@ -26,10 +26,4 @@ public:
 	void setPosition(Position position);
 };
 
-struct RayGen {
-	unsigned short direction;
-	Position position;
-	Color color;
-};
-
 #endif
