@@ -2,7 +2,6 @@
 #include "auxiliary.hpp"
 #include "constants.hpp"
 #include "log.hpp"
-#include <iostream>
 
 Object::Object(Color col) : color(col)
 {

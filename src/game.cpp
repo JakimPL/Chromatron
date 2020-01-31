@@ -234,7 +234,7 @@ void Game::Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 			}
 
 			for (unsigned short ray = 0; ray < 2; ++ray) {
-				if (!isOutsideBoard(rayGens[ray].position)) {
+				if (!(isOutsideBoard(rayGens[ray].position) or obstacles[rayGens[ray].position])) {
 					if (rayGens[1 - ray].colorShift != CLS_NONE) {
 						rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(rayGens[1 - ray].colorShift));
 					}
