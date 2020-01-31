@@ -71,6 +71,7 @@ public:
 		void updateStack();
 
 		void createRay(Beamer *beamer, RayGen rayGen);
+		void createRays(Beamer *beamer, std::vector<RayGenElement> rayGens);
 		void createTangledRay(Beamer *beamer, RayGen rayGen);
 		ColorShift rayStep(Beamer *beamer, RayGen &rayGen);
 		void calculateLasers();

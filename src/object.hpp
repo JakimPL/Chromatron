@@ -28,7 +28,7 @@ public:
 	virtual void rotate(bool clockwise, bool force = false);
 	virtual void setSpriteColor();
 	virtual void updateSprite();
-	//virtual std::vector<RayGen> interaction(RayGen &rayGen, bool &stop, bool &end);
+	virtual std::vector<RayGenElement> interaction(RayGen &rayGen);
 };
 
 class Beamer : public Object
@@ -37,6 +37,8 @@ public:
 	Beamer(Color col = COL_BLACK_TUPLE);
 
 	Laser laser;
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Dot : public Object
@@ -48,6 +50,8 @@ public:
 	bool state = false;
 
 	void updateState();
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Mirror : public Object
@@ -55,49 +59,63 @@ class Mirror : public Object
 public:
 	Mirror();
 
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Bender : public Object
 {
 public:
 	Bender();
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Splitter : public Object
 {
 public:
 	Splitter();
-	//std::vector<RayGen> interaction(RayGen &rayGen, bool &stop, bool &end) override;
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Conduit : public Object
 {
 public:
 	Conduit();
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Filter : public Object
 {
 public:
 	Filter(Color col = COL_BLACK_TUPLE);
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Prism : public Object
 {
 public:
 	Prism();
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Doppler : public Object
 {
 public:
 	Doppler();
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 class Tangler : public Object
 {
 public:
 	Tangler();
+
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
 #endif

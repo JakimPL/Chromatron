@@ -3,9 +3,7 @@
 
 #include "position.hpp"
 #include "color.hpp"
-
-typedef std::vector<sf::Vertex> Ray;
-typedef std::vector<Ray> Laser;
+#include "constants.hpp"
 
 struct RayGen {
 	RayGen(unsigned short direction, Position position, Color color);
@@ -13,10 +11,15 @@ struct RayGen {
 	Position position;
 	Color color;
 
+	ColorShift colorShift = CLS_NONE;
 	sf::Vector2f delta = sf::Vector2f(0, 0);
 	bool stop = false;
 	bool end = false;
-	bool endAtMiddle = false;
+	bool endAtMiddle = true;
 };
+
+typedef std::vector<sf::Vertex> Ray;
+typedef std::vector<Ray> Laser;
+typedef std::pair<RayGen, bool> RayGenElement;
 
 #endif // RAYGEN_H
