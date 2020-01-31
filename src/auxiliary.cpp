@@ -142,60 +142,7 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 void writeObject(std::ofstream &file, Object* object)
 {
 	if (object != nullptr) {
-		writeByte(file, object->id);
-		writeByte(file, object->inStack);
-		writeByte(file, object->position.getX());
-		writeByte(file, object->position.getY());
-
-		if (object->id == OBJ_BEAMER) {
-			Beamer* beamer = static_cast<Beamer*>(object);
-
-			writeByte(file, beamer->color.red);
-			writeByte(file, beamer->color.green);
-			writeByte(file, beamer->color.blue);
-			writeByte(file, beamer->direction);
-		} else if (object->id == OBJ_DOT) {
-			Dot* dot = static_cast<Dot*>(object);
-
-			writeByte(file, dot->color.red);
-			writeByte(file, dot->color.green);
-			writeByte(file, dot->color.blue);
-		} else if (object->id == OBJ_MIRROR) {
-			Mirror* mirror = static_cast<Mirror*>(object);
-
-			writeByte(file, mirror->direction);
-		} else if (object->id == OBJ_BENDER) {
-			Bender* bender = static_cast<Bender*>(object);
-
-			writeByte(file, bender->direction);
-		} else if (object->id == OBJ_SPLITTER) {
-			Splitter* splitter = static_cast<Splitter*>(object);
-
-			writeByte(file, splitter->direction);
-		} else if (object->id == OBJ_CONDUIT) {
-			Conduit* conduit = static_cast<Conduit*>(object);
-
-			writeByte(file, conduit->direction);
-		} else if (object->id == OBJ_FILTER) {
-			Filter* filter = static_cast<Filter*>(object);
-
-			writeByte(file, filter->color.red);
-			writeByte(file, filter->color.green);
-			writeByte(file, filter->color.blue);
-			writeByte(file, filter->direction);
-		} else if (object->id == OBJ_PRISM) {
-			Prism* prism = static_cast<Prism*>(object);
-
-			writeByte(file, prism->direction);
-		} else if (object->id == OBJ_DOPPLER) {
-			Doppler* doppler = static_cast<Doppler*>(object);
-
-			writeByte(file, doppler->direction);
-		} else if (object->id == OBJ_TANGLER) {
-			Tangler* tangler = static_cast<Tangler*>(object);
-
-			writeByte(file, tangler->direction);
-		}
+		object->writeObject(file);
 	} else {
 		writeByte(file, OBJ_EMPTY);
 	}

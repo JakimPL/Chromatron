@@ -32,6 +32,8 @@ public:
 	virtual void setObject(Game *game);
 	virtual void setSpriteColor();
 	virtual void updateSprite();
+	virtual void writeGeneralData(std::ofstream &file);
+	virtual void writeObject(std::ofstream &file);
 	virtual std::vector<RayGenElement> interaction(RayGen &rayGen);
 };
 
@@ -43,6 +45,7 @@ public:
 	Laser laser;
 
 	void setObject(Game *game) override;
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -56,6 +59,7 @@ public:
 
 	void updateState();
 	void setObject(Game *game) override;
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -64,6 +68,7 @@ class Mirror : public Object
 public:
 	Mirror();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -72,6 +77,7 @@ class Bender : public Object
 public:
 	Bender();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -80,6 +86,7 @@ class Splitter : public Object
 public:
 	Splitter();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -88,6 +95,7 @@ class Conduit : public Object
 public:
 	Conduit();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -96,6 +104,7 @@ class Filter : public Object
 public:
 	Filter(Color col = COL_BLACK_TUPLE);
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -104,6 +113,7 @@ class Prism : public Object
 public:
 	Prism();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -112,6 +122,7 @@ class Doppler : public Object
 public:
 	Doppler();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 
@@ -120,6 +131,7 @@ class Tangler : public Object
 public:
 	Tangler();
 
+	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
 

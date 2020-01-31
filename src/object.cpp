@@ -107,6 +107,87 @@ void Dot::setObject(Game *game)
 	textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
 }
 
+void Object::writeGeneralData(std::ofstream &file)
+{
+	writeByte(file, this->id);
+	writeByte(file, this->inStack);
+	writeByte(file, this->position.getX());
+	writeByte(file, this->position.getY());
+}
+
+void Object::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+}
+
+void Beamer::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->color.red);
+	writeByte(file, this->color.green);
+	writeByte(file, this->color.blue);
+	writeByte(file, this->direction);
+}
+
+void Dot::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->color.red);
+	writeByte(file, this->color.green);
+	writeByte(file, this->color.blue);
+}
+
+void Mirror::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
+void Bender::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
+void Splitter::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
+void Conduit::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
+void Filter::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->color.red);
+	writeByte(file, this->color.green);
+	writeByte(file, this->color.blue);
+	writeByte(file, this->direction);
+}
+
+void Prism::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
+void Doppler::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
+void Tangler::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
+	writeByte(file, this->direction);
+}
+
 std::vector<RayGenElement> Object::interaction(RayGen &rayGen)
 {
 	rayGen.stop = rayGen.end = true;
