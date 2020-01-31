@@ -88,12 +88,44 @@ Tangler::Tangler()
 	colorable = false;
 }
 
-void Object::setObject(Game *game)
+void Object::setObject(Game *game, Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
+{
+	this->id = id;
+	this->position.setPosition(position);
+	this->direction = direction;
+	this->inStack = inStack;
+
+	this->textures.push_back(game->graphics.textures[id]);
+	this->sprite.setOrigin(ORIGIN);
+	this->sprite.setPosition(inStack ? this->position + game->level.stack.offset : this->position);
+	this->sprite.setTexture(*(this->textures)[0]);
+	this->sprite.setRotation(direction * HALF_ANGLE);
+
+	if (this->colorable) {
+		this->setSpriteColor();
+	}
+
+	if (!inStack) {
+		game->level.objectMap[this->position] = this;
+	} else {
+		game->level.stack.objectMap[this->position] = this;
+		game->level.stack.objectList[id].push_back(this);
+	}
+
+	if (stackObject) {
+		game->level.stackObjectList.push_back(this);
+	}
+
+	this->setAdditionalSprites(game);
+	game->level.objectList[id].push_back(this);
+}
+
+void Object::setAdditionalSprites(Game *game)
 {
 
 }
 
-void Beamer::setObject(Game *game)
+void Beamer::setAdditionalSprites(Game *game)
 {
 	textures.push_back(game->graphics.textures[OBJ_COUNT]);
 	baseSprite.setOrigin(ORIGIN);
@@ -102,7 +134,7 @@ void Beamer::setObject(Game *game)
 	baseSprite.setRotation(direction * HALF_ANGLE);
 }
 
-void Dot::setObject(Game *game)
+void Dot::setAdditionalSprites(Game *game)
 {
 	textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
 }

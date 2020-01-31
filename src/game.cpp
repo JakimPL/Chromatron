@@ -407,41 +407,41 @@ void Game::Level::newObject(Position position, ObjectID id, bool inStack)
 	if (id == OBJ_BEAMER) {
 		if (!inStack) {
 			Beamer *beamer = new Beamer();
-			setObject(beamer, position, id, DIR_NORTH, inStack);
+			beamer->setObject(game, position, id, DIR_NORTH, inStack);
 		} else {
 			LogWarning("Can't place a beamer into the stack!");
 		}
 	} else if (id == OBJ_DOT) {
 		if (!inStack) {
 			Dot* dot = new Dot();
-			setObject(dot, position, id, DIR_NORTH, inStack);
+			dot->setObject(game, position, id, DIR_NORTH, inStack);
 		} else {
 			LogWarning("Can't place a dot into the stack!");
 		}
 	} else if (id == OBJ_MIRROR) {
 		Mirror* mirror = new Mirror();
-		setObject(mirror, position, id, DIR_NORTH, inStack);
+		mirror->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_BENDER) {
 		Bender* bender = new Bender();
-		setObject(bender, position, id, DIR_NORTH, inStack);
+		bender->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_SPLITTER) {
 		Splitter* splitter = new Splitter();
-		setObject(splitter, position, id, DIR_NORTH, inStack);
+		splitter->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_CONDUIT) {
 		Conduit* conduit = new Conduit();
-		setObject(conduit, position, id, DIR_NORTH, inStack);
+		conduit->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_FILTER) {
 		Filter* filter = new Filter();
-		setObject(filter, position, id, DIR_NORTH, inStack);
+		filter->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_PRISM) {
 		Prism* prism = new Prism();
-		setObject(prism, position, id, DIR_NORTH, inStack);
+		prism->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_DOPPLER) {
 		Doppler* doppler = new Doppler();
-		setObject(doppler, position, id, DIR_NORTH, inStack);
+		doppler->setObject(game, position, id, DIR_NORTH, inStack);
 	} else if (id == OBJ_TANGLER) {
 		Tangler* tangler = new Tangler();
-		setObject(tangler, position, id, DIR_NORTH, inStack);
+		tangler->setObject(game, position, id, DIR_NORTH, inStack);
 	}
 }
 
@@ -582,43 +582,6 @@ bool Game::Level::setObstacle(Position position, bool obstacle)
 	setTile(position, obstacle);
 
 	return true;
-}
-
-void Game::Level::setObject(Object *object, short x, short y, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
-{
-	setObject(object, shortToPosition(x, y), id, direction, inStack, stackObject);
-}
-
-void Game::Level::setObject(Object *object, Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
-{
-	object->id = id;
-	object->position.setPosition(position);
-	object->direction = direction;
-	object->inStack = inStack;
-
-	object->textures.push_back(game->graphics.textures[id]);
-	object->sprite.setOrigin(ORIGIN);
-	object->sprite.setPosition(inStack ? object->position + stack.offset : object->position);
-	object->sprite.setTexture(*(object->textures)[0]);
-	object->sprite.setRotation(direction * HALF_ANGLE);
-
-	if (object->colorable) {
-		object->setSpriteColor();
-	}
-
-	if (!inStack) {
-		game->level.objectMap[object->position] = object;
-	} else {
-		game->level.stack.objectMap[object->position] = object;
-		game->level.stack.objectList[id].push_back(object);
-	}
-
-	if (stackObject) {
-		game->level.stackObjectList.push_back(object);
-	}
-
-	object->setObject(game);
-	game->level.objectList[id].push_back(object);
 }
 
 void Game::Level::setTile(Position position, bool obstacle)

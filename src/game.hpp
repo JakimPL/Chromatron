@@ -46,8 +46,6 @@ public:
 		void newObject(Position position, ObjectID id, bool inStack);
 		bool removeObject(Position position);
 		bool rotateObject(Position mousePosition, bool clockwise = true);
-		void setObject(Object *object, short x, short y, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
-		void setObject(Object *object, Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
 		bool setObstacle(Position position, bool obstacle);
 		void setTile(Position position, bool obstacle);
 		bool moveFromStack(Position stackPosition, Position mousePosition);

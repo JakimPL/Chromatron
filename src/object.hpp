@@ -29,7 +29,8 @@ public:
 
 	virtual ~Object();
 	virtual void rotate(bool clockwise, bool force = false);
-	virtual void setObject(Game *game);
+	virtual void setObject(Game *game, Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
+	virtual void setAdditionalSprites(Game *game);
 	virtual void setSpriteColor();
 	virtual void updateSprite();
 	virtual void writeGeneralData(std::ofstream &file);
@@ -44,7 +45,7 @@ public:
 
 	Laser laser;
 
-	void setObject(Game *game) override;
+	void setAdditionalSprites(Game *game) override;
 	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
@@ -58,7 +59,7 @@ public:
 	bool state = false;
 
 	void updateState();
-	void setObject(Game *game) override;
+	void setAdditionalSprites(Game *game) override;
 	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };

@@ -62,7 +62,7 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Beamer* beamer = new Beamer(color);
-		level.setObject(beamer, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		beamer->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_DOT) {
 		unsigned short red, green, blue;
 
@@ -73,35 +73,35 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Dot* dot = new Dot(color);
-		level.setObject(dot, x, y, static_cast<ObjectID>(id), DIR_NORTH, inStack > 0, stackObject);
+		dot->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), DIR_NORTH, inStack > 0, stackObject);
 	} else if (id == OBJ_MIRROR) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Mirror* mirror = new Mirror();
-		level.setObject(mirror, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		mirror->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_BENDER) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Bender* bender = new Bender();
-		level.setObject(bender, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		bender->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_SPLITTER) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Splitter* splitter = new Splitter();
-		level.setObject(splitter, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		splitter->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_CONDUIT) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Conduit* conduit = new Conduit();
-		level.setObject(conduit, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		conduit->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_FILTER) {
 		unsigned short red, green, blue;
 		unsigned short direction;
@@ -114,28 +114,28 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 		Color color(red > 0, green > 0, blue > 0);
 
 		Filter* filter = new Filter(color);
-		level.setObject(filter, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		filter->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_PRISM) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Prism* prism = new Prism();
-		level.setObject(prism, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		prism->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_DOPPLER) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Doppler* doppler = new Doppler();
-		level.setObject(doppler, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		doppler->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	} else if (id == OBJ_TANGLER) {
 		unsigned short direction;
 
 		readByte(file, direction);
 
 		Tangler* tangler = new Tangler();
-		level.setObject(tangler, x, y, static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+		tangler->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
 	}
 }
 
