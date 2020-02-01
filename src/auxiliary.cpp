@@ -136,6 +136,9 @@ void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
 
 		Tangler* tangler = new Tangler();
 		tangler->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), static_cast<DirectionID>(direction), inStack > 0, stackObject);
+	} else if (id == OBJ_TELEPORTER) {
+		Teleporter* teleporter = new Teleporter();
+		teleporter->setObject(level.game, shortToPosition(x, y), static_cast<ObjectID>(id), DIR_NORTH, inStack > 0, stackObject);
 	}
 }
 

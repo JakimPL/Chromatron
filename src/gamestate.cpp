@@ -301,6 +301,7 @@ void GameState::keyboardGlobalEvents()
 
 void GameState::keyboardEditorEvents()
 {
+	///TODO: abstraction
 	if (event.type == sf::Event::KeyPressed) {
 		switch (event.key.code) {
 		case sf::Keyboard::Tab: {
@@ -345,6 +346,10 @@ void GameState::keyboardEditorEvents()
 		}
 		case sf::Keyboard::Num0: {
 			game.editor.setObject(OBJ_TANGLER);
+			break;
+		}
+		case sf::Keyboard::Q: {
+			game.editor.setObject(OBJ_TELEPORTER);
 			break;
 		}
 		default:

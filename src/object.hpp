@@ -18,19 +18,20 @@ public:
 	bool rotatable = false;
 	bool movable = false;
 	bool colorable = false;
+
+	Game *game;
 	ObjectID id;
 	DirectionID direction = DIR_NORTH;
+	Position position;
+	Color color;
 
 	std::vector<sf::Texture*> textures;
 	sf::Sprite baseSprite;
 	sf::Sprite sprite;
-	Color color;
-	Position position;
-
 	virtual ~Object();
 	virtual void rotate(bool clockwise, bool force = false);
-	virtual void setObject(Game *game, Position position, ObjectID id, DirectionID direction = DIR_NORTH, bool inStack = false, bool stackObject = false);
-	virtual void setAdditionalSprites(Game *game);
+	virtual void setObject(Game *gam, Position pos, ObjectID obID, DirectionID dir = DIR_NORTH, bool inSt = false, bool stackObject = false);
+	virtual void setAdditionalSprites();
 	virtual void setSpriteColor();
 	virtual void updateSprite();
 	virtual void writeGeneralData(std::ofstream &file);
@@ -45,7 +46,7 @@ public:
 
 	Laser laser;
 
-	void setAdditionalSprites(Game *game) override;
+	void setAdditionalSprites() override;
 	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
@@ -59,7 +60,7 @@ public:
 	bool state = false;
 
 	void updateState();
-	void setAdditionalSprites(Game *game) override;
+	void setAdditionalSprites() override;
 	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };
@@ -132,6 +133,16 @@ class Tangler : public Object
 public:
 	Tangler();
 
+	void writeObject(std::ofstream &file) override;
+	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
+};
+
+class Teleporter : public Object
+{
+public:
+	Teleporter();
+
+	Position findAnotherTeleporter(unsigned short direction);
 	void writeObject(std::ofstream &file) override;
 	std::vector<RayGenElement> interaction(RayGen &rayGen) override;
 };

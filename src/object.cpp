@@ -87,27 +87,35 @@ Tangler::Tangler()
 	colorable = false;
 }
 
-void Object::setObject(Game *game, Position position, ObjectID id, DirectionID direction, bool inStack, bool stackObject)
+Teleporter::Teleporter()
 {
-	this->id = id;
-	this->position.setPosition(position);
-	this->direction = direction;
-	this->inStack = inStack;
+	rotatable = false;
+	movable = false;
+	colorable = false;
+}
 
-	this->textures.push_back(game->graphics.textures[id]);
-	this->sprite.setOrigin(ORIGIN);
-	this->sprite.setPosition(inStack ? this->position + game->level.stack.offset : this->position);
-	this->sprite.setTexture(*(this->textures)[0]);
-	this->sprite.setRotation(direction * HALF_ANGLE);
+void Object::setObject(Game *gam, Position pos, ObjectID obID, DirectionID dir, bool inSt, bool stackObject)
+{
+	game = gam;
+	id = obID;
+	position.setPosition(pos);
+	direction = dir;
+	inStack = inSt;
 
-	if (this->colorable) {
-		this->setSpriteColor();
+	textures.push_back(game->graphics.textures[id]);
+	sprite.setOrigin(ORIGIN);
+	sprite.setPosition(inStack ? position + game->level.stack.offset : position);
+	sprite.setTexture(*(textures)[0]);
+	sprite.setRotation(direction * HALF_ANGLE);
+
+	if (colorable) {
+		setSpriteColor();
 	}
 
 	if (!inStack) {
-		game->level.objectMap[this->position] = this;
+		game->level.objectMap[position] = this;
 	} else {
-		game->level.stack.objectMap[this->position] = this;
+		game->level.stack.objectMap[position] = this;
 		game->level.stack.objectList[id].push_back(this);
 	}
 
@@ -115,16 +123,16 @@ void Object::setObject(Game *game, Position position, ObjectID id, DirectionID d
 		game->level.stackObjectList.push_back(this);
 	}
 
-	this->setAdditionalSprites(game);
+	setAdditionalSprites();
 	game->level.objectList[id].push_back(this);
 }
 
-void Object::setAdditionalSprites(Game *game)
+void Object::setAdditionalSprites()
 {
 
 }
 
-void Beamer::setAdditionalSprites(Game *game)
+void Beamer::setAdditionalSprites()
 {
 	textures.push_back(game->graphics.textures[OBJ_COUNT]);
 	baseSprite.setOrigin(ORIGIN);
@@ -133,17 +141,17 @@ void Beamer::setAdditionalSprites(Game *game)
 	baseSprite.setRotation(direction * HALF_ANGLE);
 }
 
-void Dot::setAdditionalSprites(Game *game)
+void Dot::setAdditionalSprites()
 {
 	textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
 }
 
 void Object::writeGeneralData(std::ofstream &file)
 {
-	writeByte(file, this->id);
-	writeByte(file, this->inStack);
-	writeByte(file, this->position.getX());
-	writeByte(file, this->position.getY());
+	writeByte(file, id);
+	writeByte(file, inStack);
+	writeByte(file, position.getX());
+	writeByte(file, position.getY());
 }
 
 void Object::writeObject(std::ofstream &file)
@@ -154,69 +162,74 @@ void Object::writeObject(std::ofstream &file)
 void Beamer::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->color.red);
-	writeByte(file, this->color.green);
-	writeByte(file, this->color.blue);
-	writeByte(file, this->direction);
+	writeByte(file, color.red);
+	writeByte(file, color.green);
+	writeByte(file, color.blue);
+	writeByte(file, direction);
 }
 
 void Dot::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->color.red);
-	writeByte(file, this->color.green);
-	writeByte(file, this->color.blue);
+	writeByte(file, color.red);
+	writeByte(file, color.green);
+	writeByte(file, color.blue);
 }
 
 void Mirror::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
 }
 
 void Bender::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
 }
 
 void Splitter::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
 }
 
 void Conduit::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
 }
 
 void Filter::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->color.red);
-	writeByte(file, this->color.green);
-	writeByte(file, this->color.blue);
-	writeByte(file, this->direction);
+	writeByte(file, color.red);
+	writeByte(file, color.green);
+	writeByte(file, color.blue);
+	writeByte(file, direction);
 }
 
 void Prism::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
 }
 
 void Doppler::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
 }
 
 void Tangler::writeObject(std::ofstream &file)
 {
 	writeGeneralData(file);
-	writeByte(file, this->direction);
+	writeByte(file, direction);
+}
+
+void Teleporter::writeObject(std::ofstream &file)
+{
+	writeGeneralData(file);
 }
 
 std::vector<RayGenElement> Object::interaction(RayGen &rayGen)
@@ -402,6 +415,19 @@ std::vector<RayGenElement> Tangler::interaction(RayGen &rayGen)
 	return rayGens;
 }
 
+std::vector<RayGenElement> Teleporter::interaction(RayGen &rayGen)
+{
+	Position newPosition = findAnotherTeleporter(rayGen.direction);
+	if (newPosition != EMPTY_POSITION) {
+		rayGen.position = newPosition;
+		rayGen.stop = true;
+	} else {
+		rayGen.stop = rayGen.end;
+	}
+
+	return {};
+}
+
 void Object::rotate(bool clockwise, bool force)
 {
 	if (rotatable || force) {
@@ -429,4 +455,25 @@ void Dot::updateState()
 
 	direction = DIR_NORTH;
 	sprite.setRotation(0);
+}
+
+Position Teleporter::findAnotherTeleporter(unsigned short direction)
+{
+	Position now = position;
+	bool found = false;
+	bool end = false;
+
+	while (!end) {
+		now.moveInDirection(direction, 1);
+		if (game->level.isPlaceTaken(now)) {
+			if (game->level.objectMap[now]->id == OBJ_TELEPORTER) {
+				found = true;
+				break;
+			}
+		}
+
+		end = game->level.isOutsideBoard(now);
+	}
+
+	return (found ? now : EMPTY_POSITION);
 }

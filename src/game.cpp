@@ -404,6 +404,7 @@ bool Game::Level::addObject(Position position, ObjectID id)
 
 void Game::Level::newObject(Position position, ObjectID id, bool inStack)
 {
+	///TODO: abstraction
 	if (id == OBJ_BEAMER) {
 		if (!inStack) {
 			Beamer *beamer = new Beamer();
@@ -442,6 +443,9 @@ void Game::Level::newObject(Position position, ObjectID id, bool inStack)
 	} else if (id == OBJ_TANGLER) {
 		Tangler* tangler = new Tangler();
 		tangler->setObject(game, position, id, DIR_NORTH, inStack);
+	} else if (id == OBJ_TELEPORTER) {
+		Teleporter* teleporter = new Teleporter();
+		teleporter->setObject(game, position, id, DIR_NORTH, inStack);
 	}
 }
 
