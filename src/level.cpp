@@ -106,7 +106,7 @@ void Level::loadLevel(const std::string &id, bool ignoreSave)
 
 		readByte(levelFile, stackObjectsCount);
 
-		if (checkLevelSave(id) && !ignoreSave) {
+		if (checkLevelSave(id) and !ignoreSave) {
 			levelFile.close();
 			LogInfo("File " + location + " loaded successfully");
 			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
@@ -201,7 +201,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 	switch (rayType) {
 	case RT_TANGLED: {
 		RayGen rayGens[2] = {{DIR(rayGen.direction - 2), rayGen.position, rayGen.color}, {DIR(rayGen.direction + 2), rayGen.position, rayGen.color}};
-		Ray rays[2] = {{sf::Vertex(rayGen.position, rayGen.color.convertToColor())}, {sf::Vertex(rayGen.position, rayGen.color.convertToColor())}};
+		Ray rays[2] = {{sf::Vertex(rayGen.position, rayGen.color.convertToRealColor())}, {sf::Vertex(rayGen.position, rayGen.color.convertToRealColor())}};
 
 		for (unsigned short ray = 0; ray < 2; ++ray) {
 			rayGens[ray].stop = true;
@@ -213,7 +213,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 			Color previousColors[2] = {rayGens[0].color, rayGens[1].color};
 			for (unsigned short ray = 0; ray < 2; ++ray) {
 				if (!rayGens[ray].end) {
-					rayStep(beamer, rayGens[ray]);
+					rayStep(beamer, rays[ray], rayGens[ray]);
 				}
 			}
 
@@ -223,11 +223,11 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 						rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(rayGens[1 - ray].colorShift));
 					}
 					if (previousColors[ray] != rayGens[ray].color) {
-						addNode(rays[ray], sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
+						addNode(rays[ray], sf::Vertex(rayGens[ray].position, previousColors[ray].convertToRealColor()));
 					}
 				}
 
-				sf::Vertex node(rayGens[ray].position, rayGens[ray].color.convertToColor());
+				sf::Vertex node(rayGens[ray].position, rayGens[ray].color.convertToRealColor());
 				if (!rayGens[ray].endAtMiddle) {
 					node.position.x -= rayGens[ray].delta.x * 0.5f;
 					node.position.y -= rayGens[ray].delta.y * 0.5f;
@@ -244,7 +244,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 		break;
 	}
 	default: {
-		Ray ray = {sf::Vertex(rayGen.position, rayGen.color.convertToColor())};
+		Ray ray = {sf::Vertex(rayGen.position, rayGen.color.convertToRealColor())};
 
 		rayGen.end = false;
 		while (!rayGen.end) {
@@ -252,14 +252,14 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 			rayGen.endAtMiddle = true;
 			Color previousColor = rayGen.color;
 			while (!rayGen.stop) {
-				rayStep(beamer, rayGen);
+				rayStep(beamer, ray, rayGen);
 			}
 
 			if (previousColor != rayGen.color) {
-				addNode(ray, sf::Vertex(rayGen.position, previousColor.convertToColor()));
+				addNode(ray, sf::Vertex(rayGen.position, previousColor.convertToRealColor()));
 			}
 
-			sf::Vertex node(rayGen.position, rayGen.color.convertToColor());
+			sf::Vertex node(rayGen.position, rayGen.color.convertToRealColor());
 			if (!rayGen.endAtMiddle) {
 				node.position.x -= rayGen.delta.x * 0.5f;
 				node.position.y -= rayGen.delta.y * 0.5f;
@@ -282,7 +282,7 @@ void Level::createRays(Beamer *beamer, RayGenList rayGens)
 	}
 }
 
-void Level::rayStep(Beamer *beamer, RayGen &rayGen)
+void Level::rayStep(Beamer *beamer, Ray &ray, RayGen &rayGen)
 {
 	if (rayGen.color == COL_BLACK) {
 		rayGen.stop = rayGen.end = true;
@@ -295,10 +295,10 @@ void Level::rayStep(Beamer *beamer, RayGen &rayGen)
 	rayGen.delta = sf::Vector2f(rayGen.position) - rayGen.delta;
 
 	if (isPlaceTaken(rayGen.position)) {
-		createRays(beamer, objectMap[rayGen.position]->interaction(rayGen));
+		createRays(beamer, objectMap[rayGen.position]->interaction(ray, rayGen));
 	}
 
-	if (isOutsideBoard(rayGen.position) || obstacles[rayGen.position]) {
+	if (isOutsideBoard(rayGen.position) or obstacles[rayGen.position]) {
 		rayGen.stop = rayGen.end = true;
 		rayGen.endAtMiddle = false;
 	}
@@ -464,7 +464,7 @@ Position Level::getRelativePosition(Position mousePosition)
 
 bool Level::isPlaceFree(Position position)
 {
-	return (objectMap[position] == nullptr && !obstacles[position] && !isOutsideBoard(position));
+	return (objectMap[position] == nullptr and !obstacles[position] and !isOutsideBoard(position));
 }
 
 bool Level::isPlaceFree(Position position, bool onStack)
@@ -478,7 +478,7 @@ bool Level::isPlaceFree(Position position, bool onStack)
 
 bool Level::isPlaceTaken(Position position)
 {
-	return (objectMap[position] != nullptr && !objectMap[position]->inStack);
+	return (objectMap[position] != nullptr and !objectMap[position]->inStack);
 }
 
 bool Level::isPlaceTaken(Position position, bool onStack)
@@ -492,12 +492,12 @@ bool Level::isPlaceTaken(Position position, bool onStack)
 
 bool Level::isOutsideBoard(Position position)
 {
-	return (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height);
+	return (position.getX() < 0 or position.getY() < 0 or position.getX() >= width or position.getY() >= height);
 }
 
 bool Level::dragObject(Drag & drag, Position position)
 {
-	bool success = isPlaceTaken(position) && (objectMap[position]->movable || game->editor.isActive());
+	bool success = isPlaceTaken(position) and (objectMap[position]->movable or game->editor.isActive());
 
 	if (success) {
 		drag.fromStack = false;
@@ -582,7 +582,7 @@ void Level::setTile(Position position, bool obstacle)
 
 bool Level::moveFromStack(Position stackPosition, Position mousePosition)
 {
-	bool success = !stack.isPlaceFree(stackPosition) && isPlaceFree(mousePosition);
+	bool success = !stack.isPlaceFree(stackPosition) and isPlaceFree(mousePosition);
 
 	if (success) {
 		objectMap[mousePosition] = stack.objectMap[stackPosition];
@@ -600,7 +600,7 @@ bool Level::moveFromStack(Position stackPosition, Position mousePosition)
 bool Level::moveToStack(Position dragPosition, Position mousePosition)
 {
 	Position stackPosition = stack.getRelativePosition(mousePosition);
-	bool success = stack.isPlaceFree(stackPosition) && isPlaceTaken(dragPosition);
+	bool success = stack.isPlaceFree(stackPosition) and isPlaceTaken(dragPosition);
 
 	if (success) {
 		stack.objectMap[stackPosition] = objectMap[dragPosition];
@@ -617,7 +617,7 @@ bool Level::moveToStack(Position dragPosition, Position mousePosition)
 bool Level::moveFromStackToStack(Position dragPosition, Position mousePosition)
 {
 	Position stackPosition = stack.getRelativePosition(mousePosition);
-	bool success = stack.isPlaceTaken(dragPosition) && stack.isPlaceFree(stackPosition);
+	bool success = stack.isPlaceTaken(dragPosition) and stack.isPlaceFree(stackPosition);
 
 	if (success) {
 		stack.objectMap[stackPosition] = stack.objectMap[dragPosition];

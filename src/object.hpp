@@ -37,7 +37,7 @@ public:
 	virtual void updateSprite();
 	virtual void writeGeneralData(std::ofstream &file);
 	virtual void writeObject(std::ofstream &file);
-	virtual RayGenList interaction(RayGen &rayGen);
+	virtual RayGenList interaction(Ray &ray, RayGen &rayGen);
 };
 
 class Beamer : public Object
@@ -48,7 +48,7 @@ public:
 	Laser laser;
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Dot : public Object
@@ -61,7 +61,7 @@ public:
 
 	void updateState();
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Mirror : public Object
@@ -70,7 +70,7 @@ public:
 	Mirror();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Bender : public Object
@@ -79,7 +79,7 @@ public:
 	Bender();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Splitter : public Object
@@ -88,7 +88,7 @@ public:
 	Splitter();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Conduit : public Object
@@ -97,7 +97,7 @@ public:
 	Conduit();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Filter : public Object
@@ -106,7 +106,7 @@ public:
 	Filter(Color col = COL_BLACK_TUPLE);
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Prism : public Object
@@ -115,7 +115,7 @@ public:
 	Prism();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Doppler : public Object
@@ -124,7 +124,7 @@ public:
 	Doppler();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Tangler : public Object
@@ -133,7 +133,7 @@ public:
 	Tangler();
 
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 class Teleporter : public Object
@@ -143,7 +143,7 @@ public:
 
 	Position findAnotherTeleporter(unsigned short direction);
 	void writeObject(std::ofstream &file) override;
-	RayGenList interaction(RayGen &rayGen) override;
+	RayGenList interaction(Ray &ray, RayGen &rayGen) override;
 };
 
 #endif

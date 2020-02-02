@@ -15,6 +15,15 @@ void addNode(Ray &ray, sf::Vertex node, unsigned short count)
 	}
 }
 
+void addLine(Ray &ray, Color color, Position start, Position end)
+{
+	sf::Vertex startNode(start, color.convertToRealColor());
+	sf::Vertex endNode(end, color.convertToRealColor());
+
+	addNode(ray, startNode, 1);
+	addNode(ray, endNode, 1);
+}
+
 sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 {
 	sf::RectangleShape rectangle(sf::Vector2f(w, h));

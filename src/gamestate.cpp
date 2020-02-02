@@ -139,7 +139,7 @@ void GameState::drawGameObjects()
 	bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
 	for (size_t type = 0; type < OBJ_COUNT; ++type) {
 		for (size_t index = 0; index < game.level.objectList[type].size(); ++index) {
-			if (drag.fromStack != game.level.objectList[type][index]->inStack || drag.position != game.level.objectList[type][index]->position) {
+			if (drag.fromStack != game.level.objectList[type][index]->inStack or drag.position != game.level.objectList[type][index]->position) {
 				if (game.level.objectList[type][index]->id == OBJ_BEAMER) {
 					window.draw(game.level.objectList[type][index]->baseSprite);
 				}
@@ -148,7 +148,7 @@ void GameState::drawGameObjects()
 		}
 	}
 
-	if (game.editor.isActive() && !shiftPressed) {
+	if (game.editor.isActive() and !shiftPressed) {
 		if (game.editor.mode == ED_ADD_OR_REMOVE_OBJECTS) {
 			game.editor.sprite.setPosition(mousePosition);
 			window.draw(game.editor.sprite);
@@ -240,7 +240,7 @@ void GameState::gameEvents()
 	keyboardGlobalEvents();
 
 	bool shiftPressed = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
-	if (game.editor.isActive() && !shiftPressed) {
+	if (game.editor.isActive() and !shiftPressed) {
 		keyboardEditorEvents();
 		mouseEditorEvents();
 	} else {

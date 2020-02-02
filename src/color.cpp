@@ -14,24 +14,24 @@ Color::Color(Colors colId)
 
 Color Color::operator+(const Color& color)
 {
-	Color newColor(this->red || color.red, this->green || color.green, this->blue || color.blue);
+	Color newColor(this->red or color.red, this->green or color.green, this->blue or color.blue);
 	return newColor;
 }
 
 Color Color::operator*(const Color& color)
 {
-	Color newColor(this->red && color.red, this->green && color.green, this->blue && color.blue);
+	Color newColor(this->red and color.red, this->green and color.green, this->blue and color.blue);
 	return newColor;
 }
 
 bool Color::operator==(const Color& color)
 {
-	return (this->red == color.red && this->green == color.green && this->blue == color.blue);
+	return (this->red == color.red and this->green == color.green and this->blue == color.blue);
 }
 
 bool Color::operator!=(const Color& color)
 {
-	return (this->red != color.red || this->green != color.green || this->blue != color.blue);
+	return (this->red != color.red or this->green != color.green or this->blue != color.blue);
 }
 
 bool Color::operator==(const Colors colID)
@@ -44,7 +44,7 @@ bool Color::operator!=(const Colors colID)
 	return (*this != colors[colID]);
 }
 
-sf::Color Color::convertToColor()
+sf::Color Color::convertToRealColor()
 {
 	return sf::Color(MAX_COLOR * static_cast<sf::Uint8>(red), MAX_COLOR * static_cast<sf::Uint8>(green), MAX_COLOR * static_cast<sf::Uint8>(blue));
 }

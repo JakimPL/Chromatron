@@ -33,17 +33,17 @@ Position Position::operator-()
 
 bool Position::operator<(const Position &pos) const
 {
-	return x < pos.x || (x == pos.x && y < pos.y);
+	return x < pos.x or (x == pos.x && y < pos.y);
 }
 
 bool Position::operator==(const Position &pos) const
 {
-	return x == pos.x && y == pos.y;
+	return x == pos.x and y == pos.y;
 }
 
 bool Position::operator!=(const Position &pos) const
 {
-	return x != pos.x || y != pos.y;
+	return x != pos.x or y != pos.y;
 }
 
 Position::operator sf::Vector2f()

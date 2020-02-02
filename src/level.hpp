@@ -58,7 +58,7 @@ struct Level {
 
 	void createRay(Beamer *beamer, RayGen &rayGen, RayType rayType = RT_NORMAL);
 	void createRays(Beamer *beamer, RayGenList rayGens);
-	void rayStep(Beamer *beamer, RayGen &rayGen);
+	void rayStep(Beamer *beamer, Ray &ray, RayGen &rayGen);
 	void calculateLasers();
 };
 

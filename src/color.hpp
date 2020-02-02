@@ -25,7 +25,7 @@ public:
 	bool green;
 	bool blue;
 
-	sf::Color convertToColor();
+	sf::Color convertToRealColor();
 	Color shiftColor(bool orientation);
 	Color shiftColor(ColorShift colorShift);
 
