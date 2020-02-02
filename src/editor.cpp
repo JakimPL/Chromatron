@@ -24,7 +24,7 @@ void Editor::setObject(ObjectID id)
 	}
 
 	if (id == OBJ_BEAMER) {
-		sprite.setTexture(*game->graphics.textures[OBJ_COUNT]);
+		sprite.setTexture(*game->graphics.additionalTextures[id]);
 	} else {
 		sprite.setTexture(*game->graphics.textures[id]);
 	}
