@@ -220,25 +220,25 @@ void Teleporter::writeObject(std::ofstream &file)
 	writeGeneralData(file);
 }
 
-RayGenList Object::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Object::interaction(Ray&, RayGen &rayGen)
 {
 	rayGen.stop = rayGen.end = true;
 	return {};
 }
 
-RayGenList Beamer::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Beamer::interaction(Ray&, RayGen &rayGen)
 {
 	rayGen.stop = rayGen.end = true;
 	return {};
 }
 
-RayGenList Dot::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Dot::interaction(Ray&, RayGen &rayGen)
 {
 	this->actualColor = this->actualColor + rayGen.color;
 	return {};
 }
 
-RayGenList Mirror::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Mirror::interaction(Ray&, RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if (ABS(diff) <= 1) {
@@ -251,7 +251,7 @@ RayGenList Mirror::interaction(Ray &ray, RayGen &rayGen)
 	return {};
 }
 
-RayGenList Bender::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Bender::interaction(Ray&, RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction + 7) % DIR_COUNT - 4;
 	if (-2 <= diff and diff < 2) {
@@ -264,7 +264,7 @@ RayGenList Bender::interaction(Ray &ray, RayGen &rayGen)
 	return {};
 }
 
-RayGenList Splitter::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Splitter::interaction(Ray&, RayGen &rayGen)
 {
 	RayGenList rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
@@ -280,7 +280,7 @@ RayGenList Splitter::interaction(Ray &ray, RayGen &rayGen)
 	return rayGens;
 }
 
-RayGenList Conduit::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Conduit::interaction(Ray&, RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
 	if (diff != 0) {
@@ -290,7 +290,7 @@ RayGenList Conduit::interaction(Ray &ray, RayGen &rayGen)
 	return {};
 }
 
-RayGenList Filter::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Filter::interaction(Ray&, RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction + 2) % (DIR_COUNT / 2) - 2;
 	if (diff == 0) {
@@ -310,7 +310,7 @@ RayGenList Filter::interaction(Ray &ray, RayGen &rayGen)
 	return {};
 }
 
-RayGenList Prism::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Prism::interaction(Ray&, RayGen &rayGen)
 {
 	RayGenList rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT;
@@ -366,7 +366,7 @@ RayGenList Prism::interaction(Ray &ray, RayGen &rayGen)
 	return rayGens;
 }
 
-RayGenList Doppler::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Doppler::interaction(Ray&, RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if ((diff + 2) % 4 == 0) {
@@ -383,7 +383,7 @@ RayGenList Doppler::interaction(Ray &ray, RayGen &rayGen)
 	return {};
 }
 
-RayGenList Tangler::interaction(Ray &ray, RayGen &rayGen)
+RayGenList Tangler::interaction(Ray&, RayGen &rayGen)
 {
 	RayGenList rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;

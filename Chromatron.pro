@@ -1,5 +1,6 @@
 CONFIG += c++11 console
 CONFIG -= app_bundle
+
 QMAKE_CFLAGS_WARN_ON += -W4
 
 HEADERS += \
@@ -39,6 +40,8 @@ SOURCES += \
 
 LIBS += -L/usr/lib -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 OBJECTS_DIR = obj
+
+DEFINES += DEBUG_LEVEL=2
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -21,7 +21,6 @@ class Game
 public:
 	Game();
 	~Game();
-
 	struct Level level;
 	struct LevelSet levelSet;
 	struct Editor editor;

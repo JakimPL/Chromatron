@@ -34,37 +34,32 @@ std::string Log::typeText(Log::Type type)
 		text = "";
 		break;
 	case Log::Type::MESSAGE:
-        text = "[";
-        text += "MESSAGE";
-		text += "] ";
+		text = "[MESSAGE] ";
 		break;
 	case Log::Type::INFO:
-        text = "   [";
-        text += "INFO";
-		text += "] ";
+		text = "   [INFO] ";
 		break;
 	case Log::Type::WARNING:
-        text = "[";
-        text += "WARNING";
-		text += "] ";
+		text = "[WARNING] ";
 		break;
 	case Log::Type::ERROR:
-        text = "  [";
-        text += "ERROR";
-		text += "] ";
+		text = "  [ERROR] ";
 		break;
 	}
+
 	return text;
 }
 
 void Log::log(Log::Type type, std::string message, bool file, bool date)
 {
-	std::string dateText = getCurrentDateTime();
-	if (date) {
-		std::cout << dateText << ": ";
-	}
-	std::cout << typeText(type) << message << "\n";
-	if (file) {
-		logToFile(message, date);
+	if (static_cast<unsigned int>(type) < DEBUG_LEVEL) {
+		std::string dateText = getCurrentDateTime();
+		if (date) {
+			std::cout << dateText << ": ";
+		}
+		std::cout << typeText(type) << message << "\n";
+		if (file) {
+			logToFile(message, date);
+		}
 	}
 }

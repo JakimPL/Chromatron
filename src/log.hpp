@@ -17,11 +17,11 @@ public:
 };
 
 enum class Log::Type {
-	NONE,
-	MESSAGE,
-	INFO,
-	WARNING,
 	ERROR,
+	WARNING,
+	INFO,
+	MESSAGE,
+	NONE
 };
 
 #endif
