@@ -4,7 +4,6 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include "constants.hpp"
-#include "object.hpp"
 #include "game.hpp"
 
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);

@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 
 struct Graphics {
-	///TODO: second layer of textures
 	std::vector<sf::Texture*> textures;
 	std::vector<sf::Texture*> additionalTextures;
 	std::vector<sf::Texture*> tiles;

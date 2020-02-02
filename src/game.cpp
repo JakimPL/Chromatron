@@ -1,8 +1,4 @@
-#include <fstream>
-
 #include "game.hpp"
-#include "auxiliary.hpp"
-#include "log.hpp"
 
 Game::Game()
 {

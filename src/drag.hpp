@@ -2,7 +2,7 @@
 #define DRAG_H
 
 #include <SFML/Graphics.hpp>
-#include "object.hpp"
+#include "position.hpp"
 
 struct Drag {
 	bool fromStack = false;

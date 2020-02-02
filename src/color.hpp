@@ -46,7 +46,4 @@ static Color colors[COL_COUNT] = {
 	Color(COL_WHITE_TUPLE)
 };
 
-typedef std::vector<sf::Vertex> Ray;
-typedef std::vector<Ray> Laser;
-
 #endif

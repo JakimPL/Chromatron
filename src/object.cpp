@@ -103,10 +103,7 @@ void Object::setObject(Game *gam, Position pos, ObjectID obID, DirectionID dir, 
 	inStack = inSt;
 
 	textures.push_back(game->graphics.textures[id]);
-	sprite.setOrigin(ORIGIN);
-	sprite.setPosition(inStack ? position + game->level.stack.offset : position);
-	sprite.setTexture(*(textures)[0]);
-	sprite.setRotation(direction * HALF_ANGLE);
+	textures.push_back(game->graphics.additionalTextures[id]);
 
 	if (colorable) {
 		setSpriteColor();
@@ -123,27 +120,18 @@ void Object::setObject(Game *gam, Position pos, ObjectID obID, DirectionID dir, 
 		game->level.stackObjectList.push_back(this);
 	}
 
-	setAdditionalSprites();
+	setSprite(sprite, 0);
+	setSprite(baseSprite, 1);
+
 	game->level.objectList[id].push_back(this);
 }
 
-void Object::setAdditionalSprites()
+void Object::setSprite(sf::Sprite &sprite, size_t textureIndex)
 {
-
-}
-
-void Beamer::setAdditionalSprites()
-{
-	textures.push_back(game->graphics.textures[OBJ_COUNT]);
-	baseSprite.setOrigin(ORIGIN);
-	baseSprite.setPosition(inStack ? position + game->level.stack.offset : position);
-	baseSprite.setTexture(*(textures)[1]);
-	baseSprite.setRotation(direction * HALF_ANGLE);
-}
-
-void Dot::setAdditionalSprites()
-{
-	textures.push_back(game->graphics.textures[OBJ_COUNT + 1]);
+	sprite.setOrigin(ORIGIN);
+	sprite.setPosition(inStack ? position + game->level.stack.offset : position);
+	sprite.setTexture(*(textures)[textureIndex]);
+	sprite.setRotation(direction * HALF_ANGLE);
 }
 
 void Object::writeGeneralData(std::ofstream &file)
@@ -232,25 +220,25 @@ void Teleporter::writeObject(std::ofstream &file)
 	writeGeneralData(file);
 }
 
-std::vector<RayGenElement> Object::interaction(RayGen &rayGen)
+RayGenList Object::interaction(RayGen &rayGen)
 {
 	rayGen.stop = rayGen.end = true;
 	return {};
 }
 
-std::vector<RayGenElement> Beamer::interaction(RayGen &rayGen)
+RayGenList Beamer::interaction(RayGen &rayGen)
 {
 	rayGen.stop = rayGen.end = true;
 	return {};
 }
 
-std::vector<RayGenElement> Dot::interaction(RayGen &rayGen)
+RayGenList Dot::interaction(RayGen &rayGen)
 {
 	this->actualColor = this->actualColor + rayGen.color;
 	return {};
 }
 
-std::vector<RayGenElement> Mirror::interaction(RayGen &rayGen)
+RayGenList Mirror::interaction(RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if (ABS(diff) <= 1) {
@@ -263,7 +251,7 @@ std::vector<RayGenElement> Mirror::interaction(RayGen &rayGen)
 	return {};
 }
 
-std::vector<RayGenElement> Bender::interaction(RayGen &rayGen)
+RayGenList Bender::interaction(RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction + 7) % DIR_COUNT - 4;
 	if (-2 <= diff && diff < 2) {
@@ -276,9 +264,9 @@ std::vector<RayGenElement> Bender::interaction(RayGen &rayGen)
 	return {};
 }
 
-std::vector<RayGenElement> Splitter::interaction(RayGen &rayGen)
+RayGenList Splitter::interaction(RayGen &rayGen)
 {
-	std::vector<RayGenElement> rayGens;
+	RayGenList rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
 	if (diff == 0) {
 		rayGen.stop = rayGen.end = true;
@@ -292,7 +280,7 @@ std::vector<RayGenElement> Splitter::interaction(RayGen &rayGen)
 	return rayGens;
 }
 
-std::vector<RayGenElement> Conduit::interaction(RayGen &rayGen)
+RayGenList Conduit::interaction(RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % (DIR_COUNT / 2) - 2;
 	if (diff != 0) {
@@ -302,7 +290,7 @@ std::vector<RayGenElement> Conduit::interaction(RayGen &rayGen)
 	return {};
 }
 
-std::vector<RayGenElement> Filter::interaction(RayGen &rayGen)
+RayGenList Filter::interaction(RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction + 2) % (DIR_COUNT / 2) - 2;
 	if (diff == 0) {
@@ -322,9 +310,9 @@ std::vector<RayGenElement> Filter::interaction(RayGen &rayGen)
 	return {};
 }
 
-std::vector<RayGenElement> Prism::interaction(RayGen &rayGen)
+RayGenList Prism::interaction(RayGen &rayGen)
 {
-	std::vector<RayGenElement> rayGens;
+	RayGenList rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT;
 	if (rayGen.color.isMono()) {
 		if (rayGen.color.red) {
@@ -378,7 +366,7 @@ std::vector<RayGenElement> Prism::interaction(RayGen &rayGen)
 	return rayGens;
 }
 
-std::vector<RayGenElement> Doppler::interaction(RayGen &rayGen)
+RayGenList Doppler::interaction(RayGen &rayGen)
 {
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if ((diff + 2) % 4 == 0) {
@@ -395,9 +383,9 @@ std::vector<RayGenElement> Doppler::interaction(RayGen &rayGen)
 	return {};
 }
 
-std::vector<RayGenElement> Tangler::interaction(RayGen &rayGen)
+RayGenList Tangler::interaction(RayGen &rayGen)
 {
-	std::vector<RayGenElement> rayGens;
+	RayGenList rayGens;
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if (diff == 0) {
 		if (rayGen.color.red) {
@@ -415,7 +403,7 @@ std::vector<RayGenElement> Tangler::interaction(RayGen &rayGen)
 	return rayGens;
 }
 
-std::vector<RayGenElement> Teleporter::interaction(RayGen &rayGen)
+RayGenList Teleporter::interaction(RayGen &rayGen)
 {
 	Position newPosition = findAnotherTeleporter(rayGen.direction);
 	if (newPosition != EMPTY_POSITION) {

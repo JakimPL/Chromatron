@@ -7,8 +7,10 @@ sf::Texture* Graphics::loadTexture(const std::string &filename)
 {
 	std::string location = PATH_DATA + PATH_IMG_PREFIX + filename + PATH_IMG_SUFFIX;
 	sf::Texture* image = new sf::Texture();
-	if (!image->loadFromFile(location)) {
-		throw std::runtime_error("failed to load " + location + " image file");
+	if (filename != "") {
+		if (!image->loadFromFile(location)) {
+			throw std::runtime_error("failed to load " + location + " image file");
+		}
 	}
 
 	return image;
@@ -16,8 +18,12 @@ sf::Texture* Graphics::loadTexture(const std::string &filename)
 
 void Graphics::loadTextures()
 {
-	for (size_t index = 0; index < OBJ_COUNT + 2; ++index) {
+	for (size_t index = 0; index < OBJ_COUNT; ++index) {
 		textures.push_back(loadTexture(IMG_OBJECT_NAMES[index]));
+	}
+
+	for (size_t index = 0; index < OBJ_COUNT; ++index) {
+		additionalTextures.push_back(loadTexture(IMG_EXTRA_OBJECT_NAMES[index]));
 	}
 
 	for (size_t index = 0; index < TIL_COUNT; ++index) {

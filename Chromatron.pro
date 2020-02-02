@@ -21,6 +21,7 @@ SOURCES += \
         src/game.cpp \
         src/gamestate.cpp \
         src/graphics.cpp \
+        src/level.cpp \
         src/levelset.cpp \
         src/log.cpp \
         src/object.cpp \
@@ -42,9 +43,12 @@ HEADERS += \
 	src/color.hpp \
 	src/constants.hpp \
 	src/drag.hpp \
+	src/editor.hpp \
 	src/game.hpp \
 	src/gamestate.hpp \
 	src/graphics.hpp \
+	src/level.hpp \
+	src/levelset.hpp \
 	src/log.hpp \
 	src/object.hpp \
 	src/position.hpp \

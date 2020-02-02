@@ -275,7 +275,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 	}
 }
 
-void Level::createRays(Beamer *beamer, std::vector<RayGenElement> rayGens)
+void Level::createRays(Beamer *beamer, RayGenList rayGens)
 {
 	for (RayGenElement &rayGen : rayGens) {
 		createRay(beamer, rayGen.first, rayGen.second);

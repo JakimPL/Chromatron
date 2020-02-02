@@ -1,9 +1,9 @@
 #ifndef RAYGEN_H
 #define RAYGEN_H
 
-#include "position.hpp"
 #include "color.hpp"
 #include "constants.hpp"
+#include "position.hpp"
 
 struct RayGen {
 	RayGen(unsigned short direction, Position position, Color color);
@@ -21,5 +21,6 @@ struct RayGen {
 typedef std::vector<sf::Vertex> Ray;
 typedef std::vector<Ray> Laser;
 typedef std::pair<RayGen, RayType> RayGenElement;
+typedef std::vector<RayGenElement> RayGenList;
 
 #endif // RAYGEN_H

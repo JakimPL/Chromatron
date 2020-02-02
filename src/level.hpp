@@ -57,7 +57,7 @@ struct Level {
 	void updateStack();
 
 	void createRay(Beamer *beamer, RayGen &rayGen, RayType rayType = RT_NORMAL);
-	void createRays(Beamer *beamer, std::vector<RayGenElement> rayGens);
+	void createRays(Beamer *beamer, RayGenList rayGens);
 	void rayStep(Beamer *beamer, RayGen &rayGen);
 	void calculateLasers();
 };
