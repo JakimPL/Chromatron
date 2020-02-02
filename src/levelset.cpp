@@ -4,7 +4,7 @@
 #include "auxiliary.hpp"
 #include "log.hpp"
 
-void Game::LevelSet::loadSet(const std::string &levelSetName)
+void LevelSet::loadSet(const std::string &levelSetName)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SET_SUFFIX;
 	std::ifstream levelSetFile(location);
@@ -50,26 +50,26 @@ void Game::LevelSet::loadSet(const std::string &levelSetName)
 	game->level.loadLevel(currentLevel);
 }
 
-bool Game::LevelSet::checkSet(const std::string &levelSetName)
+bool LevelSet::checkSet(const std::string &levelSetName)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (checkSetSave(levelSetName) ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
 	std::ifstream levelSetFile(location);
 	return (levelSetFile.good());
 }
 
-bool Game::LevelSet::checkSetSave(const std::string &levelSetName)
+bool LevelSet::checkSetSave(const std::string &levelSetName)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + PATH_SAV_SUFFIX;
 	std::ifstream levelSetSaveFile(location);
 	return levelSetSaveFile.good();
 }
 
-void Game::LevelSet::saveSet(bool save)
+void LevelSet::saveSet(bool save)
 {
 	saveSet(name, save);
 }
 
-void Game::LevelSet::saveSet(const std::string &levelSetName, bool save)
+void LevelSet::saveSet(const std::string &levelSetName, bool save)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (save ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
 	std::ofstream levelSetFile(location, std::ios::binary);
@@ -93,12 +93,12 @@ void Game::LevelSet::saveSet(const std::string &levelSetName, bool save)
 	saveCurrentLevel();
 }
 
-void Game::LevelSet::saveCurrentLevel()
+void LevelSet::saveCurrentLevel()
 {
 	saveCurrentLevel(name);
 }
 
-void Game::LevelSet::saveCurrentLevel(const std::string &levelSetName)
+void LevelSet::saveCurrentLevel(const std::string &levelSetName)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + "/" + numberToString(currentLevel) + PATH_SAV_SUFFIX;
 	std::ofstream levelSetFile(location, std::ios::binary);
@@ -117,17 +117,17 @@ void Game::LevelSet::saveCurrentLevel(const std::string &levelSetName)
 	}
 }
 
-bool Game::LevelSet::isLevelFirst()
+bool LevelSet::isLevelFirst()
 {
 	return currentLevel == 1;
 }
 
-bool Game::LevelSet::isLevelLast()
+bool LevelSet::isLevelLast()
 {
 	return currentLevel == levels;
 }
 
-void Game::LevelSet::unlockNextLevel()
+void LevelSet::unlockNextLevel()
 {
 	for (size_t level = 0; level < levels; ++level) {
 		if (levelStates[level] == LS_LOCKED) {
@@ -137,12 +137,12 @@ void Game::LevelSet::unlockNextLevel()
 	}
 }
 
-unsigned short Game::LevelSet::getCurrentLevel()
+unsigned short LevelSet::getCurrentLevel()
 {
 	return currentLevel;
 }
 
-void Game::LevelSet::nextLevel()
+void LevelSet::nextLevel()
 {
 	if (!isLevelLast()) {
 		currentLevel++;
@@ -151,7 +151,7 @@ void Game::LevelSet::nextLevel()
 	game->levelId = numberToString(currentLevel);
 }
 
-void Game::LevelSet::previousLevel()
+void LevelSet::previousLevel()
 {
 	if (!isLevelFirst()) {
 		currentLevel--;

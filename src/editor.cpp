@@ -1,22 +1,23 @@
+#include "editor.hpp"
 #include "game.hpp"
 
-bool Game::Editor::isActive()
+bool Editor::isActive()
 {
 	return active;
 }
 
-void Game::Editor::switchMode()
+void Editor::switchMode()
 {
 	mode = static_cast<EditorMode>((mode + 1) % static_cast<int>(ED_COUNT));
 }
 
-void Game::Editor::turn(bool editorOn)
+void Editor::turn(bool editorOn)
 {
 	active = editorOn;
 	sprite.setOrigin(ORIGIN);
 }
 
-void Game::Editor::setObject(ObjectID id)
+void Editor::setObject(ObjectID id)
 {
 	if (active) {
 		currentObject = id;
@@ -29,7 +30,7 @@ void Game::Editor::setObject(ObjectID id)
 	}
 }
 
-ObjectID Game::Editor::getObject()
+ObjectID Editor::getObject()
 {
 	return currentObject;
 }

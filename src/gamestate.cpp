@@ -115,8 +115,8 @@ void GameState::drawLasers()
 
 void GameState::drawLasers(bool blackLasers)
 {
-	for (size_t beamerIndex = 0; beamerIndex < game.level.objectList[OBJ_BEAMER].size(); ++beamerIndex) {
-		Beamer* beamer = (Beamer*) game.level.objectList[OBJ_BEAMER][beamerIndex];
+	for (Object *object : game.level.objectList[OBJ_BEAMER]) {
+		Beamer* beamer = (Beamer*) object;
 		size_t rays = beamer->laser.size();
 
 		for (size_t rayIndex = 0; rayIndex < rays; ++rayIndex) {

@@ -38,7 +38,7 @@ void readByte(std::ifstream &file, unsigned short &var)
 	var = static_cast<unsigned short>(buffer);
 }
 
-void readObject(std::ifstream &file, Game::Level &level, bool stackObject)
+void readObject(std::ifstream &file, Level &level, bool stackObject)
 {
 	unsigned short id;
 	readByte(file, id);

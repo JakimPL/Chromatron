@@ -4,16 +4,15 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include "constants.hpp"
-#include "game.hpp"
-#include "gamestate.hpp"
 #include "object.hpp"
+#include "game.hpp"
 
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);
 extern unsigned short countDigit(unsigned short n);
 extern std::string numberToString(unsigned short number);
 extern void loadSprites();
 extern void readByte(std::ifstream &file, unsigned short &var);
-extern void readObject(std::ifstream &file, Game::Level &level, bool stackObject = false);
+extern void readObject(std::ifstream &file, Level &level, bool stackObject = false);
 extern void writeByte(std::ofstream &file, unsigned short var);
 extern void writeObject(std::ofstream &file, Object* object);
 extern Position floatToPosition(sf::Vector2f vector);

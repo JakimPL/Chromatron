@@ -28,6 +28,8 @@ public:
 	std::vector<sf::Texture*> textures;
 	sf::Sprite baseSprite;
 	sf::Sprite sprite;
+
+
 	virtual ~Object();
 	virtual void rotate(bool clockwise, bool force = false);
 	virtual void setObject(Game *gam, Position pos, ObjectID obID, DirectionID dir = DIR_NORTH, bool inSt = false, bool stackObject = false);

@@ -2,7 +2,10 @@
 #define STACK_H
 
 #include <SFML/Graphics.hpp>
-#include "object.hpp"
+#include "constants.hpp"
+#include "position.hpp"
+
+class Object;
 
 struct Stack {
 	unsigned short width = STACK_WIDTH;
