@@ -1,6 +1,20 @@
 #include "auxiliary.hpp"
 #include "log.hpp"
 
+void addElement(RayGenList &rayGens, RayGenElement element, unsigned short count)
+{
+	for (unsigned short index = 0; index < count; ++index) {
+		rayGens.push_back(element);
+	}
+}
+
+void addNode(Ray &ray, sf::Vertex node, unsigned short count)
+{
+	for (unsigned short index = 0; index < count; ++index) {
+		ray.push_back(node);
+	}
+}
+
 sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color)
 {
 	sf::RectangleShape rectangle(sf::Vector2f(w, h));

@@ -105,23 +105,19 @@ void Object::setObject(Game *gam, Position pos, ObjectID obID, DirectionID dir, 
 	textures.push_back(game->graphics.textures[id]);
 	textures.push_back(game->graphics.additionalTextures[id]);
 
-	if (colorable) {
-		setSpriteColor();
-	}
+	setSprite(sprite, 0);
+	setSprite(baseSprite, 1);
 
-	if (!inStack) {
-		game->level.objectMap[position] = this;
-	} else {
+	if (inStack) {
 		game->level.stack.objectMap[position] = this;
 		game->level.stack.objectList[id].push_back(this);
+	} else {
+		game->level.objectMap[position] = this;
 	}
 
 	if (stackObject) {
 		game->level.stackObjectList.push_back(this);
 	}
-
-	setSprite(sprite, 0);
-	setSprite(baseSprite, 1);
 
 	game->level.objectList[id].push_back(this);
 }
@@ -132,6 +128,10 @@ void Object::setSprite(sf::Sprite &sprite, size_t textureIndex)
 	sprite.setPosition(inStack ? position + game->level.stack.offset : position);
 	sprite.setTexture(*(textures)[textureIndex]);
 	sprite.setRotation(direction * HALF_ANGLE);
+
+	if (colorable) {
+		setSpriteColor();
+	}
 }
 
 void Object::writeGeneralData(std::ofstream &file)
@@ -274,7 +274,7 @@ RayGenList Splitter::interaction(RayGen &rayGen)
 		unsigned short newDirection = (DIR_COUNT + rayGen.direction + 2 * diff) % DIR_COUNT;
 		RayGen newRayGen = rayGen;
 		newRayGen.direction = newDirection;
-		rayGens.push_back({newRayGen, RT_NORMAL});
+		addElement(rayGens, {newRayGen, RT_NORMAL});
 	}
 
 	return rayGens;
@@ -341,7 +341,7 @@ RayGenList Prism::interaction(RayGen &rayGen)
 			if ((diff / 2) % 2 != 0) {
 				RayGen newRayGen = rayGen;
 				newRayGen.color = COL_RED;
-				rayGens.push_back({newRayGen, RT_NORMAL});
+				addElement(rayGens, {newRayGen, RT_NORMAL});
 			}
 		}
 		if (rayGen.color.green) {
@@ -349,7 +349,7 @@ RayGenList Prism::interaction(RayGen &rayGen)
 				RayGen newRayGen = rayGen;
 				newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) / 3) * 2 + 3) % DIR_COUNT;
 				newRayGen.color = COL_GREEN;
-				rayGens.push_back({newRayGen, RT_NORMAL});
+				addElement(rayGens, {newRayGen, RT_NORMAL});
 			}
 		}
 		if (rayGen.color.blue) {
@@ -357,7 +357,7 @@ RayGenList Prism::interaction(RayGen &rayGen)
 				RayGen newRayGen = rayGen;
 				newRayGen.direction = (DIR_COUNT + rayGen.direction - ((diff + 1) % 3) * 2 + 2) % DIR_COUNT;
 				newRayGen.color = COL_BLUE;
-				rayGens.push_back({newRayGen, RT_NORMAL});
+				addElement(rayGens, {newRayGen, RT_NORMAL});
 			}
 		}
 		rayGen.stop = rayGen.end = true;
@@ -389,13 +389,13 @@ RayGenList Tangler::interaction(RayGen &rayGen)
 	short diff = (DIR_COUNT + this->direction - rayGen.direction) % DIR_COUNT - 4;
 	if (diff == 0) {
 		if (rayGen.color.red) {
-			rayGens.push_back({{rayGen.direction, rayGen.position, COL_RED}, RT_TANGLED});
+			addElement(rayGens, {{rayGen.direction, rayGen.position, COL_RED}, RT_TANGLED});
 		}
 		if (rayGen.color.green) {
-			rayGens.push_back({{rayGen.direction, rayGen.position, COL_GREEN}, RT_TANGLED});
+			addElement(rayGens, {{rayGen.direction, rayGen.position, COL_GREEN}, RT_TANGLED});
 		}
 		if (rayGen.color.blue) {
-			rayGens.push_back({{rayGen.direction, rayGen.position, COL_BLUE}, RT_TANGLED});
+			addElement(rayGens, {{rayGen.direction, rayGen.position, COL_BLUE}, RT_TANGLED});
 		}
 	}
 	rayGen.stop = rayGen.end = true;

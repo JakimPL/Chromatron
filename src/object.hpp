@@ -5,7 +5,7 @@
 #include "constants.hpp"
 #include "color.hpp"
 #include "position.hpp"
-#include "raygen.hpp"
+#include "ray.hpp"
 
 class Game;
 

@@ -5,6 +5,9 @@
 #include "constants.hpp"
 #include "position.hpp"
 
+typedef std::vector<sf::Vertex> Ray;
+typedef std::vector<Ray> Laser;
+
 struct RayGen {
 	RayGen(unsigned short direction, Position position, Color color);
 	unsigned short direction;
@@ -18,8 +21,6 @@ struct RayGen {
 	bool endAtMiddle;
 };
 
-typedef std::vector<sf::Vertex> Ray;
-typedef std::vector<Ray> Laser;
 typedef std::pair<RayGen, RayType> RayGenElement;
 typedef std::vector<RayGenElement> RayGenList;
 

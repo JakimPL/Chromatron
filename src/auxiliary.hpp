@@ -6,6 +6,8 @@
 #include "constants.hpp"
 #include "game.hpp"
 
+extern void addElement(RayGenList &rayGens, RayGenElement element, unsigned short count = 2);
+extern void addNode(Ray &ray, sf::Vertex node, unsigned short count = 2);
 extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color color);
 extern unsigned short countDigit(unsigned short n);
 extern std::string numberToString(unsigned short number);

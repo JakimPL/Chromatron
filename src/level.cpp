@@ -223,7 +223,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 						rayGens[ray].color = rayGens[ray].color.shiftColor(CLS_REVERSE(rayGens[1 - ray].colorShift));
 					}
 					if (previousColors[ray] != rayGens[ray].color) {
-						rays[ray].push_back(sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
+						addNode(rays[ray], sf::Vertex(rayGens[ray].position, previousColors[ray].convertToColor()));
 					}
 				}
 
@@ -233,7 +233,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 					node.position.y -= rayGens[ray].delta.y * 0.5f;
 				}
 
-				rays[ray].push_back(node);
+				addNode(rays[ray], node);
 			}
 		}
 
@@ -256,7 +256,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 			}
 
 			if (previousColor != rayGen.color) {
-				ray.push_back(sf::Vertex(rayGen.position, previousColor.convertToColor()));
+				addNode(ray, sf::Vertex(rayGen.position, previousColor.convertToColor()));
 			}
 
 			sf::Vertex node(rayGen.position, rayGen.color.convertToColor());
@@ -265,7 +265,7 @@ void Level::createRay(Beamer *beamer, RayGen &rayGen, RayType rayType)
 				node.position.y -= rayGen.delta.y * 0.5f;
 			}
 
-			ray.push_back(node);
+			addNode(ray, node);
 		}
 
 		beamer->laser.push_back(ray);
@@ -293,6 +293,7 @@ void Level::rayStep(Beamer *beamer, RayGen &rayGen)
 	rayGen.delta = rayGen.position;
 	rayGen.position.moveInDirection(rayGen.direction, 1);
 	rayGen.delta = sf::Vector2f(rayGen.position) - rayGen.delta;
+
 	if (isPlaceTaken(rayGen.position)) {
 		createRays(beamer, objectMap[rayGen.position]->interaction(rayGen));
 	}

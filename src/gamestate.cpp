@@ -129,7 +129,7 @@ void GameState::drawLasers(bool blackLasers)
 				}
 			}
 
-			window.draw(vertices, size, sf::LinesStrip, (blackLasers ? sf::BlendNone : sf::BlendAdd));
+			window.draw(vertices, size, sf::Lines, (blackLasers ? sf::BlendNone : sf::BlendAdd));
 		}
 	}
 }
