@@ -52,7 +52,7 @@ std::string Log::typeText(Log::Type type)
 
 void Log::log(Log::Type type, std::string message, bool file, bool date)
 {
-	if (static_cast<unsigned int>(type) < DEBUG_LEVEL) {
+	if (static_cast<unsigned int>(type) >= LOG_LEVEL) {
 		std::string dateText = getCurrentDateTime();
 		if (date) {
 			std::cout << dateText << ": ";

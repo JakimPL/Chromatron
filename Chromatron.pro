@@ -41,7 +41,7 @@ SOURCES += \
 LIBS += -L/usr/lib -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 OBJECTS_DIR = obj
 
-DEFINES += DEBUG_LEVEL=2
+DEFINES += LOG_LEVEL=5
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

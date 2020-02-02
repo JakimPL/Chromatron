@@ -3,8 +3,6 @@
 
 #include <string>
 
-//TODO: LOG LEVELES
-
 class Log
 {
 private:
@@ -17,11 +15,11 @@ public:
 };
 
 enum class Log::Type {
-	ERROR,
-	WARNING,
-	INFO,
+	NONE,
 	MESSAGE,
-	NONE
+	INFO,
+	WARNING,
+	ERROR
 };
 
 #endif
