@@ -390,6 +390,7 @@ bool Level::addObject(Position position, ObjectID id)
 void Level::newObject(Position position, ObjectID id, bool inStack)
 {
 	///TODO: abstraction
+	typeMap[id];
 	if (id == OBJ_BEAMER) {
 		if (!inStack) {
 			Beamer *beamer = new Beamer();

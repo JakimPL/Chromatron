@@ -45,6 +45,8 @@ void GameState::initializeGame()
 	LogNone("Game starts");
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	game.levelSet.loadSet(game.levelSet.name);
+	game.graphics.loadFont();
+	updateLevelsList();
 }
 
 void GameState::mainLoop()
@@ -87,6 +89,7 @@ void GameState::draw()
 	drawStack();
 	drawLasers();
 	drawGameObjects();
+	drawLevelsList();
 
 	window.display();
 }
@@ -131,6 +134,13 @@ void GameState::drawLasers(bool blackLasers)
 
 			window.draw(vertices, size, sf::Lines, (blackLasers ? sf::BlendNone : sf::BlendAdd));
 		}
+	}
+}
+
+void GameState::drawLevelsList()
+{
+	for (unsigned short level = 0; level < texts.size(); ++level) {
+		window.draw(texts[level]);
 	}
 }
 
@@ -261,6 +271,25 @@ void GameState::gameEvents()
 
 		game.level.event = false;
 	}
+}
+
+sf::Color GameState::getTextColor(unsigned short level)
+{
+	if (level == game.levelSet.getCurrentLevel()) {
+		return white;
+	} else {
+		LevelState levelState = game.levelSet.levelStates[level - 1];
+		switch (levelState) {
+		case LS_LOCKED:
+			return red;
+		case LS_AVAILABLE:
+			return blue;
+		case LS_PASSED:
+			return green;
+		}
+	}
+
+	return black;
 }
 
 void GameState::keyboardGlobalEvents()
@@ -434,12 +463,14 @@ void GameState::clearLevel()
 	drag.position.setNull();
 	game.level.clearLevel();
 	game.level.event = true;
+	updateLevelsList();
 }
 
 void GameState::loadLevel()
 {
 	clearLevel();
 	game.level.loadLevel(game.levelSet.getCurrentLevel());
+	updateLevelsList();
 }
 
 void GameState::nextLevel()
@@ -495,5 +526,25 @@ void GameState::saveLevel()
 		game.level.event = true;
 	} else {
 		game.levelSet.saveSet(game.levelSet.name);
+	}
+}
+
+
+void GameState::updateLevelsList()
+{
+	texts.clear();
+	unsigned short offsetX = TILE_SIZE * OFFSET_X;
+	unsigned short offsetY = TILE_SIZE * (2 * OFFSET_Y + game.level.height);
+	unsigned short lineWidth = SCREEN_WIDTH / TILE_SIZE - OFFSET_X;
+	for (unsigned short level = 1; level <= game.levelSet.levels; ++level) {
+		sf::Text text;
+		sf::Color realColor = getTextColor(level);
+		text.setFont(game.graphics.font);
+		text.setString(std::to_string(level));
+		text.setFillColor(realColor);
+		text.setOrigin(0, TILE_SIZE / 2);
+		text.setCharacterSize(TEXT_SIZE);
+		text.setPosition(offsetX + TILE_SIZE * ((level - 1) % lineWidth), offsetY + TILE_SIZE * ((level - 1) / lineWidth));
+		texts.push_back(text);
 	}
 }

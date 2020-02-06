@@ -13,6 +13,7 @@ class Color
 public:
 	Color(bool r = false, bool g = false, bool b = false);
 	Color(Colors colId = COL_BLACK);
+	Color(LevelState levelState);
 
 	Color operator+(const Color &color);
 	Color operator*(const Color &color);

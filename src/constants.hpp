@@ -3,11 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#define SCREEN_WIDTH 600
-#define SCREEN_HEIGHT 420
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
 #define OFFSET_X 1
 #define OFFSET_Y 1
 #define TILE_SIZE 24
+#define TEXT_SIZE 12
 #define OUTLINE_SIZE 1
 #define HALF_ANGLE 45
 
@@ -110,11 +111,12 @@ enum RayType : unsigned short {
 	RT_TANGLED
 };
 
-static std::string PATH_DATA       = "./data/";
+static std::string PATH_DATA       = "data/";
 static std::string PATH_LEV_PREFIX = "LEV/";
 static std::string PATH_LEV_SUFFIX = ".lev";
 static std::string PATH_IMG_PREFIX = "IMG/";
 static std::string PATH_IMG_SUFFIX = ".png";
+static std::string PATH_FNT        = "FNT/notomono.ttf";
 static std::string PATH_LS_SUFFIX  = "/levels";
 static std::string FIRST_LEVEL_ID  = "001";
 static std::string PATH_SAV_SUFFIX = ".sav";

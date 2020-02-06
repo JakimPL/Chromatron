@@ -54,6 +54,26 @@ std::string numberToString(unsigned short number)
 	}
 }
 
+template<typename T> Object* createObject()
+{
+	return new T;
+}
+
+void createObjectMap()
+{
+	typeMap[OBJ_BEAMER]     = &createObject<Beamer>;
+	typeMap[OBJ_DOT]        = &createObject<Dot>;
+	typeMap[OBJ_MIRROR]     = &createObject<Mirror>;
+	typeMap[OBJ_BENDER]     = &createObject<Bender>;
+	typeMap[OBJ_SPLITTER]   = &createObject<Splitter>;
+	typeMap[OBJ_CONDUIT]    = &createObject<Conduit>;
+	typeMap[OBJ_FILTER]     = &createObject<Filter>;
+	typeMap[OBJ_PRISM]      = &createObject<Prism>;
+	typeMap[OBJ_DOPPLER]    = &createObject<Doppler>;
+	typeMap[OBJ_TANGLER]    = &createObject<Tangler>;
+	typeMap[OBJ_TELEPORTER] = &createObject<Teleporter>;
+}
+
 void readByte(std::ifstream &file, unsigned short &var)
 {
 	char buffer;
