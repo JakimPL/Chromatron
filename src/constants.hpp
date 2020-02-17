@@ -25,11 +25,11 @@
 #define DIR(a) static_cast<unsigned short>((DIR_COUNT + ((a) % DIR_COUNT)) % DIR_COUNT)
 #define CLS_REVERSE(a) static_cast<ColorShift>((3 - ((3 + (a % 3)) % 3)) % 3)
 
-#define LogInfo(message) Log::log(Log::Type::INFO, message)
-#define LogError(message) Log::log(Log::Type::ERROR, message)
+#define LogInfo(message)    Log::log(Log::Type::INFO, message)
+#define LogError(message)   Log::log(Log::Type::ERROR, message)
 #define LogMessage(message) Log::log(Log::Type::MESSAGE, message)
 #define LogWarning(message) Log::log(Log::Type::WARNING, message)
-#define LogNone(message) Log::log(Log::Type::NONE, message)
+#define LogNone(message)    Log::log(Log::Type::NONE, message)
 
 #define BASIC_COLORS 3
 #define COL_BLACK_TUPLE   {false, false, false}

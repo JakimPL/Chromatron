@@ -326,6 +326,7 @@ void GameState::keyboardGlobalEvents()
 		}
 		case sf::Keyboard::E: {
 			game.editor.turn(!game.editor.isActive());
+			updateLevelsList();
 			break;
 		}
 		case sf::Keyboard::R: {
@@ -482,12 +483,14 @@ void GameState::mouseGameEvents()
 
 void GameState::mouseLevelsListEvents()
 {
-	if (event.type == sf::Event::MouseButtonReleased) {
-		short level = getLevelFromList();
-		if (level > 0 and game.levelSet.getLevelState(level) != LS_LOCKED) {
-			saveCurrentLevel();
-			game.levelSet.setCurrentLevel(level);
-			loadLevel();
+	if (!game.editor.isActive()) {
+		if (event.type == sf::Event::MouseButtonReleased) {
+			short level = getLevelFromList();
+			if (level > 0 and game.levelSet.getLevelState(level) != LS_LOCKED) {
+				saveCurrentLevel();
+				game.levelSet.setCurrentLevel(level);
+				loadLevel();
+			}
 		}
 	}
 }
@@ -572,7 +575,7 @@ void GameState::updateLevelsList()
 	unsigned short LINE_WIDTH = SCREEN_WIDTH / TILE_SIZE - OFFSET_X;
 	for (unsigned short level = 1; level <= game.levelSet.getLevelsCount(); ++level) {
 		sf::Text text;
-		sf::Color realColor = getTextColor(level);
+		sf::Color realColor = game.editor.isActive() ? dgray : getTextColor(level);
 		Position position = shortToPosition((level - 1) % LINE_WIDTH, game.level.height + ((level - 1) / LINE_WIDTH));
 
 		text.setFont(game.graphics.font);
