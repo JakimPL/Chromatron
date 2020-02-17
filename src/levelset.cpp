@@ -50,6 +50,11 @@ void LevelSet::loadSet(const std::string &levelSetName)
 	game->level.loadLevel(currentLevel);
 }
 
+void LevelSet::loadSet()
+{
+	loadSet(name);
+}
+
 bool LevelSet::checkSet(const std::string &levelSetName)
 {
 	std::string location = PATH_DATA + PATH_LEV_PREFIX + levelSetName + PATH_LS_SUFFIX + (checkSetSave(levelSetName) ? PATH_SAV_SUFFIX : PATH_SET_SUFFIX);
@@ -115,6 +120,16 @@ void LevelSet::saveCurrentLevel(const std::string &levelSetName)
 	} else {
 		LogError("Failed to save " + location + " file");
 	}
+}
+
+std::string LevelSet::getName()
+{
+	return name;
+}
+
+void LevelSet::setName(std::string newName)
+{
+	name = newName;
 }
 
 bool LevelSet::isLevelFirst()

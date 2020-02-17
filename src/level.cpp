@@ -4,7 +4,7 @@
 
 bool Level::checkLevelSave(const std::string &id)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.getName() + "/" + id + PATH_SAV_SUFFIX;
 	std::ifstream levelSetSaveFile(location);
 	return levelSetSaveFile.good();
 }
@@ -76,7 +76,7 @@ void Level::loadLevel(const unsigned short level, bool ignoreSave)
 void Level::loadLevel(const std::string &id, bool ignoreSave)
 {
 	///TODO: error handling
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_LEV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.getName() + "/" + id + PATH_LEV_SUFFIX;
 	std::ifstream levelFile(location, std::ios::binary | std::ios::in);
 	if (levelFile.good()) {
 		readByte(levelFile, width);
@@ -109,7 +109,7 @@ void Level::loadLevel(const std::string &id, bool ignoreSave)
 		if (checkLevelSave(id) and !ignoreSave) {
 			levelFile.close();
 			LogInfo("File " + location + " loaded successfully");
-			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_SAV_SUFFIX;
+			location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.getName() + "/" + id + PATH_SAV_SUFFIX;
 			levelFile.open(location, std::ios::binary | std::ios::in);
 			readByte(levelFile, stackObjectsCountSave);
 			if (stackObjectsCount != stackObjectsCountSave) {
@@ -134,7 +134,7 @@ void Level::loadLevel(const std::string &id, bool ignoreSave)
 
 void Level::saveLevel(const std::string &id)
 {
-	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.name + "/" + id + PATH_LEV_SUFFIX;
+	std::string location = PATH_DATA + PATH_LEV_PREFIX + game->levelSet.getName() + "/" + id + PATH_LEV_SUFFIX;
 	std::ofstream levelFile(location, std::ios::binary);
 	if (levelFile.good()) {
 		writeByte(levelFile, width);
