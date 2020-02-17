@@ -5,13 +5,15 @@
 
 class Game;
 
+///TODO: name, levels, levelStates private
+
 struct LevelSet {
 private:
 	unsigned short currentLevel;
-public:
-	std::string name;
 	unsigned short levels;
 	std::vector<LevelState> levelStates;
+public:
+	std::string name;
 	Game* game;
 
 	bool checkSetSave(const std::string &levelSetName);
@@ -23,12 +25,19 @@ public:
 	void saveSet(bool save = true);
 
 	unsigned short getCurrentLevel();
+	unsigned short getLevelsCount();
+	void setCurrentLevel(short level);
 	void nextLevel();
 	void previousLevel();
 
 	bool isLevelFirst();
 	bool isLevelLast();
+	void passLevel();
 	void unlockNextLevel();
+
+	void addLevel();
+	LevelState getLevelState();
+	LevelState getLevelState(short level);
 };
 
 #endif

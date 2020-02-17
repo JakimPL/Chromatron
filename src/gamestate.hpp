@@ -11,6 +11,7 @@ struct GameState {
 	Drag &drag;
 	sf::Event &event;
 	Position mousePosition;
+	Position levelsListPosition;
 	std::vector<sf::Text> texts;
 
 	void handleApplicationParameters(int argc, char* argv[]);
@@ -28,6 +29,7 @@ struct GameState {
 	void drawTile(Position position, bool inStack = false);
 	void endGame();
 	void gameEvents();
+	short getLevelFromList();
 	sf::Color getTextColor(unsigned short level);
 	void initializeGame();
 	void keyboardGlobalEvents();
@@ -36,6 +38,7 @@ struct GameState {
 	void mainLoop();
 	void mouseEditorEvents();
 	void mouseGameEvents();
+	void mouseLevelsListEvents();
 	void nextLevel();
 	void previousLevel();
 	void resetLevel();

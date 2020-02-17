@@ -127,6 +127,14 @@ bool LevelSet::isLevelLast()
 	return currentLevel == levels;
 }
 
+void LevelSet::passLevel()
+{
+	if (getLevelState() == LS_AVAILABLE) {
+		levelStates[currentLevel - 1] = LS_PASSED;
+		unlockNextLevel();
+	}
+}
+
 void LevelSet::unlockNextLevel()
 {
 	for (size_t level = 0; level < levels; ++level) {
@@ -137,25 +145,49 @@ void LevelSet::unlockNextLevel()
 	}
 }
 
+unsigned short LevelSet::getLevelsCount()
+{
+	return levels;
+}
+
 unsigned short LevelSet::getCurrentLevel()
 {
 	return currentLevel;
 }
 
+void LevelSet::setCurrentLevel(short level)
+{
+	if (0 < level and level <= levels) {
+		if (getLevelState(level) != LS_LOCKED) {
+			currentLevel = level;
+		}
+
+		game->levelId = numberToString(currentLevel);
+	}
+}
+
 void LevelSet::nextLevel()
 {
-	if (!isLevelLast()) {
-		currentLevel++;
-	}
-
-	game->levelId = numberToString(currentLevel);
+	setCurrentLevel(currentLevel + 1);
 }
 
 void LevelSet::previousLevel()
 {
-	if (!isLevelFirst()) {
-		currentLevel--;
-	}
+	setCurrentLevel(currentLevel - 1);
+}
 
-	game->levelId = numberToString(currentLevel);
+void LevelSet::addLevel()
+{
+	levels++;
+}
+
+LevelState LevelSet::getLevelState()
+{
+	///TODO: 0 < level <= levels
+	return getLevelState(currentLevel);
+}
+
+LevelState LevelSet::getLevelState(short level)
+{
+	return levelStates[level - 1];
 }

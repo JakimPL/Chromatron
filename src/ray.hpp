@@ -24,4 +24,4 @@ struct RayGen {
 typedef std::pair<RayGen, RayType> RayGenElement;
 typedef std::vector<RayGenElement> RayGenList;
 
-#endif // RAYGEN_H
+#endif

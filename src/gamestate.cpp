@@ -139,6 +139,10 @@ void GameState::drawLasers(bool blackLasers)
 
 void GameState::drawLevelsList()
 {
+	if (getLevelFromList() > 0) {
+		drawSelectorSquare(mousePosition, dyellow, dgray, false);
+	}
+
 	for (unsigned short level = 0; level < texts.size(); ++level) {
 		window.draw(texts[level]);
 	}
@@ -261,16 +265,33 @@ void GameState::gameEvents()
 		game.level.calculateLasers();
 
 		if (!game.editor.isActive()) {
-			if (game.levelSet.levelStates[game.levelSet.getCurrentLevel() - 1] != LS_PASSED) {
+			if (game.levelSet.getLevelState() != LS_PASSED) {
 				if (game.level.checkWin()) {
-					game.levelSet.levelStates[game.levelSet.getCurrentLevel() - 1] = LS_PASSED;
-					game.levelSet.unlockNextLevel();
+					game.levelSet.passLevel();
+					updateLevelsList();
 				}
 			}
 		}
 
 		game.level.event = false;
 	}
+
+	mouseLevelsListEvents();
+}
+
+short GameState::getLevelFromList()
+{
+	short row = mousePosition.getX();
+	short column = mousePosition.getY() - game.level.height;
+
+	if (0 <= column and column <= game.levelSet.getLevelsCount() / LINE_WIDTH and 0 <= row and row < LINE_WIDTH) {
+		short level = LINE_WIDTH * column + row + 1;
+		if (level <= game.levelSet.getLevelsCount()) {
+			return level;
+		}
+	}
+
+	return 0;
 }
 
 sf::Color GameState::getTextColor(unsigned short level)
@@ -278,7 +299,7 @@ sf::Color GameState::getTextColor(unsigned short level)
 	if (level == game.levelSet.getCurrentLevel()) {
 		return white;
 	} else {
-		LevelState levelState = game.levelSet.levelStates[level - 1];
+		LevelState levelState = game.levelSet.getLevelState(level);
 		switch (levelState) {
 		case LS_LOCKED:
 			return red;
@@ -458,6 +479,17 @@ void GameState::mouseGameEvents()
 	}
 }
 
+void GameState::mouseLevelsListEvents()
+{
+	if (event.type == sf::Event::MouseButtonPressed) {
+		short level = getLevelFromList();
+		if (level > 0 and game.levelSet.getLevelState(level) != LS_LOCKED) {
+			game.levelSet.setCurrentLevel(level);
+			loadLevel();
+		}
+	}
+}
+
 void GameState::clearLevel()
 {
 	drag.position.setNull();
@@ -477,16 +509,16 @@ void GameState::nextLevel()
 {
 	if (game.editor.isActive()) {
 		if (game.levelSet.isLevelLast()) {
-			game.levelSet.levels++;
+			game.levelSet.addLevel();
 			game.levelSet.nextLevel();
 			game.levelSet.saveSet(false);
 			clearLevel();
-			LogInfo("Added a new level to the levelset");
 			game.level.saveLevel(game.levelId);
+			LogInfo("Added a new level to the levelset");
 		}
 	} else {
 		if (!game.levelSet.isLevelLast()) {
-			if (game.levelSet.levelStates[game.levelSet.getCurrentLevel()] != LS_LOCKED) {
+			if (game.levelSet.getLevelState(game.levelSet.getCurrentLevel() + 1) != LS_LOCKED) {
 				saveCurrentLevel();
 				game.levelSet.nextLevel();
 				loadLevel();
@@ -533,18 +565,21 @@ void GameState::saveLevel()
 void GameState::updateLevelsList()
 {
 	texts.clear();
-	unsigned short offsetX = TILE_SIZE * OFFSET_X;
-	unsigned short offsetY = TILE_SIZE * (2 * OFFSET_Y + game.level.height);
-	unsigned short lineWidth = SCREEN_WIDTH / TILE_SIZE - OFFSET_X;
-	for (unsigned short level = 1; level <= game.levelSet.levels; ++level) {
+	unsigned short LINE_WIDTH = SCREEN_WIDTH / TILE_SIZE - OFFSET_X;
+	for (unsigned short level = 1; level <= game.levelSet.getLevelsCount(); ++level) {
 		sf::Text text;
 		sf::Color realColor = getTextColor(level);
+		Position position = shortToPosition((level - 1) % LINE_WIDTH, game.level.height + ((level - 1) / LINE_WIDTH));
+
 		text.setFont(game.graphics.font);
+		text.setCharacterSize(TEXT_SIZE);
 		text.setString(std::to_string(level));
 		text.setFillColor(realColor);
-		text.setOrigin(0, TILE_SIZE / 2);
-		text.setCharacterSize(TEXT_SIZE);
-		text.setPosition(offsetX + TILE_SIZE * ((level - 1) % lineWidth), offsetY + TILE_SIZE * ((level - 1) / lineWidth));
+
+		sf::FloatRect textBounds = text.getLocalBounds();
+
+		text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
+		text.setPosition(position);
 		texts.push_back(text);
 	}
 }

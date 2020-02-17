@@ -143,4 +143,6 @@ static sf::Color   dblue(0,   0,   128);
 static sf::Color  yellow(255, 255, 0);
 static sf::Color dyellow(128, 128, 0);
 
+constexpr short LINE_WIDTH = SCREEN_WIDTH / TILE_SIZE - OFFSET_X;
+
 #endif
