@@ -142,6 +142,11 @@ bool LevelSet::isLevelLast()
 	return currentLevel == levels;
 }
 
+bool LevelSet::isLevelInRange(short level)
+{
+	return (0 < level and level <= levels);
+}
+
 void LevelSet::passLevel()
 {
 	if (getLevelState() == LS_AVAILABLE) {
@@ -198,11 +203,14 @@ void LevelSet::addLevel()
 
 LevelState LevelSet::getLevelState()
 {
-	///TODO: 0 < level <= levels
 	return getLevelState(currentLevel);
 }
 
 LevelState LevelSet::getLevelState(short level)
 {
-	return levelStates[level - 1];
+	if (isLevelInRange(level)) {
+		return levelStates[level - 1];
+	} else {
+		return LS_LOCKED;
+	}
 }

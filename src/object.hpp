@@ -38,6 +38,12 @@ public:
 	virtual void writeGeneralData(std::ofstream &file);
 	virtual void writeObject(std::ofstream &file);
 	virtual RayGenList interaction(Ray &ray, RayGen &rayGen);
+
+	typedef std::map<ObjectID, Object*(*)()> TypeMap;
+	static TypeMap typeMap;
+
+	template<typename T> static Object* createObject();
+	static void createObjectMap();
 };
 
 class Beamer : public Object

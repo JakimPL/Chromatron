@@ -34,6 +34,7 @@ public:
 
 	bool isLevelFirst();
 	bool isLevelLast();
+	bool isLevelInRange(short level);
 	void passLevel();
 	void unlockNextLevel();
 

@@ -390,48 +390,13 @@ bool Level::addObject(Position position, ObjectID id)
 void Level::newObject(Position position, ObjectID id, bool inStack)
 {
 	///TODO: abstraction
-	typeMap[id];
-	if (id == OBJ_BEAMER) {
-		if (!inStack) {
-			Beamer *beamer = new Beamer();
-			beamer->setObject(game, position, id, DIR_NORTH, inStack);
-		} else {
-			LogWarning("Can't place a beamer into the stack!");
-		}
-	} else if (id == OBJ_DOT) {
-		if (!inStack) {
-			Dot* dot = new Dot();
-			dot->setObject(game, position, id, DIR_NORTH, inStack);
-		} else {
-			LogWarning("Can't place a dot into the stack!");
-		}
-	} else if (id == OBJ_MIRROR) {
-		Mirror* mirror = new Mirror();
-		mirror->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_BENDER) {
-		Bender* bender = new Bender();
-		bender->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_SPLITTER) {
-		Splitter* splitter = new Splitter();
-		splitter->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_CONDUIT) {
-		Conduit* conduit = new Conduit();
-		conduit->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_FILTER) {
-		Filter* filter = new Filter();
-		filter->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_PRISM) {
-		Prism* prism = new Prism();
-		prism->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_DOPPLER) {
-		Doppler* doppler = new Doppler();
-		doppler->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_TANGLER) {
-		Tangler* tangler = new Tangler();
-		tangler->setObject(game, position, id, DIR_NORTH, inStack);
-	} else if (id == OBJ_TELEPORTER) {
-		Teleporter* teleporter = new Teleporter();
-		teleporter->setObject(game, position, id, DIR_NORTH, inStack);
+	Object* object = (Object::typeMap[id]());
+
+	if (object->movable or !inStack) {
+		object->setObject(game, position, id, DIR_NORTH, inStack);
+	} else {
+		LogWarning("Can't place an object into the stack!");
+		delete object;
 	}
 }
 

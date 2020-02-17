@@ -3,6 +3,8 @@
 #include "constants.hpp"
 #include "log.hpp"
 
+Object::TypeMap Object::typeMap;
+
 Object::Object(Color col) : color(col)
 {
 
@@ -465,4 +467,24 @@ Position Teleporter::findAnotherTeleporter(unsigned short direction)
 	}
 
 	return (found ? now : EMPTY_POSITION);
+}
+
+template<typename T> Object* Object::createObject()
+{
+	return new T;
+}
+
+void Object::createObjectMap()
+{
+	typeMap[OBJ_BEAMER]     = &createObject<Beamer>;
+	typeMap[OBJ_DOT]        = &createObject<Dot>;
+	typeMap[OBJ_MIRROR]     = &createObject<Mirror>;
+	typeMap[OBJ_BENDER]     = &createObject<Bender>;
+	typeMap[OBJ_SPLITTER]   = &createObject<Splitter>;
+	typeMap[OBJ_CONDUIT]    = &createObject<Conduit>;
+	typeMap[OBJ_FILTER]     = &createObject<Filter>;
+	typeMap[OBJ_PRISM]      = &createObject<Prism>;
+	typeMap[OBJ_DOPPLER]    = &createObject<Doppler>;
+	typeMap[OBJ_TANGLER]    = &createObject<Tangler>;
+	typeMap[OBJ_TELEPORTER] = &createObject<Teleporter>;
 }

@@ -8,11 +8,6 @@
 
 class Object;
 
-typedef std::map<ObjectID, Object*(*)()> TypeMap;
-template<typename T>
-extern Object* createObject();
-static TypeMap typeMap;
-
 extern void addElement(RayGenList &rayGens, RayGenElement element, unsigned short count = 2);
 extern void addNode(Ray &ray, sf::Vertex node, unsigned short count = 2);
 extern void addLine(Ray &ray, Color color, Position start, Position end);
@@ -20,7 +15,6 @@ extern sf::RectangleShape rectangleCreate(int x, int y, int w, int h, sf::Color 
 extern unsigned short countDigit(unsigned short n);
 extern std::string numberToString(unsigned short number);
 extern void loadSprites();
-extern void createObjectMap();
 extern void readByte(std::ifstream &file, unsigned short &var);
 extern void readObject(std::ifstream &file, Level &level, bool stackObject = false);
 extern void writeByte(std::ofstream &file, unsigned short var);
