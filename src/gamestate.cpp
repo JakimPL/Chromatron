@@ -143,8 +143,10 @@ void GameState::drawLevelsList()
 		drawSelectorSquare(mousePosition, dyellow, dgray, false);
 	}
 
-	for (unsigned short level = 0; level < texts.size(); ++level) {
-		window.draw(texts[level]);
+	for (short layer = TXT_LAYERS - 1; layer >= 0; --layer) {
+		for (unsigned short level = 0; level < texts[layer].size(); ++level) {
+			window.draw(texts[layer][level]);
+		}
 	}
 }
 
@@ -561,10 +563,12 @@ void GameState::saveLevel()
 	}
 }
 
-
 void GameState::updateLevelsList()
 {
-	texts.clear();
+	for (unsigned short layer = 0; layer < TXT_LAYERS; ++layer) {
+		texts[layer].clear();
+	}
+
 	unsigned short LINE_WIDTH = SCREEN_WIDTH / TILE_SIZE - OFFSET_X;
 	for (unsigned short level = 1; level <= game.levelSet.getLevelsCount(); ++level) {
 		sf::Text text;
@@ -580,6 +584,12 @@ void GameState::updateLevelsList()
 
 		text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
 		text.setPosition(position);
-		texts.push_back(text);
+		texts[TXT_NORMAL].push_back(text);
+
+		sf::Text shadow(text);
+		shadow.setFillColor(dgray);
+		shadow.setOrigin(textBounds.width / 2.0f - 1, textBounds.height / 2.0f - 1);
+
+		texts[TXT_SHADOW].push_back(shadow);
 	}
 }

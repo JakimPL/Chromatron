@@ -12,7 +12,7 @@ struct GameState {
 	sf::Event &event;
 	Position mousePosition;
 	Position levelsListPosition;
-	std::vector<sf::Text> texts;
+	std::vector<sf::Text> texts[TXT_LAYERS];
 
 	void handleApplicationParameters(int argc, char* argv[]);
 	void clearLevel();

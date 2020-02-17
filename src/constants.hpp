@@ -106,6 +106,12 @@ enum LevelState : unsigned short {
 	LS_PASSED
 };
 
+enum TextLayers : short {
+	TXT_NORMAL,
+	TXT_SHADOW,
+	TXT_LAYERS
+};
+
 enum RayType : unsigned short {
 	RT_NORMAL,
 	RT_TANGLED
